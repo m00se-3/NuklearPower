@@ -1,6 +1,6 @@
 # NuklearPower
 
-This is a fork from [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear/) that has been thoroughly defiled by C++23. The original README finishes below:
+This is a WIP fork from [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear/) that has been thoroughly defiled by C++23. The original README finishes below:
 
 [![](https://github.com/Immediate-Mode-UI/Nuklear/workflows/C%2FC++%20CI/badge.svg )](https://github.com/Immediate-Mode-UI/Nuklear/actions)
 
