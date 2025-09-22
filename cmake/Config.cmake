@@ -1,0 +1,23 @@
+if(DEFINED NP_USE_CCACHE)
+  find_program(CCACHE_PROGRAM ${NP_USE_CCACHE})
+else()
+  find_program(CCACHE_PROGRAM ccache)
+endif()
+
+if(DEFINED NP_USE_CLANG_TIDY)
+  find_program(CLANG_TIDY_PROGRAM ${NP_USE_CLANG_TIDY})
+else()
+  find_program(CLANG_TIDY_PROGRAM clang-tidy)
+endif()
+
+if(DEFINED NP_USE_CPPCHECK)
+  find_program(CPPCHECK_PROGRAM ${NP_USE_CPPCHECK})
+else()
+  find_program(CPPCHECK_PROGRAM cppcheck)
+endif()
+
+if($ENV{MSVC_IDE} MATCHES "ON")
+  include(${CMAKE_CURRENT_LIST_DIR}/MSVCOptions.cmake)
+else()
+  include(${CMAKE_CURRENT_LIST_DIR}/GNUOptions.cmake)
+endif()

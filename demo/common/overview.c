@@ -5,16 +5,16 @@ static int
 overview(struct nk_context *ctx)
 {
     /* window flags */
-    static nk_bool show_menu = nk_true;
+    static bool show_menu = nk_true;
     static nk_flags window_flags = NK_WINDOW_TITLE|NK_WINDOW_BORDER|NK_WINDOW_SCALABLE|NK_WINDOW_MOVABLE|NK_WINDOW_MINIMIZABLE|NK_WINDOW_SCROLL_AUTO_HIDE;
     nk_flags actual_window_flags = 0;
 
     /* widget flags */
-    static nk_bool disable_widgets = nk_false;
+    static bool disable_widgets = nk_false;
 
     /* popups */
     static enum nk_style_header_align header_align = NK_HEADER_RIGHT;
-    static nk_bool show_app_about = nk_false;
+    static bool show_app_about = nk_false;
 
 #ifdef INCLUDE_STYLE
     /* styles */
@@ -37,7 +37,7 @@ overview(struct nk_context *ctx)
             enum menu_states {MENU_DEFAULT, MENU_WINDOWS};
             static nk_size mprog = 60;
             static int mslider = 10;
-            static nk_bool mcheck = nk_true;
+            static bool mcheck = nk_true;
             nk_menubar_begin(ctx);
 
             /* menu #1 */
@@ -47,7 +47,7 @@ overview(struct nk_context *ctx)
             {
                 static size_t prog = 40;
                 static int slider = 10;
-                static nk_bool check = nk_true;
+                static bool check = nk_true;
                 nk_layout_row_dynamic(ctx, 25, 1);
                 if (nk_menu_item_label(ctx, "Hide", NK_TEXT_LEFT))
                     show_menu = nk_false;
@@ -167,10 +167,10 @@ overview(struct nk_context *ctx)
         if (nk_tree_push(ctx, NK_TREE_TAB, "Widgets", NK_MINIMIZED))
         {
             enum options {A,B,C};
-            static nk_bool checkbox_left_text_left;
-            static nk_bool checkbox_centered_text_right;
-            static nk_bool checkbox_right_text_right;
-            static nk_bool checkbox_right_text_left;
+            static bool checkbox_left_text_left;
+            static bool checkbox_centered_text_right;
+            static bool checkbox_right_text_right;
+            static bool checkbox_right_text_left;
             static int option_left;
             static int option_right;
             if (nk_tree_push(ctx, NK_TREE_NODE, "Text", NK_MINIMIZED))
@@ -304,7 +304,7 @@ overview(struct nk_context *ctx)
 
             if (nk_tree_push(ctx, NK_TREE_NODE, "Inactive", NK_MINIMIZED))
             {
-                static nk_bool inactive = 1;
+                static bool inactive = 1;
                 nk_layout_row_dynamic(ctx, 30, 1);
                 nk_checkbox_label(ctx, "Inactive", &inactive);
 
@@ -325,7 +325,7 @@ overview(struct nk_context *ctx)
             {
                 if (nk_tree_push(ctx, NK_TREE_NODE, "List", NK_MINIMIZED))
                 {
-                    static nk_bool selected[4] = {nk_false, nk_false, nk_true, nk_false};
+                    static bool selected[4] = {nk_false, nk_false, nk_true, nk_false};
                     nk_layout_row_static(ctx, 18, 100, 1);
                     nk_selectable_label(ctx, "Selectable", NK_TEXT_LEFT, &selected[0]);
                     nk_selectable_label(ctx, "Selectable", NK_TEXT_LEFT, &selected[1]);
@@ -337,7 +337,7 @@ overview(struct nk_context *ctx)
                 if (nk_tree_push(ctx, NK_TREE_NODE, "Grid", NK_MINIMIZED))
                 {
                     int i;
-                    static nk_bool selected[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+                    static bool selected[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
                     nk_layout_row_static(ctx, 50, 50, 4);
                     for (i = 0; i < 16; ++i) {
                         if (nk_selectable_label(ctx, "Z", NK_TEXT_CENTERED, &selected[i])) {
@@ -384,7 +384,7 @@ overview(struct nk_context *ctx)
                  */
                 static float chart_selection = 8.0f;
                 static int current_weapon = 0;
-                static nk_bool check_values[5];
+                static bool check_values[5];
                 static float position[3];
                 static struct nk_color combo_color = {130, 50, 50, 255};
                 static struct nk_colorf combo_color2 = {0.509f, 0.705f, 0.2f, 1.0f};
@@ -675,7 +675,7 @@ overview(struct nk_context *ctx)
             float id = 0;
             static int col_index = -1;
             static int line_index = -1;
-            static nk_bool show_markers = nk_true;
+            static bool show_markers = nk_true;
             float step = (2*3.141592654f) / 32;
 
             int i;
@@ -760,8 +760,8 @@ overview(struct nk_context *ctx)
         if (nk_tree_push(ctx, NK_TREE_TAB, "Popup", NK_MINIMIZED))
         {
             static struct nk_color color = {255,0,0, 255};
-            static nk_bool select[4];
-            static nk_bool popup_active;
+            static bool select[4];
+            static bool popup_active;
             const struct nk_input *in = &ctx->input;
             struct nk_rect bounds;
 
@@ -930,9 +930,9 @@ overview(struct nk_context *ctx)
 
             if (nk_tree_push(ctx, NK_TREE_NODE, "Group", NK_MINIMIZED))
             {
-                static nk_bool group_titlebar = nk_false;
-                static nk_bool group_border = nk_true;
-                static nk_bool group_no_scrollbar = nk_false;
+                static bool group_titlebar = nk_false;
+                static bool group_border = nk_true;
+                static bool group_no_scrollbar = nk_false;
                 static int group_width = 320;
                 static int group_height = 200;
 
@@ -958,7 +958,7 @@ overview(struct nk_context *ctx)
                 nk_layout_row_static(ctx, (float)group_height, group_width, 2);
                 if (nk_group_begin(ctx, "Group", group_flags)) {
                     int i = 0;
-                    static nk_bool selected[16];
+                    static bool selected[16];
                     nk_layout_row_static(ctx, 18, 100, 1);
                     for (i = 0; i < 16; ++i)
                         nk_selectable_label(ctx, (selected[i]) ? "Selected": "Unselected", NK_TEXT_CENTERED, &selected[i]);
@@ -968,12 +968,12 @@ overview(struct nk_context *ctx)
             }
             if (nk_tree_push(ctx, NK_TREE_NODE, "Tree", NK_MINIMIZED))
             {
-                static nk_bool root_selected = 0;
-                nk_bool sel = root_selected;
+                static bool root_selected = 0;
+                bool sel = root_selected;
                 if (nk_tree_element_push(ctx, NK_TREE_NODE, "Root", NK_MINIMIZED, &sel)) {
-                    static nk_bool selected[8];
+                    static bool selected[8];
                     int i = 0;
-                    nk_bool node_select = selected[0];
+                    bool node_select = selected[0];
                     if (sel != root_selected) {
                         root_selected = sel;
                         for (i = 0; i < 8; ++i)
@@ -981,7 +981,7 @@ overview(struct nk_context *ctx)
                     }
                     if (nk_tree_element_push(ctx, NK_TREE_NODE, "Node", NK_MINIMIZED, &node_select)) {
                         int j = 0;
-                        static nk_bool sel_nodes[4];
+                        static bool sel_nodes[4];
                         if (node_select != selected[0]) {
                             selected[0] = node_select;
                             for (i = 0; i < 4; ++i)
@@ -1109,7 +1109,7 @@ overview(struct nk_context *ctx)
                 nk_layout_space_begin(ctx, NK_STATIC, 500, 64);
                 nk_layout_space_push(ctx, nk_rect(0,0,150,500));
                 if (nk_group_begin(ctx, "Group_left", NK_WINDOW_BORDER)) {
-                    static nk_bool selected[32];
+                    static bool selected[32];
                     nk_layout_row_static(ctx, 18, 100, 1);
                     for (i = 0; i < 32; ++i)
                         nk_selectable_label(ctx, (selected[i]) ? "Selected": "Unselected", NK_TEXT_CENTERED, &selected[i]);
@@ -1142,7 +1142,7 @@ overview(struct nk_context *ctx)
 
                 nk_layout_space_push(ctx, nk_rect(320,0,150,150));
                 if (nk_group_begin(ctx, "Group_right_top", NK_WINDOW_BORDER)) {
-                    static nk_bool selected[4];
+                    static bool selected[4];
                     nk_layout_row_static(ctx, 18, 100, 1);
                     for (i = 0; i < 4; ++i)
                         nk_selectable_label(ctx, (selected[i]) ? "Selected": "Unselected", NK_TEXT_CENTERED, &selected[i]);
@@ -1151,7 +1151,7 @@ overview(struct nk_context *ctx)
 
                 nk_layout_space_push(ctx, nk_rect(320,160,150,150));
                 if (nk_group_begin(ctx, "Group_right_center", NK_WINDOW_BORDER)) {
-                    static nk_bool selected[4];
+                    static bool selected[4];
                     nk_layout_row_static(ctx, 18, 100, 1);
                     for (i = 0; i < 4; ++i)
                         nk_selectable_label(ctx, (selected[i]) ? "Selected": "Unselected", NK_TEXT_CENTERED, &selected[i]);
@@ -1160,7 +1160,7 @@ overview(struct nk_context *ctx)
 
                 nk_layout_space_push(ctx, nk_rect(320,320,150,150));
                 if (nk_group_begin(ctx, "Group_right_bottom", NK_WINDOW_BORDER)) {
-                    static nk_bool selected[4];
+                    static bool selected[4];
                     nk_layout_row_static(ctx, 18, 100, 1);
                     for (i = 0; i < 4; ++i)
                         nk_selectable_label(ctx, (selected[i]) ? "Selected": "Unselected", NK_TEXT_CENTERED, &selected[i]);

@@ -6,7 +6,7 @@ struct nk_canvas {
     struct nk_style_item window_background;
 };
 
-static nk_bool
+static bool
 canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
     int x, int y, int width, int height, struct nk_color background_color)
 {

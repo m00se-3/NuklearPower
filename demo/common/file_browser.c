@@ -381,7 +381,7 @@ file_browser_run(struct file_browser *browser, struct nk_context *ctx)
     int ret = 0;
     struct media *media = browser->media;
     struct nk_rect total_space;
-    static nk_bool file_browser_is_open = nk_true;
+    static bool file_browser_is_open = nk_true;
 
     if (file_browser_is_open)
     {

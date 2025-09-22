@@ -49,7 +49,7 @@ NK_API void nk_d3d12_font_stash_cleanup();
  *    - The returned handle can be used as texture handle to render custom images.
  *    - The caller must keep track of the state of the texture when it comes to rendering with nk_d3d12_render(...).
  */
-NK_API nk_bool nk_d3d12_set_user_texture(unsigned int index, ID3D12Resource* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* description, nk_handle* handle_out);
+NK_API bool nk_d3d12_set_user_texture(unsigned int index, ID3D12Resource* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* description, nk_handle* handle_out);
 /*
  * USAGE:
  *    - This function should be called within the user window proc to allow nuklear to listen to window events
@@ -883,9 +883,9 @@ void nk_d3d12_font_stash_cleanup()
 }
 
 NK_API
-nk_bool nk_d3d12_set_user_texture(unsigned int index, ID3D12Resource* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* description, nk_handle* handle_out)
+bool nk_d3d12_set_user_texture(unsigned int index, ID3D12Resource* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* description, nk_handle* handle_out)
 {
-    nk_bool result = nk_false;
+    bool result = nk_false;
     if(index < d3d12.max_user_textures)
     {
         D3D12_CPU_DESCRIPTOR_HANDLE srv_handle;

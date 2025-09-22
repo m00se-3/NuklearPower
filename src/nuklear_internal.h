@@ -1,5 +1,5 @@
-#ifndef NK_INTERNAL_H
-#define NK_INTERNAL_H
+#ifndef intERNAL_H
+#define intERNAL_H
 
 #ifndef NK_POOL_DEFAULT_CAPACITY
 #define NK_POOL_DEFAULT_CAPACITY 16
@@ -24,7 +24,7 @@
 #include <stdarg.h> /* valist, va_start, va_end, ... */
 #endif
 #ifndef NK_ASSERT
-#include <assert.h>
+#include <cassert>
 #define NK_ASSERT(expr) assert(expr)
 #endif
 
@@ -62,30 +62,30 @@
 /* Make sure correct type size:
  * This will fire with a negative subscript error if the type sizes
  * are set incorrectly by the compiler, and compile out if not */
-NK_STATIC_ASSERT(sizeof(nk_size) >= sizeof(void*));
-NK_STATIC_ASSERT(sizeof(nk_ptr) == sizeof(void*));
+NK_STATIC_ASSERT(sizeof(std::size_t) >= sizeof(void*));
+NK_STATIC_ASSERT(sizeof(std::uintptr_t) == sizeof(void*));
 NK_STATIC_ASSERT(sizeof(nk_flags) >= 4);
 NK_STATIC_ASSERT(sizeof(nk_rune) >= 4);
-NK_STATIC_ASSERT(sizeof(nk_ushort) == 2);
-NK_STATIC_ASSERT(sizeof(nk_short) == 2);
-NK_STATIC_ASSERT(sizeof(nk_uint) == 4);
-NK_STATIC_ASSERT(sizeof(nk_int) == 4);
-NK_STATIC_ASSERT(sizeof(nk_byte) == 1);
+NK_STATIC_ASSERT(sizeof(unsigned short) == 2);
+NK_STATIC_ASSERT(sizeof(short) == 2);
+NK_STATIC_ASSERT(sizeof(std::uint32_t) == 4);
+NK_STATIC_ASSERT(sizeof(std::int32_t) == 4);
+NK_STATIC_ASSERT(sizeof(std::byte) == 1);
 #ifdef NK_INCLUDE_STANDARD_BOOL
-NK_STATIC_ASSERT(sizeof(nk_bool) == sizeof(bool));
+NK_STATIC_ASSERT(sizeof(bool) == sizeof(bool));
 #else
-NK_STATIC_ASSERT(sizeof(nk_bool) == 4);
+NK_STATIC_ASSERT(sizeof(bool) == 4);
 #endif
 
-NK_GLOBAL const struct nk_rect nk_null_rect = {-8192.0f, -8192.0f, 16384, 16384};
+NK_GLOBAL constexpr struct nk_rect nk_null_rect = {.x=-8192.0f, .y=-8192.0f, .w=16384, .h=16384};
 #define NK_FLOAT_PRECISION 0.00000000000001
 
-NK_GLOBAL const struct nk_color nk_red = {255,0,0,255};
-NK_GLOBAL const struct nk_color nk_green = {0,255,0,255};
-NK_GLOBAL const struct nk_color nk_blue = {0,0,255,255};
-NK_GLOBAL const struct nk_color nk_white = {255,255,255,255};
-NK_GLOBAL const struct nk_color nk_black = {0,0,0,255};
-NK_GLOBAL const struct nk_color nk_yellow = {255,255,0,255};
+NK_GLOBAL constexpr nk_color nk_red = {.r=255,.g=0,.b=0,.a=255};
+NK_GLOBAL constexpr nk_color nk_green = {.r=0,.g=255,.b=0,.a=255};
+NK_GLOBAL constexpr nk_color nk_blue = {.r=0, .g=0, .b=255, .a=255};
+NK_GLOBAL constexpr nk_color nk_white = {.r=255,.g=255,.b=255,.a=255};
+NK_GLOBAL constexpr nk_color nk_black = {.r=0,.g=0,.b=0,.a=255};
+NK_GLOBAL constexpr nk_color nk_yellow = {.r=255,.g=255,.b=0,.a=255};
 
 /* widget */
 #define nk_widget_state_reset(s)\
@@ -109,7 +109,7 @@ NK_LIB float nk_atan(float x);
 #ifndef NK_ATAN2
 NK_LIB float nk_atan2(float y, float x);
 #endif
-NK_LIB nk_uint nk_round_up_pow2(nk_uint v);
+NK_LIB std::uint32_t nk_round_up_pow2(std::uint32_t v);
 NK_LIB struct nk_rect nk_shrink_rect(struct nk_rect r, float amount);
 NK_LIB struct nk_rect nk_pad_rect(struct nk_rect r, struct nk_vec2 pad);
 NK_LIB void nk_unify(struct nk_rect *clip, const struct nk_rect *a, float x0, float y0, float x1, float y1);
@@ -122,18 +122,18 @@ NK_LIB float nk_roundf(float x);
 
 /* util */
 enum {NK_DO_NOT_STOP_ON_NEW_LINE, NK_STOP_ON_NEW_LINE};
-NK_LIB nk_bool nk_is_lower(int c);
-NK_LIB nk_bool nk_is_upper(int c);
+NK_LIB bool nk_is_lower(int c);
+NK_LIB bool nk_is_upper(int c);
 NK_LIB int nk_to_upper(int c);
 NK_LIB int nk_to_lower(int c);
 
 #ifndef NK_MEMCPY
-NK_LIB void* nk_memcopy(void *dst, const void *src, nk_size n);
+NK_LIB void* nk_memcopy(void *dst, const void *src, std::size_t n);
 #endif
 #ifndef NK_MEMSET
-NK_LIB void nk_memset(void *ptr, int c0, nk_size size);
+NK_LIB void nk_memset(void *ptr, int c0, std::size_t size);
 #endif
-NK_LIB void nk_zero(void *ptr, nk_size size);
+NK_LIB void nk_zero(void *ptr, std::size_t size);
 NK_LIB char *nk_itoa(char *s, long n);
 NK_LIB int nk_string_float_limit(char *string, int prec);
 #ifndef NK_DTOA
@@ -145,22 +145,22 @@ NK_LIB struct nk_vec2 nk_text_calculate_text_bounds(const struct nk_user_font *f
 NK_LIB int nk_strfmt(char *buf, int buf_size, const char *fmt, va_list args);
 #endif
 #ifdef NK_INCLUDE_STANDARD_IO
-NK_LIB char *nk_file_load(const char* path, nk_size* siz, const struct nk_allocator *alloc);
+NK_LIB char *nk_file_load(const char* path, std::size_t* siz, const struct nk_allocator *alloc);
 #endif
 
 /* buffer */
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-NK_LIB void* nk_malloc(nk_handle unused, void *old,nk_size size);
+NK_LIB void* nk_malloc(nk_handle unused, void *old,std::size_t size);
 NK_LIB void nk_mfree(nk_handle unused, void *ptr);
 #endif
-NK_LIB void* nk_buffer_align(void *unaligned, nk_size align, nk_size *alignment, enum nk_buffer_allocation_type type);
-NK_LIB void* nk_buffer_alloc(struct nk_buffer *b, enum nk_buffer_allocation_type type, nk_size size, nk_size align);
-NK_LIB void* nk_buffer_realloc(struct nk_buffer *b, nk_size capacity, nk_size *size);
+NK_LIB void* nk_buffer_align(void *unaligned, std::size_t align, std::size_t *alignment, enum nk_buffer_allocation_type type);
+NK_LIB void* nk_buffer_alloc(struct nk_buffer *b, enum nk_buffer_allocation_type type, std::size_t size, std::size_t align);
+NK_LIB void* nk_buffer_realloc(struct nk_buffer *b, std::size_t capacity, std::size_t *size);
 
 /* draw */
 NK_LIB void nk_command_buffer_init(struct nk_command_buffer *cb, struct nk_buffer *b, enum nk_command_clipping clip);
 NK_LIB void nk_command_buffer_reset(struct nk_command_buffer *b);
-NK_LIB void* nk_command_buffer_push(struct nk_command_buffer* b, enum nk_command_type t, nk_size size);
+NK_LIB void* nk_command_buffer_push(struct nk_command_buffer* b, enum nk_command_type t, std::size_t size);
 NK_LIB void nk_draw_symbol(struct nk_command_buffer *out, enum nk_symbol_type type, struct nk_rect content, struct nk_color background, struct nk_color foreground, float border_width, const struct nk_user_font *font);
 
 /* buffering */
@@ -192,7 +192,7 @@ NK_LIB void nk_insert_window(struct nk_context *ctx, struct nk_window *win, enum
 /* pool */
 NK_LIB void nk_pool_init(struct nk_pool *pool, const struct nk_allocator *alloc, unsigned int capacity);
 NK_LIB void nk_pool_free(struct nk_pool *pool);
-NK_LIB void nk_pool_init_fixed(struct nk_pool *pool, void *memory, nk_size size);
+NK_LIB void nk_pool_init_fixed(struct nk_pool *pool, void *memory, std::size_t size);
 NK_LIB struct nk_page_element *nk_pool_alloc(struct nk_pool *pool);
 
 /* page-element */
@@ -205,19 +205,19 @@ NK_LIB struct nk_table* nk_create_table(struct nk_context *ctx);
 NK_LIB void nk_remove_table(struct nk_window *win, struct nk_table *tbl);
 NK_LIB void nk_free_table(struct nk_context *ctx, struct nk_table *tbl);
 NK_LIB void nk_push_table(struct nk_window *win, struct nk_table *tbl);
-NK_LIB nk_uint *nk_add_value(struct nk_context *ctx, struct nk_window *win, nk_hash name, nk_uint value);
-NK_LIB nk_uint *nk_find_value(const struct nk_window *win, nk_hash name);
+NK_LIB std::uint32_t *nk_add_value(struct nk_context *ctx, struct nk_window *win, nk_hash name, std::uint32_t value);
+NK_LIB std::uint32_t *nk_find_value(const struct nk_window *win, nk_hash name);
 
 /* panel */
 NK_LIB void *nk_create_panel(struct nk_context *ctx);
 NK_LIB void nk_free_panel(struct nk_context*, struct nk_panel *pan);
-NK_LIB nk_bool nk_panel_has_header(nk_flags flags, const char *title);
+NK_LIB bool nk_panel_has_header(nk_flags flags, const char *title);
 NK_LIB struct nk_vec2 nk_panel_get_padding(const struct nk_style *style, enum nk_panel_type type);
 NK_LIB float nk_panel_get_border(const struct nk_style *style, nk_flags flags, enum nk_panel_type type);
 NK_LIB struct nk_color nk_panel_get_border_color(const struct nk_style *style, enum nk_panel_type type);
-NK_LIB nk_bool nk_panel_is_sub(enum nk_panel_type type);
-NK_LIB nk_bool nk_panel_is_nonblock(enum nk_panel_type type);
-NK_LIB nk_bool nk_panel_begin(struct nk_context *ctx, const char *title, enum nk_panel_type panel_type);
+NK_LIB bool nk_panel_is_sub(enum nk_panel_type type);
+NK_LIB bool nk_panel_is_nonblock(enum nk_panel_type type);
+NK_LIB bool nk_panel_begin(struct nk_context *ctx, const char *title, enum nk_panel_type panel_type);
 NK_LIB void nk_panel_end(struct nk_context *ctx);
 
 /* layout */
@@ -230,7 +230,7 @@ NK_LIB void nk_panel_alloc_space(struct nk_rect *bounds, const struct nk_context
 NK_LIB void nk_layout_peek(struct nk_rect *bounds, const struct nk_context *ctx);
 
 /* popup */
-NK_LIB nk_bool nk_nonblock_begin(struct nk_context *ctx, nk_flags flags, struct nk_rect body, struct nk_rect header, enum nk_panel_type panel_type);
+NK_LIB bool nk_nonblock_begin(struct nk_context *ctx, nk_flags flags, struct nk_rect body, struct nk_rect header, enum nk_panel_type panel_type);
 
 /* text */
 struct nk_text {
@@ -242,34 +242,34 @@ NK_LIB void nk_widget_text(struct nk_command_buffer *o, struct nk_rect b, const 
 NK_LIB void nk_widget_text_wrap(struct nk_command_buffer *o, struct nk_rect b, const char *string, int len, const struct nk_text *t, const struct nk_user_font *f);
 
 /* button */
-NK_LIB nk_bool nk_button_behavior(nk_flags *state, struct nk_rect r, const struct nk_input *i, enum nk_button_behavior behavior);
+NK_LIB bool nk_button_behavior(nk_flags *state, struct nk_rect r, const struct nk_input *i, enum nk_button_behavior behavior);
 NK_LIB const struct nk_style_item* nk_draw_button(struct nk_command_buffer *out, const struct nk_rect *bounds, nk_flags state, const struct nk_style_button *style);
-NK_LIB nk_bool nk_do_button(nk_flags *state, struct nk_command_buffer *out, struct nk_rect r, const struct nk_style_button *style, const struct nk_input *in, enum nk_button_behavior behavior, struct nk_rect *content);
+NK_LIB bool nk_do_button(nk_flags *state, struct nk_command_buffer *out, struct nk_rect r, const struct nk_style_button *style, const struct nk_input *in, enum nk_button_behavior behavior, struct nk_rect *content);
 NK_LIB void nk_draw_button_text(struct nk_command_buffer *out, const struct nk_rect *bounds, const struct nk_rect *content, nk_flags state, const struct nk_style_button *style, const char *txt, int len, nk_flags text_alignment, const struct nk_user_font *font);
-NK_LIB nk_bool nk_do_button_text(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *string, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_input *in, const struct nk_user_font *font);
+NK_LIB bool nk_do_button_text(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *string, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_input *in, const struct nk_user_font *font);
 NK_LIB void nk_draw_button_symbol(struct nk_command_buffer *out, const struct nk_rect *bounds, const struct nk_rect *content, nk_flags state, const struct nk_style_button *style, enum nk_symbol_type type, const struct nk_user_font *font);
-NK_LIB nk_bool nk_do_button_symbol(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, enum nk_symbol_type symbol, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_input *in, const struct nk_user_font *font);
+NK_LIB bool nk_do_button_symbol(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, enum nk_symbol_type symbol, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_input *in, const struct nk_user_font *font);
 NK_LIB void nk_draw_button_image(struct nk_command_buffer *out, const struct nk_rect *bounds, const struct nk_rect *content, nk_flags state, const struct nk_style_button *style, const struct nk_image *img);
-NK_LIB nk_bool nk_do_button_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, struct nk_image img, enum nk_button_behavior b, const struct nk_style_button *style, const struct nk_input *in);
+NK_LIB bool nk_do_button_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, struct nk_image img, enum nk_button_behavior b, const struct nk_style_button *style, const struct nk_input *in);
 NK_LIB void nk_draw_button_text_symbol(struct nk_command_buffer *out, const struct nk_rect *bounds, const struct nk_rect *label, const struct nk_rect *symbol, nk_flags state, const struct nk_style_button *style, const char *str, int len, enum nk_symbol_type type, const struct nk_user_font *font);
-NK_LIB nk_bool nk_do_button_text_symbol(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, enum nk_symbol_type symbol, const char *str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_user_font *font, const struct nk_input *in);
+NK_LIB bool nk_do_button_text_symbol(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, enum nk_symbol_type symbol, const char *str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_user_font *font, const struct nk_input *in);
 NK_LIB void nk_draw_button_text_image(struct nk_command_buffer *out, const struct nk_rect *bounds, const struct nk_rect *label, const struct nk_rect *image, nk_flags state, const struct nk_style_button *style, const char *str, int len, const struct nk_user_font *font, const struct nk_image *img);
-NK_LIB nk_bool nk_do_button_text_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, struct nk_image img, const char* str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_user_font *font, const struct nk_input *in);
+NK_LIB bool nk_do_button_text_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, struct nk_image img, const char* str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button *style, const struct nk_user_font *font, const struct nk_input *in);
 
 /* toggle */
 enum nk_toggle_type {
     NK_TOGGLE_CHECK,
     NK_TOGGLE_OPTION
 };
-NK_LIB nk_bool nk_toggle_behavior(const struct nk_input *in, struct nk_rect select, nk_flags *state, nk_bool active);
-NK_LIB void nk_draw_checkbox(struct nk_command_buffer *out, nk_flags state, const struct nk_style_toggle *style, nk_bool active, const struct nk_rect *label, const struct nk_rect *selector, const struct nk_rect *cursors, const char *string, int len, const struct nk_user_font *font, nk_flags text_alignment);
-NK_LIB void nk_draw_option(struct nk_command_buffer *out, nk_flags state, const struct nk_style_toggle *style, nk_bool active, const struct nk_rect *label, const struct nk_rect *selector, const struct nk_rect *cursors, const char *string, int len, const struct nk_user_font *font, nk_flags text_alignment);
-NK_LIB nk_bool nk_do_toggle(nk_flags *state, struct nk_command_buffer *out, struct nk_rect r, nk_bool *active, const char *str, int len, enum nk_toggle_type type, const struct nk_style_toggle *style, const struct nk_input *in, const struct nk_user_font *font, nk_flags widget_alignment, nk_flags text_alignment);
+NK_LIB bool nk_toggle_behavior(const struct nk_input *in, struct nk_rect select, nk_flags *state, bool active);
+NK_LIB void nk_draw_checkbox(struct nk_command_buffer *out, nk_flags state, const struct nk_style_toggle *style, bool active, const struct nk_rect *label, const struct nk_rect *selector, const struct nk_rect *cursors, const char *string, int len, const struct nk_user_font *font, nk_flags text_alignment);
+NK_LIB void nk_draw_option(struct nk_command_buffer *out, nk_flags state, const struct nk_style_toggle *style, bool active, const struct nk_rect *label, const struct nk_rect *selector, const struct nk_rect *cursors, const char *string, int len, const struct nk_user_font *font, nk_flags text_alignment);
+NK_LIB bool nk_do_toggle(nk_flags *state, struct nk_command_buffer *out, struct nk_rect r, bool *active, const char *str, int len, enum nk_toggle_type type, const struct nk_style_toggle *style, const struct nk_input *in, const struct nk_user_font *font, nk_flags widget_alignment, nk_flags text_alignment);
 
 /* progress */
-NK_LIB nk_size nk_progress_behavior(nk_flags *state, struct nk_input *in, struct nk_rect r, struct nk_rect cursor, nk_size max, nk_size value, nk_bool modifiable);
-NK_LIB void nk_draw_progress(struct nk_command_buffer *out, nk_flags state, const struct nk_style_progress *style, const struct nk_rect *bounds, const struct nk_rect *scursor, nk_size value, nk_size max);
-NK_LIB nk_size nk_do_progress(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, nk_size value, nk_size max, nk_bool modifiable, const struct nk_style_progress *style, struct nk_input *in);
+NK_LIB std::size_t nk_progress_behavior(nk_flags *state, struct nk_input *in, struct nk_rect r, struct nk_rect cursor, std::size_t max, std::size_t value, bool modifiable);
+NK_LIB void nk_draw_progress(struct nk_command_buffer *out, nk_flags state, const struct nk_style_progress *style, const struct nk_rect *bounds, const struct nk_rect *scursor, std::size_t value, std::size_t max);
+NK_LIB std::size_t nk_do_progress(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, std::size_t value, std::size_t max, bool modifiable, const struct nk_style_progress *style, struct nk_input *in);
 
 /* slider */
 NK_LIB float nk_slider_behavior(nk_flags *state, struct nk_rect *logical_cursor, struct nk_rect *visual_cursor, struct nk_input *in, struct nk_rect bounds, float slider_min, float slider_max, float slider_value, float slider_step, float slider_steps);
@@ -283,18 +283,18 @@ NK_LIB float nk_do_scrollbarv(nk_flags *state, struct nk_command_buffer *out, st
 NK_LIB float nk_do_scrollbarh(nk_flags *state, struct nk_command_buffer *out, struct nk_rect scroll, int has_scrolling, float offset, float target, float step, float button_pixel_inc, const struct nk_style_scrollbar *style, struct nk_input *in, const struct nk_user_font *font);
 
 /* selectable */
-NK_LIB void nk_draw_selectable(struct nk_command_buffer *out, nk_flags state, const struct nk_style_selectable *style, nk_bool active, const struct nk_rect *bounds, const struct nk_rect *icon, const struct nk_image *img, enum nk_symbol_type sym, const char *string, int len, nk_flags align, const struct nk_user_font *font);
-NK_LIB nk_bool nk_do_selectable(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *str, int len, nk_flags align, nk_bool *value, const struct nk_style_selectable *style, const struct nk_input *in, const struct nk_user_font *font);
-NK_LIB nk_bool nk_do_selectable_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *str, int len, nk_flags align, nk_bool *value, const struct nk_image *img, const struct nk_style_selectable *style, const struct nk_input *in, const struct nk_user_font *font);
+NK_LIB void nk_draw_selectable(struct nk_command_buffer *out, nk_flags state, const struct nk_style_selectable *style, bool active, const struct nk_rect *bounds, const struct nk_rect *icon, const struct nk_image *img, enum nk_symbol_type sym, const char *string, int len, nk_flags align, const struct nk_user_font *font);
+NK_LIB bool nk_do_selectable(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *str, int len, nk_flags align, bool *value, const struct nk_style_selectable *style, const struct nk_input *in, const struct nk_user_font *font);
+NK_LIB bool nk_do_selectable_image(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, const char *str, int len, nk_flags align, bool *value, const struct nk_image *img, const struct nk_style_selectable *style, const struct nk_input *in, const struct nk_user_font *font);
 
 /* edit */
-NK_LIB void nk_edit_draw_text(struct nk_command_buffer *out, const struct nk_style_edit *style, float pos_x, float pos_y, float x_offset, const char *text, int byte_len, float row_height, const struct nk_user_font *font, struct nk_color background, struct nk_color foreground, nk_bool is_selected);
+NK_LIB void nk_edit_draw_text(struct nk_command_buffer *out, const struct nk_style_edit *style, float pos_x, float pos_y, float x_offset, const char *text, int byte_len, float row_height, const struct nk_user_font *font, struct nk_color background, struct nk_color foreground, bool is_selected);
 NK_LIB nk_flags nk_do_edit(nk_flags *state, struct nk_command_buffer *out, struct nk_rect bounds, nk_flags flags, nk_plugin_filter filter, struct nk_text_edit *edit, const struct nk_style_edit *style, struct nk_input *in, const struct nk_user_font *font);
 
 /* color-picker */
-NK_LIB nk_bool nk_color_picker_behavior(nk_flags *state, const struct nk_rect *bounds, const struct nk_rect *matrix, const struct nk_rect *hue_bar, const struct nk_rect *alpha_bar, struct nk_colorf *color, const struct nk_input *in);
+NK_LIB bool nk_color_picker_behavior(nk_flags *state, const struct nk_rect *bounds, const struct nk_rect *matrix, const struct nk_rect *hue_bar, const struct nk_rect *alpha_bar, struct nk_colorf *color, const struct nk_input *in);
 NK_LIB void nk_draw_color_picker(struct nk_command_buffer *o, const struct nk_rect *matrix, const struct nk_rect *hue_bar, const struct nk_rect *alpha_bar, struct nk_colorf col);
-NK_LIB nk_bool nk_do_color_picker(nk_flags *state, struct nk_command_buffer *out, struct nk_colorf *col, enum nk_color_format fmt, struct nk_rect bounds, struct nk_vec2 padding, const struct nk_input *in, const struct nk_user_font *font);
+NK_LIB bool nk_do_color_picker(nk_flags *state, struct nk_command_buffer *out, struct nk_colorf *col, enum nk_color_format fmt, struct nk_rect bounds, struct nk_vec2 padding, const struct nk_input *in, const struct nk_user_font *font);
 
 /* property */
 enum nk_property_status {
@@ -356,7 +356,7 @@ NK_LIB void nk_property(struct nk_context *ctx, const char *name, struct nk_prop
 /* Allow consumer to define own STBTT_malloc/STBTT_free, and use the font atlas' allocator otherwise */
 #ifndef STBTT_malloc
 static void*
-nk_stbtt_malloc(nk_size size, void *user_data) {
+nk_stbtt_malloc(std::size_t size, void *user_data) {
     struct nk_allocator *alloc = (struct nk_allocator *) user_data;
     return alloc->alloc(alloc->userdata, 0, size);
 }

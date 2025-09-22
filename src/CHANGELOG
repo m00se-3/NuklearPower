@@ -48,13 +48,13 @@
 /// - 2021/03/17 (4.07.1) - Fix warning about unused parameter
 /// - 2021/03/17 (4.07.0) - Fix nk_property hover bug
 /// - 2021/03/15 (4.06.4) - Change nk_propertyi back to int
-/// - 2021/03/15 (4.06.3) - Update documentation for functions that now return nk_bool
+/// - 2021/03/15 (4.06.3) - Update documentation for functions that now return bool
 /// - 2020/12/19 (4.06.2) - Fix additional C++ style comments which are not allowed in ISO C90.
 /// - 2020/10/11 (4.06.1) - Fix C++ style comments which are not allowed in ISO C90.
-/// - 2020/10/07 (4.06.0) - Fix nk_combo return type wrongly changed to nk_bool
+/// - 2020/10/07 (4.06.0) - Fix nk_combo return type wrongly changed to bool
 /// - 2020/09/05 (4.05.0) - Use the nk_font_atlas allocator for stb_truetype memory management.
-/// - 2020/09/04 (4.04.1) - Replace every boolean int by nk_bool
-/// - 2020/09/04 (4.04.0) - Add nk_bool with NK_INCLUDE_STANDARD_BOOL
+/// - 2020/09/04 (4.04.1) - Replace every boolean int by bool
+/// - 2020/09/04 (4.04.0) - Add bool with NK_INCLUDE_STANDARD_BOOL
 /// - 2020/06/13 (4.03.1) - Fix nk_pool allocation sizes.
 /// - 2020/06/04 (4.03.0) - Made nk_combo header symbols optional.
 /// - 2020/05/27 (4.02.5) - Fix nk_do_edit: Keep scroll position when re-activating edit widget.
@@ -70,7 +70,7 @@
 /// - 2020/03/11 (4.01.8) - Fix bug where padding is subtracted from widget
 /// - 2020/03/06 (4.01.7) - Fix bug where width padding was applied twice
 /// - 2020/02/06 (4.01.6) - Update stb_truetype.h and stb_rect_pack.h and separate them
-/// - 2019/12/10 (4.01.5) - Fix off-by-one error in NK_INTERSECT
+/// - 2019/12/10 (4.01.5) - Fix off-by-one error in intERSECT
 /// - 2019/10/09 (4.01.4) - Fix bug for autoscrolling in nk_do_edit
 /// - 2019/09/20 (4.01.3) - Fixed a bug wherein combobox cannot be closed by clicking the header
 ///                        when NK_BUTTON_TRIGGER_ON_RELEASE is defined.

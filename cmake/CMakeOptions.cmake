@@ -1,0 +1,1 @@
+option(NP_BUILD_TESTS "Build with tests." OFF)
