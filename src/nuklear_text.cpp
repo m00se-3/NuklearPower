@@ -1,17 +1,18 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
 
-/* ===============================================================
- *
- *                              TEXT
- *
- * ===============================================================*/
-NK_LIB void
-nk_widget_text(struct nk_command_buffer *o, struct nk_rect b,
-    const char *string, int len, const struct nk_text *t,
-    nk_flags a, const struct nk_user_font *f)
-{
-    struct nk_rect label;
+namespace nk {
+  /* ===============================================================
+   *
+   *                              TEXT
+   *
+   * ===============================================================*/
+  NK_LIB void
+  widget_text(struct command_buffer *o, rectf b,
+      const char *string, int len, const struct text *t,
+      flag a, const struct user_font *f)
+  {
+    rectf label;
     float text_width;
 
     NK_ASSERT(o);
@@ -28,49 +29,49 @@ nk_widget_text(struct nk_command_buffer *o, struct nk_rect b,
 
     /* align in x-axis */
     if (a & NK_TEXT_ALIGN_LEFT) {
-        label.x = b.x + t->padding.x;
-        label.w = NK_MAX(0, b.w - 2 * t->padding.x);
+      label.x = b.x + t->padding.x;
+      label.w = NK_MAX(0, b.w - 2 * t->padding.x);
     } else if (a & NK_TEXT_ALIGN_CENTERED) {
-        label.w = NK_MAX(1, 2 * t->padding.x + (float)text_width);
-        label.x = (b.x + t->padding.x + ((b.w - 2 * t->padding.x) - label.w) / 2);
-        label.x = NK_MAX(b.x + t->padding.x, label.x);
-        label.w = NK_MIN(b.x + b.w, label.x + label.w);
-        if (label.w >= label.x) label.w -= label.x;
+      label.w = NK_MAX(1, 2 * t->padding.x + (float)text_width);
+      label.x = (b.x + t->padding.x + ((b.w - 2 * t->padding.x) - label.w) / 2);
+      label.x = NK_MAX(b.x + t->padding.x, label.x);
+      label.w = NK_MIN(b.x + b.w, label.x + label.w);
+      if (label.w >= label.x) label.w -= label.x;
     } else if (a & NK_TEXT_ALIGN_RIGHT) {
-        label.x = NK_MAX(b.x + t->padding.x, (b.x + b.w) - (2 * t->padding.x + (float)text_width));
-        label.w = (float)text_width + 2 * t->padding.x;
+      label.x = NK_MAX(b.x + t->padding.x, (b.x + b.w) - (2 * t->padding.x + (float)text_width));
+      label.w = (float)text_width + 2 * t->padding.x;
     } else return;
 
     /* align in y-axis */
     if (a & NK_TEXT_ALIGN_MIDDLE) {
-        label.y = b.y + b.h/2.0f - (float)f->height/2.0f;
-        label.h = NK_MAX(b.h/2.0f, b.h - (b.h/2.0f + f->height/2.0f));
+      label.y = b.y + b.h/2.0f - (float)f->height/2.0f;
+      label.h = NK_MAX(b.h/2.0f, b.h - (b.h/2.0f + f->height/2.0f));
     } else if (a & NK_TEXT_ALIGN_BOTTOM) {
-        label.y = b.y + b.h - f->height;
-        label.h = f->height;
+      label.y = b.y + b.h - f->height;
+      label.h = f->height;
     }
-    nk_draw_text(o, label, (const char*)string, len, f, t->background, t->text);
-}
-NK_LIB void
-nk_widget_text_wrap(struct nk_command_buffer *o, struct nk_rect b,
-    const char *string, int len, const struct nk_text *t,
-    const struct nk_user_font *f)
-{
+    draw_text(o, label, (const char*)string, len, f, t->background, t->txt);
+  }
+  NK_LIB void
+  widget_text_wrap(struct command_buffer *o, rectf b,
+      const char *string, int len, const struct text *t,
+      const struct user_font *f)
+  {
     float width;
     int glyphs = 0;
     int fitting = 0;
     int done = 0;
-    struct nk_rect line;
-    struct nk_text text;
-    intERN nk_rune seperator[] = {' '};
+    rectf line;
+    struct text text;
+    INTERN rune seperator[] = {' '};
 
     NK_ASSERT(o);
     NK_ASSERT(t);
     if (!o || !t) return;
 
-    text.padding = nk_vec2(0,0);
+    text.padding = vec2_from_floats(0.0f,0.0f);
     text.background = t->background;
-    text.text = t->text;
+    text.txt = t->txt;
 
     b.w = NK_MAX(b.w, 2 * t->padding.x);
     b.h = NK_MAX(b.h, 2 * t->padding.y);
@@ -81,52 +82,25 @@ nk_widget_text_wrap(struct nk_command_buffer *o, struct nk_rect b,
     line.w = b.w - 2 * t->padding.x;
     line.h = 2 * t->padding.y + f->height;
 
-    fitting = nk_text_clamp(f, string, len, line.w, &glyphs, &width, seperator,NK_LEN(seperator));
+    fitting = text_clamp(f, string, len, line.w, &glyphs, &width, seperator,NK_LEN(seperator));
     while (done < len) {
-        if (!fitting || line.y + line.h >= (b.y + b.h)) break;
-        nk_widget_text(o, line, &string[done], fitting, &text, NK_TEXT_LEFT, f);
-        done += fitting;
-        line.y += f->height + 2 * t->padding.y;
-        fitting = nk_text_clamp(f, &string[done], len - done, line.w, &glyphs, &width, seperator,NK_LEN(seperator));
+      if (!fitting || line.y + line.h >= (b.y + b.h)) break;
+      widget_text(o, line, &string[done], fitting, &text, NK_TEXT_LEFT, f);
+      done += fitting;
+      line.y += f->height + 2 * t->padding.y;
+      fitting = text_clamp(f, &string[done], len - done, line.w, &glyphs, &width, seperator,NK_LEN(seperator));
     }
-}
-NK_API void
-nk_text_colored(struct nk_context *ctx, const char *str, int len,
-    nk_flags alignment, struct nk_color color)
-{
-    struct nk_window *win;
-    const struct nk_style *style;
+  }
+  NK_API void
+  text_colored(struct context *ctx, const char *str, int len,
+      flag alignment, struct color color)
+  {
+    struct window *win;
+    const struct style *style;
 
-    struct nk_vec2 item_padding;
-    struct nk_rect bounds;
-    struct nk_text text;
-
-    NK_ASSERT(ctx);
-    NK_ASSERT(ctx->current);
-    NK_ASSERT(ctx->current->layout);
-    if (!ctx || !ctx->current || !ctx->current->layout) return;
-
-    win = ctx->current;
-    style = &ctx->style;
-    nk_panel_alloc_space(&bounds, ctx);
-    item_padding = style->text.padding;
-
-    text.padding.x = item_padding.x;
-    text.padding.y = item_padding.y;
-    text.background = style->window.background;
-    text.text = nk_rgb_factor(color, style->text.color_factor);
-    nk_widget_text(&win->buffer, bounds, str, len, &text, alignment, style->font);
-}
-NK_API void
-nk_text_wrap_colored(struct nk_context *ctx, const char *str,
-    int len, struct nk_color color)
-{
-    struct nk_window *win;
-    const struct nk_style *style;
-
-    struct nk_vec2 item_padding;
-    struct nk_rect bounds;
-    struct nk_text text;
+    vec2f item_padding;
+    rectf bounds;
+    struct text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -135,158 +109,185 @@ nk_text_wrap_colored(struct nk_context *ctx, const char *str,
 
     win = ctx->current;
     style = &ctx->style;
-    nk_panel_alloc_space(&bounds, ctx);
+    panel_alloc_space(&bounds, ctx);
     item_padding = style->text.padding;
 
     text.padding.x = item_padding.x;
     text.padding.y = item_padding.y;
     text.background = style->window.background;
-    text.text = nk_rgb_factor(color, style->text.color_factor);
-    nk_widget_text_wrap(&win->buffer, bounds, str, len, &text, style->font);
-}
+    text.txt = rgb_factor(color, style->text.color_factor);
+    widget_text(&win->buffer, bounds, str, len, &text, alignment, style->font);
+  }
+  NK_API void
+  text_wrap_colored(struct context *ctx, const char *str,
+      int len, struct color color)
+  {
+    struct window *win;
+    const struct style *style;
+
+    vec2f item_padding;
+    rectf bounds;
+    struct text text;
+
+    NK_ASSERT(ctx);
+    NK_ASSERT(ctx->current);
+    NK_ASSERT(ctx->current->layout);
+    if (!ctx || !ctx->current || !ctx->current->layout) return;
+
+    win = ctx->current;
+    style = &ctx->style;
+    panel_alloc_space(&bounds, ctx);
+    item_padding = style->text.padding;
+
+    text.padding.x = item_padding.x;
+    text.padding.y = item_padding.y;
+    text.background = style->window.background;
+    text.txt = rgb_factor(color, style->text.color_factor);
+    widget_text_wrap(&win->buffer, bounds, str, len, &text, style->font);
+  }
 #ifdef NK_INCLUDE_STANDARD_VARARGS
-NK_API void
-nk_labelf_colored(struct nk_context *ctx, nk_flags flags,
-    struct nk_color color, const char *fmt, ...)
-{
+  NK_API void
+  labelf_colored(struct context *ctx, flag flags,
+      struct color color, const char *fmt, ...)
+  {
     va_list args;
     va_start(args, fmt);
-    nk_labelfv_colored(ctx, flags, color, fmt, args);
+    labelfv_colored(ctx, flags, color, fmt, args);
     va_end(args);
-}
-NK_API void
-nk_labelf_colored_wrap(struct nk_context *ctx, struct nk_color color,
-    const char *fmt, ...)
-{
+  }
+  NK_API void
+  labelf_colored_wrap(struct context *ctx, struct color color,
+      const char *fmt, ...)
+  {
     va_list args;
     va_start(args, fmt);
-    nk_labelfv_colored_wrap(ctx, color, fmt, args);
+    labelfv_colored_wrap(ctx, color, fmt, args);
     va_end(args);
-}
-NK_API void
-nk_labelf(struct nk_context *ctx, nk_flags flags, const char *fmt, ...)
-{
+  }
+  NK_API void
+  labelf(struct context *ctx, flag flags, const char *fmt, ...)
+  {
     va_list args;
     va_start(args, fmt);
-    nk_labelfv(ctx, flags, fmt, args);
+    labelfv(ctx, flags, fmt, args);
     va_end(args);
-}
-NK_API void
-nk_labelf_wrap(struct nk_context *ctx, const char *fmt,...)
-{
+  }
+  NK_API void
+  labelf_wrap(struct context *ctx, const char *fmt,...)
+  {
     va_list args;
     va_start(args, fmt);
-    nk_labelfv_wrap(ctx, fmt, args);
+    labelfv_wrap(ctx, fmt, args);
     va_end(args);
-}
-NK_API void
-nk_labelfv_colored(struct nk_context *ctx, nk_flags flags,
-    struct nk_color color, const char *fmt, va_list args)
-{
+  }
+  NK_API void
+  labelfv_colored(struct context *ctx, flag flags,
+      struct color color, const char *fmt, va_list args)
+  {
     char buf[256];
-    nk_strfmt(buf, NK_LEN(buf), fmt, args);
-    nk_label_colored(ctx, buf, flags, color);
-}
+    strfmt(buf, NK_LEN(buf), fmt, args);
+    label_colored(ctx, buf, flags, color);
+  }
 
-NK_API void
-nk_labelfv_colored_wrap(struct nk_context *ctx, struct nk_color color,
-    const char *fmt, va_list args)
-{
+  NK_API void
+  labelfv_colored_wrap(struct context *ctx, struct color color,
+      const char *fmt, va_list args)
+  {
     char buf[256];
-    nk_strfmt(buf, NK_LEN(buf), fmt, args);
-    nk_label_colored_wrap(ctx, buf, color);
-}
+    strfmt(buf, NK_LEN(buf), fmt, args);
+    label_colored_wrap(ctx, buf, color);
+  }
 
-NK_API void
-nk_labelfv(struct nk_context *ctx, nk_flags flags, const char *fmt, va_list args)
-{
+  NK_API void
+  labelfv(struct context *ctx, flag flags, const char *fmt, va_list args)
+  {
     char buf[256];
-    nk_strfmt(buf, NK_LEN(buf), fmt, args);
-    nk_label(ctx, buf, flags);
-}
+    strfmt(buf, NK_LEN(buf), fmt, args);
+    label(ctx, buf, flags);
+  }
 
-NK_API void
-nk_labelfv_wrap(struct nk_context *ctx, const char *fmt, va_list args)
-{
+  NK_API void
+  labelfv_wrap(struct context *ctx, const char *fmt, va_list args)
+  {
     char buf[256];
-    nk_strfmt(buf, NK_LEN(buf), fmt, args);
-    nk_label_wrap(ctx, buf);
-}
+    strfmt(buf, NK_LEN(buf), fmt, args);
+    label_wrap(ctx, buf);
+  }
 
-NK_API void
-nk_value_bool(struct nk_context *ctx, const char *prefix, int value)
-{
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: %s", prefix, ((value) ? "true": "false"));
-}
-NK_API void
-nk_value_int(struct nk_context *ctx, const char *prefix, int value)
-{
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: %d", prefix, value);
-}
-NK_API void
-nk_value_uint(struct nk_context *ctx, const char *prefix, unsigned int value)
-{
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: %u", prefix, value);
-}
-NK_API void
-nk_value_float(struct nk_context *ctx, const char *prefix, float value)
-{
+  NK_API void
+  value_bool(struct context *ctx, const char *prefix, int value)
+  {
+    labelf(ctx, NK_TEXT_LEFT, "%s: %s", prefix, ((value) ? "true": "false"));
+  }
+  NK_API void
+  value_int(struct context *ctx, const char *prefix, int value)
+  {
+    labelf(ctx, NK_TEXT_LEFT, "%s: %d", prefix, value);
+  }
+  NK_API void
+  value_uint(struct context *ctx, const char *prefix, unsigned int value)
+  {
+    labelf(ctx, NK_TEXT_LEFT, "%s: %u", prefix, value);
+  }
+  NK_API void
+  value_float(struct context *ctx, const char *prefix, float value)
+  {
     double double_value = (double)value;
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: %.3f", prefix, double_value);
-}
-NK_API void
-nk_value_color_byte(struct nk_context *ctx, const char *p, struct nk_color c)
-{
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: (%d, %d, %d, %d)", p, c.r, c.g, c.b, c.a);
-}
-NK_API void
-nk_value_color_float(struct nk_context *ctx, const char *p, struct nk_color color)
-{
-    double c[4]; nk_color_dv(c, color);
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: (%.2f, %.2f, %.2f, %.2f)",
+    labelf(ctx, NK_TEXT_LEFT, "%s: %.3f", prefix, double_value);
+  }
+  NK_API void
+  value_color_byte(struct context *ctx, const char *p, struct color c)
+  {
+    labelf(ctx, NK_TEXT_LEFT, "%s: (%d, %d, %d, %d)", p, c.r, c.g, c.b, c.a);
+  }
+  NK_API void
+  value_color_float(struct context *ctx, const char *p, struct color color)
+  {
+    double c[4]; color_dv(c, color);
+    labelf(ctx, NK_TEXT_LEFT, "%s: (%.2f, %.2f, %.2f, %.2f)",
         p, c[0], c[1], c[2], c[3]);
-}
-NK_API void
-nk_value_color_hex(struct nk_context *ctx, const char *prefix, struct nk_color color)
-{
+  }
+  NK_API void
+  value_color_hex(struct context *ctx, const char *prefix, struct color color)
+  {
     char hex[16];
-    nk_color_hex_rgba(hex, color);
-    nk_labelf(ctx, NK_TEXT_LEFT, "%s: %s", prefix, hex);
-}
+    color_hex_rgba(hex, color);
+    labelf(ctx, NK_TEXT_LEFT, "%s: %s", prefix, hex);
+  }
 #endif
-NK_API void
-nk_text(struct nk_context *ctx, const char *str, int len, nk_flags alignment)
-{
+  NK_API void
+  text_string(struct context *ctx, const char *str, int len, flag alignment)
+  {
     NK_ASSERT(ctx);
     if (!ctx) return;
-    nk_text_colored(ctx, str, len, alignment, ctx->style.text.color);
-}
-NK_API void
-nk_text_wrap(struct nk_context *ctx, const char *str, int len)
-{
+    text_colored(ctx, str, len, alignment, ctx->style.text.color);
+  }
+  NK_API void
+  text_wrap(struct context *ctx, const char *str, int len)
+  {
     NK_ASSERT(ctx);
     if (!ctx) return;
-    nk_text_wrap_colored(ctx, str, len, ctx->style.text.color);
+    text_wrap_colored(ctx, str, len, ctx->style.text.color);
+  }
+  NK_API void
+  label(struct context *ctx, const char *str, flag alignment)
+  {
+    text_string(ctx, str, strlen(str), alignment);
+  }
+  NK_API void
+  label_colored(struct context *ctx, const char *str, flag align,
+      struct color color)
+  {
+    text_colored(ctx, str, strlen(str), align, color);
+  }
+  NK_API void
+  label_wrap(struct context *ctx, const char *str)
+  {
+    text_wrap(ctx, str, strlen(str));
+  }
+  NK_API void
+  label_colored_wrap(struct context *ctx, const char *str, struct color color)
+  {
+    text_wrap_colored(ctx, str, strlen(str), color);
+  }
 }
-NK_API void
-nk_label(struct nk_context *ctx, const char *str, nk_flags alignment)
-{
-    nk_text(ctx, str, nk_strlen(str), alignment);
-}
-NK_API void
-nk_label_colored(struct nk_context *ctx, const char *str, nk_flags align,
-    struct nk_color color)
-{
-    nk_text_colored(ctx, str, nk_strlen(str), align, color);
-}
-NK_API void
-nk_label_wrap(struct nk_context *ctx, const char *str)
-{
-    nk_text_wrap(ctx, str, nk_strlen(str));
-}
-NK_API void
-nk_label_colored_wrap(struct nk_context *ctx, const char *str, struct nk_color color)
-{
-    nk_text_wrap_colored(ctx, str, nk_strlen(str), color);
-}
-

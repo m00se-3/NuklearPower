@@ -20,6 +20,7 @@ add_library(nuklearpower STATIC)
 target_compile_features(nuklearpower PRIVATE cxx_std_23)
 target_compile_options(nuklearpower PRIVATE ${CompilerFlags})
 target_link_options(nuklearpower PRIVATE ${LinkerFlags})
+#target_compile_definitions(nuklearpower PRIVATE NK_INCLUDE_FONT_BAKING)
 
 file(GLOB nk_sources ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 
