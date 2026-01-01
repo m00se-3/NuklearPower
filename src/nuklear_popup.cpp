@@ -106,7 +106,7 @@ namespace nk {
   NK_LIB bool
   nonblock_begin(struct context *ctx,
       flag flags, rectf body, rectf header,
-      enum panel_type panel_type)
+      panel_type::value_type panel_type)
   {
     struct window *popup;
     struct window *win;

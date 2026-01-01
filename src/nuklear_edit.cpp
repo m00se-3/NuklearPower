@@ -215,7 +215,7 @@ namespace nk {
 
     ret = static_cast<flag>(edit->active ? edit_events::EDIT_ACTIVE : edit_events::EDIT_INACTIVE);
     if (prev_state != edit->active)
-      ret |= (edit->active) ? edit_events::EDIT_ACTIVATED : edit_events::EDIT_DEACTIVATED;
+      ret |= ((edit->active) != 0u) ? std::to_underlying(edit_events::EDIT_ACTIVATED) : std::to_underlying(edit_events::EDIT_DEACTIVATED);
 
     /* handle user input */
     if (edit->active && in)
@@ -269,7 +269,7 @@ namespace nk {
         if (flags & edit_flags::EDIT_CTRL_ENTER_NEWLINE && shift_mod)
           textedit_text(edit, "\n", 1);
         else if (flags & edit_flags::EDIT_SIG_ENTER)
-          ret |= edit_events::EDIT_COMMITED;
+          ret |= std::to_underlying(edit_events::EDIT_COMMITED);
         else textedit_text(edit, "\n", 1);
       }
 

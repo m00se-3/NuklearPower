@@ -33,7 +33,7 @@ namespace nk {
     return active;
   }
   NK_LIB struct vec2f
-  panel_get_padding(const struct style *style, enum panel_type type)
+  panel_get_padding(const struct style *style, panel_type::value_type type)
   {
     switch (type) {
       default:
@@ -47,7 +47,7 @@ namespace nk {
   }
   NK_LIB float
   panel_get_border(const struct style *style, flag flags,
-      enum panel_type type)
+      panel_type::value_type type)
   {
     if (flags & panel_flags::WINDOW_BORDER) {
       switch (type) {
@@ -62,7 +62,7 @@ namespace nk {
       }} else return 0;
   }
   NK_LIB struct color
-  panel_get_border_color(const struct style *style, enum panel_type type)
+  panel_get_border_color(const struct style *style, panel_type::value_type type)
   {
     switch (type) {
       default:
@@ -75,17 +75,17 @@ namespace nk {
       case panel_type::PANEL_TOOLTIP: return style->window.menu_border_color;}
   }
   NK_LIB bool
-  panel_is_sub(enum panel_type type)
+  panel_is_sub(panel_type::value_type type)
   {
     return ((int)type & (int) panel_set::PANEL_SET_SUB)?1:0;
   }
   NK_LIB bool
-  panel_is_nonblock(enum panel_type type)
+  panel_is_nonblock(panel_type::value_type type)
   {
     return ((int)type & (int) panel_set::PANEL_SET_NONBLOCK)?1:0;
   }
   NK_LIB bool
-  panel_begin(struct context *ctx, const char *title, enum panel_type panel_type)
+  panel_begin(struct context *ctx, const char *title, panel_type::value_type panel_type)
   {
     struct input *in;
     struct window *win;

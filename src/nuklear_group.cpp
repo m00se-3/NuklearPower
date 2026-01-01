@@ -2,6 +2,7 @@
 #include "nuklear_internal.h"
 
 namespace nk {
+
   /* ===============================================================
    *
    *                          GROUP
@@ -20,10 +21,11 @@ namespace nk {
     {const struct rectf *c = &win->layout->clip;
       if (!intERSECT(c->x, c->y, c->w, c->h, bounds.x, bounds.y, bounds.w, bounds.h) &&
           !(flags & panel_flags::WINDOW_MOVABLE)) {
-        return 0;
+        return false;
           }}
-    if (win->flags & window_flags::WINDOW_ROM)
+    if ((win->flags & window_flags::WINDOW_ROM) != 0u) {
       flags |= window_flags::WINDOW_ROM;
+}
 
     /* initialize a fake window to create the panel from */
     zero(&panel, sizeof(panel));
@@ -44,15 +46,17 @@ namespace nk {
     win->layout = panel.layout;
 
     ctx->current = win;
-    if ((panel.layout->flags & window_flags::WINDOW_CLOSED) ||
-        (panel.layout->flags & window_flags::WINDOW_MINIMIZED))
+    if (((panel.layout->flags & window_flags::WINDOW_CLOSED) != 0u) ||
+        ((panel.layout->flags & window_flags::WINDOW_MINIMIZED) != 0u))
     {
       flag f = panel.layout->flags;
       group_scrolled_end(ctx);
-      if (f & window_flags::WINDOW_CLOSED)
+      if ((f & window_flags::WINDOW_CLOSED) != 0u) {
         return static_cast<bool>(window_flags::WINDOW_CLOSED);
-      if (f & window_flags::WINDOW_MINIMIZED)
+      }
+      if ((f & window_flags::WINDOW_MINIMIZED) != 0u) {
         return static_cast<bool>(window_flags::WINDOW_MINIMIZED);
+      }
     }
     return 1;
   }

@@ -42,7 +42,7 @@ namespace nk {
     layout->row.min_height += ctx->style.window.min_row_height_padding*2;
   }
   NK_LIB float
-  layout_row_calculate_usable_space(const struct style *style, enum panel_type type,
+  layout_row_calculate_usable_space(const struct style *style, panel_type::value_type type,
       float total_space, int columns)
   {
     float panel_spacing;
@@ -88,9 +88,9 @@ namespace nk {
         Example:
             if (begin(...) {...} end(...); or
             if (group_begin(...) { group_end(...);} */
-    NK_ASSERT(!(layout->flags & std::to_underlying(window_flags::WINDOW_MINIMIZED)));
-    NK_ASSERT(!(layout->flags & std::to_underlying(window_flags::WINDOW_HIDDEN)));
-    NK_ASSERT(!(layout->flags & std::to_underlying(window_flags::WINDOW_CLOSED)));
+    NK_ASSERT(!(layout->flags & window_flags::WINDOW_MINIMIZED));
+    NK_ASSERT(!(layout->flags & window_flags::WINDOW_HIDDEN));
+    NK_ASSERT(!(layout->flags & window_flags::WINDOW_CLOSED));
 
     /* update the current row and set the current row layout */
     layout->row.index = 0;
@@ -101,7 +101,7 @@ namespace nk {
     else layout->row.height = height + item_spacing.y;
 
     layout->row.item_offset = 0;
-    if (layout->flags & std::to_underlying(window_flags::WINDOW_DYNAMIC)) {
+    if (layout->flags & window_flags::WINDOW_DYNAMIC) {
       /* draw background for dynamic panels */
       struct rectf background;
       background.x = win->bounds.x;

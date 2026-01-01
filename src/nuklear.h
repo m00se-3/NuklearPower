@@ -64,7 +64,6 @@
 #define NK_STORAGE static
 #define NK_GLOBAL inline
 
-#define NK_FLAG(x) (1 << (x))
 #define NK_STRINGIFY(x) #x
 #define NK_MACRO_STRINGIFY(x) NK_STRINGIFY(x)
 #define NK_STRING_JOIN_IMMEDIATE(arg1, arg2) arg1 ## arg2
@@ -93,40 +92,28 @@
 #define NK_MAX(a,b) ((a) < (b) ? (b) : (a))
 #define NK_CLAMP(i,v,x) (NK_MAX(NK_MIN(v,x), i))
 
+#if __cpp_lib_is_scoped_enum
 template<typename T>
- constexpr auto operator|(T lhs, T rhs) requires std::is_scoped_enum_v<T> {
-  return T{std::to_underlying(lhs) | std::to_underlying(rhs)};
+constexpr auto operator|(T lhs, T rhs) requires std::is_scoped_enum_v<T> {
+  using value_type = std::underlying_type_t<T>;
+  return T{ static_cast<value_type>(lhs) | static_cast<value_type>(rhs) };
 }
 
 template<typename T>
- constexpr auto operator|(T lhs, std::integral auto rhs) requires std::is_scoped_enum_v<T> {
-  return T{std::to_underlying(lhs) | rhs};
+constexpr auto operator&(T lhs, T rhs) requires std::is_scoped_enum_v<T> {
+  using value_type = std::underlying_type_t<T>;
+  return T{ static_cast<value_type>(lhs) & static_cast<value_type>(rhs) };
 }
 
 template<typename T>
- constexpr auto operator|(std::integral auto lhs, T rhs) -> decltype(lhs) requires std::is_scoped_enum_v<T> {
-  return lhs | std::to_underlying(rhs);
+constexpr auto operator|=(T lhs, T rhs) -> T requires std::is_scoped_enum_v<T> {
+  return lhs | rhs;
 }
 
-template<typename T>
- constexpr auto operator&(T lhs, T rhs) requires std::is_scoped_enum_v<T> {
-  return T{std::to_underlying(lhs) & std::to_underlying(rhs)};
-}
+#else
+#error "Your compiler does not support C++23's is_scoped_enum"
 
-template<typename T>
- constexpr auto operator&(T lhs, std::integral auto rhs) -> decltype(lhs) requires std::is_scoped_enum_v<T> {
-  return T{std::to_underlying(lhs) & rhs};
-}
-
-template<typename T>
- constexpr auto operator&(std::integral auto lhs, T rhs) -> decltype(lhs) requires std::is_scoped_enum_v<T> {
-  return lhs & std::to_underlying(rhs);
-}
-
-template<typename T>
- constexpr auto operator|=(std::integral auto lhs, T rhs) -> decltype(lhs) requires std::is_scoped_enum_v<T> {
-  return lhs | std::to_underlying(rhs);
-}
+#endif
 
 namespace nk {
   #ifdef NK_INCLUDE_STANDARD_VARARGS
@@ -898,9 +885,9 @@ namespace nk {
     enum convert_result {
       NK_CONVERT_SUCCESS = 0,
       NK_CONVERT_INVALID_PARAM = 1,
-      NK_CONVERT_COMMAND_BUFFER_FULL = NK_FLAG(1),
-      NK_CONVERT_VERTEX_BUFFER_FULL = NK_FLAG(2),
-      NK_CONVERT_ELEMENT_BUFFER_FULL = NK_FLAG(3)
+      NK_CONVERT_COMMAND_BUFFER_FULL = (1 << (1)),
+      NK_CONVERT_VERTEX_BUFFER_FULL = (1 << (2)),
+      NK_CONVERT_ELEMENT_BUFFER_FULL = (1 << (3))
   };
     struct draw_null_texture {
       resource_handle texture; /**!< texture handle to a texture with a white pixel */
@@ -1212,19 +1199,20 @@ namespace nk {
      * NK_MAXIMIZED| UI section is extended and visible until minimized
      */
 
-    enum class panel_flags {
-      WINDOW_BORDER            = NK_FLAG(0),
-      WINDOW_MOVABLE           = NK_FLAG(1),
-      WINDOW_SCALABLE          = NK_FLAG(2),
-      WINDOW_CLOSABLE          = NK_FLAG(3),
-      WINDOW_MINIMIZABLE       = NK_FLAG(4),
-      WINDOW_NO_SCROLLBAR      = NK_FLAG(5),
-      WINDOW_TITLE             = NK_FLAG(6),
-      WINDOW_SCROLL_AUTO_HIDE  = NK_FLAG(7),
-      WINDOW_BACKGROUND        = NK_FLAG(8),
-      WINDOW_SCALE_LEFT        = NK_FLAG(9),
-      WINDOW_NO_INPUT          = NK_FLAG(10)
-  };
+    namespace panel_flags {
+      using value_type = unsigned int;
+      constexpr value_type WINDOW_BORDER = 1 << (0);
+      constexpr value_type WINDOW_MOVABLE = 1 << (1);
+      constexpr value_type WINDOW_SCALABLE = 1 << (2);
+      constexpr value_type WINDOW_CLOSABLE = 1 << (3);
+      constexpr value_type WINDOW_MINIMIZABLE = 1 << (4);
+      constexpr value_type WINDOW_NO_SCROLLBAR = 1 << (5);
+      constexpr value_type WINDOW_TITLE = 1 << (6);
+      constexpr value_type WINDOW_SCROLL_AUTO_HIDE = 1 << (7);
+      constexpr value_type WINDOW_BACKGROUND = 1 << (8);
+      constexpr value_type WINDOW_SCALE_LEFT = 1 << (9);
+      constexpr value_type WINDOW_NO_INPUT = 1 << (10);
+  }
 
     /**
      * # # begin
@@ -3016,12 +3004,12 @@ namespace nk {
       NK_WIDGET_DISABLED /**< The widget is manually disabled and acts like NK_WIDGET_ROM */
   };
     enum widget_states {
-      NK_WIDGET_STATE_MODIFIED    = NK_FLAG(1),
-      NK_WIDGET_STATE_INACTIVE    = NK_FLAG(2), /**!< widget is neither active nor hovered */
-      NK_WIDGET_STATE_ENTERED     = NK_FLAG(3), /**!< widget has been hovered on the current frame */
-      NK_WIDGET_STATE_HOVER       = NK_FLAG(4), /**!< widget is being hovered */
-      NK_WIDGET_STATE_ACTIVED     = NK_FLAG(5),/**!< widget is currently activated */
-      NK_WIDGET_STATE_LEFT        = NK_FLAG(6), /**!< widget is from this frame on not hovered anymore */
+      NK_WIDGET_STATE_MODIFIED    = (1 << (1)),
+      NK_WIDGET_STATE_INACTIVE    = (1 << (2)), /**!< widget is neither active nor hovered */
+      NK_WIDGET_STATE_ENTERED     = (1 << (3)), /**!< widget has been hovered on the current frame */
+      NK_WIDGET_STATE_HOVER       = (1 << (4)), /**!< widget is being hovered */
+      NK_WIDGET_STATE_ACTIVED     = (1 << (5)),/**!< widget is currently activated */
+      NK_WIDGET_STATE_LEFT        = (1 << (6)), /**!< widget is from this frame on not hovered anymore */
       NK_WIDGET_STATE_HOVERED     = NK_WIDGET_STATE_HOVER|NK_WIDGET_STATE_MODIFIED, /**!< widget is being hovered */
       NK_WIDGET_STATE_ACTIVE      = NK_WIDGET_STATE_ACTIVED|NK_WIDGET_STATE_MODIFIED /**!< widget is currently activated */
   };
@@ -3408,33 +3396,34 @@ namespace nk {
      *                                  TEXT EDIT
      *
      * ============================================================================= */
-    enum class edit_flags : std::uint32_t {
-      EDIT_DEFAULT                 = 0,
-      EDIT_READ_ONLY               = NK_FLAG(0),
-      EDIT_AUTO_SELECT             = NK_FLAG(1),
-      EDIT_SIG_ENTER               = NK_FLAG(2),
-      EDIT_ALLOW_TAB               = NK_FLAG(3),
-      EDIT_NO_CURSOR               = NK_FLAG(4),
-      EDIT_SELECTABLE              = NK_FLAG(5),
-      EDIT_CLIPBOARD               = NK_FLAG(6),
-      EDIT_CTRL_ENTER_NEWLINE      = NK_FLAG(7),
-      EDIT_NO_HORIZONTAL_SCROLL    = NK_FLAG(8),
-      EDIT_ALWAYS_INSERT_MODE      = NK_FLAG(9),
-      EDIT_MULTILINE               = NK_FLAG(10),
-      EDIT_GOTO_END_ON_ACTIVATE    = NK_FLAG(11)
-  };
-    enum class edit_types {
-      EDIT_SIMPLE  = std::to_underlying(edit_flags::EDIT_ALWAYS_INSERT_MODE),
-      EDIT_FIELD   = EDIT_SIMPLE | std::to_underlying(edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_CLIPBOARD),
-      EDIT_BOX     = std::to_underlying(edit_flags::EDIT_ALWAYS_INSERT_MODE | edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_MULTILINE | edit_flags::EDIT_ALLOW_TAB | edit_flags::EDIT_CLIPBOARD),
-      EDIT_EDITOR  = std::to_underlying(edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_MULTILINE | edit_flags::EDIT_ALLOW_TAB | edit_flags::EDIT_CLIPBOARD)
+    namespace edit_flags  {
+      constexpr unsigned EDIT_DEFAULT = 0;
+      constexpr unsigned EDIT_READ_ONLY = 1 << 0;
+      constexpr unsigned EDIT_AUTO_SELECT = 1 << 1;
+      constexpr unsigned EDIT_SIG_ENTER = 1 << 2;
+      constexpr unsigned EDIT_ALLOW_TAB = 1 << 3;
+      constexpr unsigned EDIT_NO_CURSOR = 1 << 4;
+      constexpr unsigned EDIT_SELECTABLE = 1 << 5;
+      constexpr unsigned EDIT_CLIPBOARD = 1 << 6;
+      constexpr unsigned EDIT_CTRL_ENTER_NEWLINE = 1 << 7;
+      constexpr unsigned EDIT_NO_HORIZONTAL_SCROLL = 1 << 8;
+      constexpr unsigned EDIT_ALWAYS_INSERT_MODE = 1 << 9;
+      constexpr unsigned EDIT_MULTILINE = 1 << 9;
+      constexpr unsigned EDIT_GOTO_END_ON_ACTIVATE = 1 << 11;
+  }
+
+    enum class edit_types : std::uint32_t {
+      EDIT_SIMPLE  = edit_flags::EDIT_ALWAYS_INSERT_MODE,
+      EDIT_FIELD   = EDIT_SIMPLE | edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_CLIPBOARD,
+      EDIT_BOX     = edit_flags::EDIT_ALWAYS_INSERT_MODE | edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_MULTILINE | edit_flags::EDIT_ALLOW_TAB | edit_flags::EDIT_CLIPBOARD,
+      EDIT_EDITOR  = edit_flags::EDIT_SELECTABLE | edit_flags::EDIT_MULTILINE | edit_flags::EDIT_ALLOW_TAB | edit_flags::EDIT_CLIPBOARD
   };
     enum class edit_events {
-      EDIT_ACTIVE      = NK_FLAG(0), /**!< edit widget is currently being modified */
-      EDIT_INACTIVE    = NK_FLAG(1), /**!< edit widget is not active and is not being modified */
-      EDIT_ACTIVATED   = NK_FLAG(2), /**!< edit widget went from state inactive to state active */
-      EDIT_DEACTIVATED = NK_FLAG(3), /**!< edit widget went from state active to state inactive */
-      EDIT_COMMITED    = NK_FLAG(4)  /**!< edit widget has received an enter and lost focus */
+      EDIT_ACTIVE      = (1 << (0)), /**!< edit widget is currently being modified */
+      EDIT_INACTIVE    = (1 << (1)), /**!< edit widget is not active and is not being modified */
+      EDIT_ACTIVATED   = (1 << (2)), /**!< edit widget went from state inactive to state active */
+      EDIT_DEACTIVATED = (1 << (3)), /**!< edit widget went from state active to state inactive */
+      EDIT_COMMITED    = (1 << (4))  /**!< edit widget has received an enter and lost focus */
   };
     NK_API flag edit_string(struct context*, flag, char *buffer, int *len, int max, plugin_filter);
     NK_API flag edit_string_zero_terminated(struct context*, flag, char *buffer, int max, plugin_filter);
@@ -5316,20 +5305,22 @@ namespace nk {
   #define NK_CHART_MAX_SLOT 4
   #endif
 
-    enum class panel_type {
-      PANEL_NONE       = 0,
-      PANEL_WINDOW     = NK_FLAG(0),
-      PANEL_GROUP      = NK_FLAG(1),
-      PANEL_POPUP      = NK_FLAG(2),
-      PANEL_CONTEXTUAL = NK_FLAG(4),
-      PANEL_COMBO      = NK_FLAG(5),
-      PANEL_MENU       = NK_FLAG(6),
-      PANEL_TOOLTIP    = NK_FLAG(7)
-  };
+    namespace panel_type {
+      using value_type = int;
+      constexpr value_type PANEL_NONE       = 0;
+      constexpr value_type PANEL_WINDOW     = (1 << (0));
+      constexpr value_type PANEL_GROUP      = (1 << (1));
+      constexpr value_type PANEL_POPUP      = (1 << (2));
+      constexpr value_type PANEL_CONTEXTUAL = (1 << (4));
+      constexpr value_type PANEL_COMBO      = (1 << (5));
+      constexpr value_type PANEL_MENU       = (1 << (6));
+      constexpr value_type PANEL_TOOLTIP    = (1 << (7));
+  }
+
     enum class panel_set {
-      PANEL_SET_NONBLOCK = std::to_underlying(panel_type::PANEL_CONTEXTUAL | panel_type::PANEL_COMBO | panel_type::PANEL_MENU | panel_type::PANEL_TOOLTIP),
-      PANEL_SET_POPUP = PANEL_SET_NONBLOCK | std::to_underlying(panel_type::PANEL_POPUP),
-      PANEL_SET_SUB = std::to_underlying(panel_type::PANEL_GROUP) | PANEL_SET_POPUP
+      PANEL_SET_NONBLOCK = panel_type::PANEL_CONTEXTUAL | panel_type::PANEL_COMBO | panel_type::PANEL_MENU | panel_type::PANEL_TOOLTIP,
+      PANEL_SET_POPUP = PANEL_SET_NONBLOCK | panel_type::PANEL_POPUP,
+      PANEL_SET_SUB = panel_type::PANEL_GROUP | PANEL_SET_POPUP
     };
 
     struct chart_slot {
@@ -5391,7 +5382,7 @@ namespace nk {
     };
 
     struct panel {
-      enum panel_type type;
+      panel_type::value_type type;
       flag flags;
       struct rectf bounds;
       std::uint32_t *offset_x;
@@ -5417,21 +5408,21 @@ namespace nk {
   #endif
 
     struct table;
-    enum class window_flags {
-      WINDOW_PRIVATE       = NK_FLAG(11),
-      WINDOW_DYNAMIC       = WINDOW_PRIVATE,                  /**< special window type growing up in height while being filled to a certain maximum height */
-      WINDOW_ROM           = NK_FLAG(12),                        /**< sets window widgets into a read only mode and does not allow input changes */
-      WINDOW_NOT_INTERACTIVE = WINDOW_ROM |
-        std::to_underlying(panel_flags::WINDOW_NO_INPUT), /**< prevents all interaction caused by input to either window or widgets inside */
-      WINDOW_HIDDEN        = NK_FLAG(13),                        /**< Hides window and stops any window interaction and drawing */
-      WINDOW_CLOSED        = NK_FLAG(14),                        /**< Directly closes and frees the window at the end of the frame */
-      WINDOW_MINIMIZED     = NK_FLAG(15),                        /**< marks the window as minimized */
-      WINDOW_REMOVE_ROM    = NK_FLAG(16)                         /**< Removes read only mode at the end of the window */
+    namespace window_flags {
+      using value_type = unsigned int;
+      constexpr value_type WINDOW_PRIVATE       = (1 << (11));
+      constexpr value_type WINDOW_DYNAMIC       = WINDOW_PRIVATE;                  /**< special window type growing up in height while being filled to a certain maximum height */
+      constexpr value_type WINDOW_ROM           = (1 << (12));                        /**< sets window widgets into a read only mode and does not allow input changes */
+      constexpr value_type WINDOW_NOT_INTERACTIVE = WINDOW_ROM | panel_flags::WINDOW_NO_INPUT; /**< prevents all interaction caused by input to either window or widgets inside */
+      constexpr value_type WINDOW_HIDDEN        = (1 << (13));                        /**< Hides window and stops any window interaction and drawing */
+      constexpr value_type WINDOW_CLOSED        = (1 << (14));                        /**< Directly closes and frees the window at the end of the frame */
+      constexpr value_type WINDOW_MINIMIZED     = (1 << (15));                        /**< marks the window as minimized */
+      constexpr value_type WINDOW_REMOVE_ROM    = (1 << (16));                        /**< Removes read only mode at the end of the window */
   };
 
     struct popup_state {
       struct window *win;
-      enum panel_type type;
+      panel_type::value_type type;
       struct popup_buffer buf;
       hash name;
       bool active;

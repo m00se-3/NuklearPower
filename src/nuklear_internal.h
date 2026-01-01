@@ -208,16 +208,16 @@ namespace nk {
   NK_LIB void *create_panel(struct context *ctx);
   NK_LIB void free_panel(struct context*, struct panel *pan);
   NK_LIB bool panel_has_header(flag flags, const char *title);
-  NK_LIB struct vec2f panel_get_padding(const struct style *style, enum panel_type type);
-  NK_LIB float panel_get_border(const struct style *style, flag flags, enum panel_type type);
-  NK_LIB struct color panel_get_border_color(const struct style *style, enum panel_type type);
-  NK_LIB bool panel_is_sub(enum panel_type type);
-  NK_LIB bool panel_is_nonblock(enum panel_type type);
-  NK_LIB bool panel_begin(struct context *ctx, const char *title, enum panel_type panel_type);
+  NK_LIB struct vec2f panel_get_padding(const struct style *style, panel_type::value_type type);
+  NK_LIB float panel_get_border(const struct style *style, flag flags, panel_type::value_type type);
+  NK_LIB struct color panel_get_border_color(const struct style *style, panel_type::value_type type);
+  NK_LIB bool panel_is_sub(panel_type::value_type type);
+  NK_LIB bool panel_is_nonblock(panel_type::value_type type);
+  NK_LIB bool panel_begin(struct context *ctx, const char *title, panel_type::value_type panel_type);
   NK_LIB void panel_end(struct context *ctx);
 
   /* layout */
-  NK_LIB float layout_row_calculate_usable_space(const struct style *style, enum panel_type type, float total_space, int columns);
+  NK_LIB float layout_row_calculate_usable_space(const struct style *style, panel_type::value_type type, float total_space, int columns);
   NK_LIB void panel_layout(const struct context *ctx, struct window *win, float height, int cols);
   NK_LIB void row_layout(struct context *ctx, layout_format fmt, float height, int cols, int width);
   NK_LIB void panel_alloc_row(const struct context *ctx, struct window *win);
@@ -226,7 +226,7 @@ namespace nk {
   NK_LIB void layout_peek(struct rectf *bounds, const struct context *ctx);
 
   /* popup */
-  NK_LIB bool nonblock_begin(struct context *ctx, flag flags, struct rectf body, struct rectf header, enum panel_type panel_type);
+  NK_LIB bool nonblock_begin(struct context *ctx, flag flags, struct rectf body, struct rectf header, panel_type::value_type panel_type);
 
   /* text */
   struct text {

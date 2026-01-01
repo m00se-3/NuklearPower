@@ -187,7 +187,7 @@ namespace nk {
         ctx->active = win;
     } else {
       /* update window */
-      win->flags &= ~static_cast<flag>(std::to_underlying(window_flags::WINDOW_PRIVATE) - 1);
+      win->flags &= ~window_flags::WINDOW_PRIVATE - 1;
       win->flags |= flags;
       if (!(win->flags & (panel_flags::WINDOW_MOVABLE | panel_flags::WINDOW_SCALABLE)))
         win->bounds = bounds;

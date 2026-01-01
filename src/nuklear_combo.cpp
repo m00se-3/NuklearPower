@@ -15,7 +15,6 @@ namespace nk {
     int is_open = 0;
     int is_active = 0;
     struct rectf body;
-    hash hash;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -29,16 +28,16 @@ namespace nk {
     body.y = header.y + header.h-ctx->style.window.combo_border;
     body.h = size.y;
 
-    hash = win->popup.combo_count++;
+    hash hsh = win->popup.combo_count++;
     is_open = (popup) ? true:false;
-    is_active = (popup && (win->popup.name == hash) && win->popup.type == panel_type::PANEL_COMBO);
+    is_active = (popup && (win->popup.name == hsh) && win->popup.type == panel_type::PANEL_COMBO);
     if ((is_clicked && is_open && !is_active) || (is_open && !is_active) ||
-        (!is_open && !is_active && !is_clicked)) return 0;
+        (!is_open && !is_active && !is_clicked)) return false;
     if (!nonblock_begin(ctx, 0, body,
         (is_clicked && is_open)?rect(0,0,0,0):header, panel_type::PANEL_COMBO)) return 0;
 
     win->popup.type = panel_type::PANEL_COMBO;
-    win->popup.name = hash;
+    win->popup.name = hsh;
     return 1;
   }
   NK_API bool
