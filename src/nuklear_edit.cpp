@@ -180,7 +180,7 @@ namespace nk {
     area.w = bounds.w - (2.0f * style->padding.x + 2 * style->border);
     area.h = bounds.h - (2.0f * style->padding.y + 2 * style->border);
     if (static_cast<bool>(flags & edit_flags::EDIT_MULTILINE))
-      area.w = NK_MAX(0, area.w - style->scrollbar_size.x);
+      area.w = std::max(0.0f, area.w - style->scrollbar_size.x);
     row_height = (static_cast<bool>(flags & edit_flags::EDIT_MULTILINE)) ? font->height + style->row_padding : area.h;
 
     /* calculate clipping rectangle */
@@ -288,8 +288,8 @@ namespace nk {
           int b = edit->select_start;
           int e = edit->select_end;
 
-          int begin = NK_MIN(b, e);
-          int end = NK_MAX(b, e);
+          int begin = std::min(b, e);
+          int end = std::max(b, e);
           text = str_at_const(&edit->string, begin, &unicode, &glyph_len);
           if (edit->clip.copy)
             edit->clip.copy(edit->clip.userdata, text, end - begin);
@@ -358,7 +358,7 @@ namespace nk {
       }
 
 
-      area.w = NK_MAX(0, area.w - style->cursor_size);
+      area.w = std::max(0.0f, area.w - style->cursor_size);
       if (edit->active) {
         int total_lines = 1;
         vec2f text_size = vec2_from_floats(0, 0);
@@ -373,8 +373,8 @@ namespace nk {
         vec2f selection_offset_start = vec2_from_floats(0, 0);
         vec2f selection_offset_end = vec2_from_floats(0, 0);
 
-        int selection_begin = NK_MIN(edit->select_start, edit->select_end);
-        int selection_end = NK_MAX(edit->select_start, edit->select_end);
+        int selection_begin = std::min(edit->select_start, edit->select_end);
+        int selection_end = std::max(edit->select_start, edit->select_end);
 
         /* calculate total line count + total space + cursor/selection position */
         float line_width = 0.0f;
@@ -418,7 +418,7 @@ namespace nk {
               const char* remaining;
 
               /* calculate 2d position */
-              selection_offset_start.y = (float) (NK_MAX(total_lines - 1, 0)) * row_height;
+              selection_offset_start.y = (float) (std::max(total_lines - 1, 0)) * row_height;
               row_size = text_calculate_text_bounds(font, text + row_begin,
                                                     text_len - row_begin, row_height, &remaining,
                                                     &out_offset, &glyph_offset, NK_STOP_ON_NEW_LINE);
@@ -443,7 +443,7 @@ namespace nk {
               select_end_ptr = text + text_len;
             }
             if (unicode == '\n') {
-              text_size.x = NK_MAX(text_size.x, line_width);
+              text_size.x = std::max(text_size.x, line_width);
               total_lines++;
               line_width = 0;
               text_len++;
@@ -479,9 +479,9 @@ namespace nk {
               /* horizontal scroll */
               const float scroll_increment = area.w * 0.25f;
               if (cursor_pos.x < edit->scrollbar.x)
-                edit->scrollbar.x = (float) (int) NK_MAX(0.0f, cursor_pos.x - scroll_increment);
+                edit->scrollbar.x = (float) (int) std::max(0.0f, cursor_pos.x - scroll_increment);
               if (cursor_pos.x >= edit->scrollbar.x + area.w)
-                edit->scrollbar.x = (float) (int) NK_MAX(0.0f, cursor_pos.x - area.w + scroll_increment);
+                edit->scrollbar.x = (float) (int) std::max(0.0f, cursor_pos.x - area.w + scroll_increment);
             } else
               edit->scrollbar.x = 0;
 
@@ -490,7 +490,7 @@ namespace nk {
                * cursor leaves the visible area, and then only just enough
                * to keep it visible */
               if (cursor_pos.y < edit->scrollbar.y)
-                edit->scrollbar.y = NK_MAX(0.0f, cursor_pos.y);
+                edit->scrollbar.y = std::max(0.0f, cursor_pos.y);
               if (cursor_pos.y > edit->scrollbar.y + area.h - row_height)
                 edit->scrollbar.y = edit->scrollbar.y + row_height;
             } else
@@ -745,8 +745,8 @@ namespace nk {
     } else
       edit->active = false;
 
-    max = NK_MAX(1, max);
-    *len = NK_MIN(*len, max - 1);
+    max = std::max(1, max);
+    *len = std::min(*len, max - 1);
     str_init_fixed(&edit->string, memory, (std::size_t) max);
     edit->string.buffer.allocated = (std::size_t) *len;
     edit->string.len = utf_len(memory, *len);
@@ -827,7 +827,7 @@ namespace nk {
                               char* buffer, const int max, const plugin_filter filter) {
     int len = strlen(buffer);
     const flag result = edit_string(ctx, flags, buffer, &len, max, filter);
-    buffer[NK_MIN(NK_MAX(max - 1, 0), len)] = '\0';
+    buffer[std::min(std::max(max - 1, 0), len)] = '\0';
     return result;
   }
 } // namespace nk

@@ -126,8 +126,8 @@ namespace nk {
     if (!out || !style || !font || !active)
       return 0;
 
-    r.w = NK_MAX(r.w, font->height + 2 * style->padding.x);
-    r.h = NK_MAX(r.h, font->height + 2 * style->padding.y);
+    r.w = std::max(r.w, font->height + 2 * style->padding.x);
+    r.h = std::max(r.h, font->height + 2 * style->padding.y);
 
     /* add additional touch padding for touch screen devices */
     bounds.x = r.x - style->touch_padding.x;
@@ -156,7 +156,7 @@ namespace nk {
 
       /* label behind the selector */
       label.x = select.x + select.w + style->spacing;
-      label.w = NK_MAX(r.x + r.w, label.x) - label.x;
+      label.w = std::max(r.x + r.w, label.x) - label.x;
     }
 
     if (widget_alignment & NK_WIDGET_ALIGN_TOP) {

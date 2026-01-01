@@ -85,7 +85,10 @@ namespace nk {
 
   /* widget */
   constexpr auto widget_state_reset = [](auto* state) {
-    *state = NK_WIDGET_STATE_INACTIVE | (*state & NK_WIDGET_STATE_MODIFIED) ? NK_WIDGET_STATE_MODIFIED : 0;
+    *state = NK_WIDGET_STATE_INACTIVE;
+    if ((*state & NK_WIDGET_STATE_MODIFIED) == 1u) {
+      *state |= NK_WIDGET_STATE_MODIFIED;
+    }
   };
 
 
@@ -105,7 +108,7 @@ namespace nk {
 #ifndef NK_ATAN2
   NK_LIB float atan2(float y, float x);
 #endif
-  NK_LIB std::uint32_t round_up_pow2(std::uint32_t v);
+  NK_LIB std::size_t round_up_pow2(std::size_t v);
   NK_LIB rectf shrirect(rectf r, float amount);
   NK_LIB rectf pad_rect(rectf r, vec2f pad);
   NK_LIB void unify(rectf* clip, const rectf* a, float x0, float y0, float x1, float y1);

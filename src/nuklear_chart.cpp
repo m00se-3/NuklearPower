@@ -40,8 +40,8 @@ namespace nk {
     chart->y = bounds.y + style->padding.y;
     chart->w = bounds.w - 2 * style->padding.x;
     chart->h = bounds.h - 2 * style->padding.y;
-    chart->w = NK_MAX(chart->w, 2 * style->padding.x);
-    chart->h = NK_MAX(chart->h, 2 * style->padding.y);
+    chart->w = std::max(chart->w, 2 * style->padding.x);
+    chart->h = std::max(chart->h, 2 * style->padding.y);
 
     /* add first slot into chart */
     {
@@ -50,8 +50,8 @@ namespace nk {
       slot->count = count;
       slot->color = rgb_factor(color, style->color_factor);
       slot->highlight = highlight;
-      slot->min = NK_MIN(min_value, max_value);
-      slot->max = NK_MAX(min_value, max_value);
+      slot->min = std::min(min_value, max_value);
+      slot->max = std::max(min_value, max_value);
       slot->range = slot->max - slot->min;
       slot->show_markers = style->show_markers;
     }
@@ -104,8 +104,8 @@ namespace nk {
       slot->count = count;
       slot->color = rgb_factor(color, style->color_factor);
       slot->highlight = highlight;
-      slot->min = NK_MIN(min_value, max_value);
-      slot->max = NK_MAX(min_value, max_value);
+      slot->min = std::min(min_value, max_value);
+      slot->max = std::max(min_value, max_value);
       slot->range = slot->max - slot->min;
       slot->show_markers = style->show_markers;
     }
@@ -296,8 +296,8 @@ namespace nk {
     float min_value = values[offset];
     float max_value = values[offset];
     for (i = 0; i < count; ++i) {
-      min_value = NK_MIN(values[i + offset], min_value);
-      max_value = NK_MAX(values[i + offset], max_value);
+      min_value = std::min(values[i + offset], min_value);
+      max_value = std::max(values[i + offset], max_value);
     }
 
     if (chart_begin(ctx, type, count, min_value, max_value)) {
@@ -320,8 +320,8 @@ namespace nk {
     float max_value = min_value = value_getter(userdata, offset);
     for (i = 0; i < count; ++i) {
       float value = value_getter(userdata, i + offset);
-      min_value = NK_MIN(value, min_value);
-      max_value = NK_MAX(value, max_value);
+      min_value = std::min(value, min_value);
+      max_value = std::max(value, max_value);
     }
 
     if (chart_begin(ctx, type, count, min_value, max_value)) {

@@ -689,7 +689,7 @@ namespace nk {
     const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
     int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
-    size.y = NK_MIN(size.y, (float) max_height);
+    size.y = std::min(size.y, (float) max_height);
     if (combo_begin_label(ctx, items[selected], size)) {
       layout_row_dynamic(ctx, (float) item_height, 1);
       for (i = 0; i < count; ++i) {
@@ -717,7 +717,7 @@ namespace nk {
     const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
     int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
-    size.y = NK_MIN(size.y, (float) max_height);
+    size.y = std::min(size.y, (float) max_height);
 
     /* find selected item */
     const char* current_item = items_separated_by_separator;
@@ -767,7 +767,7 @@ namespace nk {
     const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
     int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
-    size.y = NK_MIN(size.y, (float) max_height);
+    size.y = std::min(size.y, (float) max_height);
 
     item_getter(userdata, selected, &item);
     if (combo_begin_label(ctx, item, size)) {

@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -29,7 +30,7 @@ namespace nk {
       if (NK_ABS(d) >= pxstep) {
         const float steps = (float) ((int) (NK_ABS(d) / pxstep));
         slider_value += (d > 0) ? (slider_step * steps) : -(slider_step * steps);
-        slider_value = NK_CLAMP(slider_min, slider_value, slider_max);
+        slider_value = std::clamp(slider_min, slider_value, slider_max);
         ratio = (slider_value - slider_min) / slider_step;
         logical_cursor->x = bounds.x + (logical_cursor->w * ratio);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = logical_cursor->x;
@@ -130,8 +131,8 @@ namespace nk {
     /* remove padding from slider bounds */
     bounds.x = bounds.x + style->padding.x;
     bounds.y = bounds.y + style->padding.y;
-    bounds.h = NK_MAX(bounds.h, 2 * style->padding.y);
-    bounds.w = NK_MAX(bounds.w, 2 * style->padding.x + style->cursor_size.x);
+    bounds.h = std::max(bounds.h, 2 * style->padding.y);
+    bounds.w = std::max(bounds.w, 2 * style->padding.x + style->cursor_size.x);
     bounds.w -= 2 * style->padding.x;
     bounds.h -= 2 * style->padding.y;
 
@@ -164,9 +165,9 @@ namespace nk {
     bounds.w -= style->cursor_size.x;
 
     /* make sure the provided values are correct */
-    float slider_max = NK_MAX(min, max);
-    float slider_min = NK_MIN(min, max);
-    float slider_value = NK_CLAMP(slider_min, val, slider_max);
+    float slider_max = std::max(min, max);
+    float slider_min = std::min(min, max);
+    float slider_value = std::clamp(slider_min, val, slider_max);
     float slider_range = slider_max - slider_min;
     float slider_steps = slider_range / step;
     float cursor_offset = (slider_value - slider_min) / step;

@@ -399,7 +399,7 @@ namespace nk {
         if (str_insert_text_utf8(&state->string, state->cursor,
                                  text + text_len, 1)) {
           textedit_makeundo_insert(state, state->cursor, 1);
-          state->cursor = NK_MIN(state->cursor + 1, state->string.len);
+          state->cursor = std::min(state->cursor + 1, state->string.len);
           state->has_preferred_x = 0;
         }
       }

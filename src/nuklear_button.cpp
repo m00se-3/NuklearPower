@@ -332,7 +332,7 @@ namespace nk {
     tri.h = font->height;
     if (align & NK_TEXT_ALIGN_LEFT) {
       tri.x = (content.x + content.w) - (2 * style->padding.x + tri.w);
-      tri.x = NK_MAX(tri.x, 0);
+      tri.x = std::max(tri.x, 0.0f);
     } else
       tri.x = content.x + 2 * style->padding.x;
 
@@ -392,7 +392,7 @@ namespace nk {
     icon.w = icon.h = bounds.h - 2 * style->padding.y;
     if (align & NK_TEXT_ALIGN_LEFT) {
       icon.x = (bounds.x + bounds.w) - (2 * style->padding.x + icon.w);
-      icon.x = NK_MAX(icon.x, 0);
+      icon.x = std::max(icon.x, 0.0f);
     } else
       icon.x = bounds.x + 2 * style->padding.x;
 

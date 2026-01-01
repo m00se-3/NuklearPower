@@ -18,11 +18,11 @@ namespace nk {
     if (!o || !t)
       return;
 
-    b.h = NK_MAX(b.h, 2 * t->padding.y);
+    b.h = std::max(b.h, 2 * t->padding.y);
     label.x = 0;
     label.w = 0;
     label.y = b.y + t->padding.y;
-    label.h = NK_MIN(f->height, b.h - 2 * t->padding.y);
+    label.h = std::min(f->height, b.h - 2 * t->padding.y);
 
     float text_width = f->width(f->userdata, f->height, (const char*) string, len);
     text_width += (2.0f * t->padding.x);
@@ -30,16 +30,16 @@ namespace nk {
     /* align in x-axis */
     if (a & NK_TEXT_ALIGN_LEFT) {
       label.x = b.x + t->padding.x;
-      label.w = NK_MAX(0, b.w - 2 * t->padding.x);
+      label.w = std::max(0.0f, b.w - 2.0f * t->padding.x);
     } else if (a & NK_TEXT_ALIGN_CENTERED) {
-      label.w = NK_MAX(1, 2 * t->padding.x + (float) text_width);
-      label.x = (b.x + t->padding.x + ((b.w - 2 * t->padding.x) - label.w) / 2);
-      label.x = NK_MAX(b.x + t->padding.x, label.x);
-      label.w = NK_MIN(b.x + b.w, label.x + label.w);
+      label.w = std::max(1.0f, 2.0f * t->padding.x + text_width);
+      label.x = (b.x + t->padding.x + (((b.w - 2 * t->padding.x) - label.w) / 2));
+      label.x = std::max(b.x + t->padding.x, label.x);
+      label.w = std::min(b.x + b.w, label.x + label.w);
       if (label.w >= label.x)
         label.w -= label.x;
     } else if (a & NK_TEXT_ALIGN_RIGHT) {
-      label.x = NK_MAX(b.x + t->padding.x, (b.x + b.w) - (2 * t->padding.x + (float) text_width));
+      label.x = std::max(b.x + t->padding.x, (b.x + b.w) - (2 * t->padding.x + (float) text_width));
       label.w = (float) text_width + 2 * t->padding.x;
     } else
       return;
@@ -47,7 +47,7 @@ namespace nk {
     /* align in y-axis */
     if (a & NK_TEXT_ALIGN_MIDDLE) {
       label.y = b.y + b.h / 2.0f - (float) f->height / 2.0f;
-      label.h = NK_MAX(b.h / 2.0f, b.h - (b.h / 2.0f + f->height / 2.0f));
+      label.h = std::max(b.h / 2.0f, b.h - (b.h / 2.0f + f->height / 2.0f));
     } else if (a & NK_TEXT_ALIGN_BOTTOM) {
       label.y = b.y + b.h - f->height;
       label.h = f->height;
@@ -75,8 +75,8 @@ namespace nk {
     text.background = t->background;
     text.txt = t->txt;
 
-    b.w = NK_MAX(b.w, 2 * t->padding.x);
-    b.h = NK_MAX(b.h, 2 * t->padding.y);
+    b.w = std::max(b.w, 2 * t->padding.x);
+    b.h = std::max(b.h, 2 * t->padding.y);
     b.h = b.h - 2 * t->padding.y;
 
     line.x = b.x + t->padding.x;

@@ -132,8 +132,8 @@ namespace nk {
     return 0.0f; /* prevents warning */
   }
 #endif
-  NK_LIB unsigned int
-  round_up_pow2(unsigned int v) {
+  NK_LIB std::size_t
+  round_up_pow2(std::size_t v) {
     v--;
     v |= v >> 1;
     v |= v >> 2;
@@ -247,8 +247,8 @@ namespace nk {
   NK_LIB rectf
   shrirect(rectf r, float amount) {
     rectf res;
-    r.w = NK_MAX(r.w, 2 * amount);
-    r.h = NK_MAX(r.h, 2 * amount);
+    r.w = std::max(r.w, 2 * amount);
+    r.h = std::max(r.h, 2 * amount);
     res.x = r.x + amount;
     res.y = r.y + amount;
     res.w = r.w - 2 * amount;
@@ -257,8 +257,8 @@ namespace nk {
   }
   NK_LIB rectf
   pad_rect(rectf r, const vec2f pad) {
-    r.w = NK_MAX(r.w, 2 * pad.x);
-    r.h = NK_MAX(r.h, 2 * pad.y);
+    r.w = std::max(r.w, 2 * pad.x);
+    r.h = std::max(r.h, 2 * pad.y);
     r.x += pad.x;
     r.y += pad.y;
     r.w -= 2 * pad.x;
@@ -292,12 +292,12 @@ namespace nk {
         float x1, float y1) {
     NK_ASSERT(a);
     NK_ASSERT(clip);
-    clip->x = NK_MAX(a->x, x0);
-    clip->y = NK_MAX(a->y, y0);
-    clip->w = NK_MIN(a->x + a->w, x1) - clip->x;
-    clip->h = NK_MIN(a->y + a->h, y1) - clip->y;
-    clip->w = NK_MAX(0, clip->w);
-    clip->h = NK_MAX(0, clip->h);
+    clip->x = std::max(a->x, x0);
+    clip->y = std::max(a->y, y0);
+    clip->w = std::min(a->x + a->w, x1) - clip->x;
+    clip->h = std::min(a->y + a->h, y1) - clip->y;
+    clip->w = std::max(0.0f, clip->w);
+    clip->h = std::max(0.0f, clip->h);
   }
 
   NK_API void
@@ -305,8 +305,8 @@ namespace nk {
                           float pad_x, float pad_y, const heading direction) {
     NK_ASSERT(result);
 
-    r.w = NK_MAX(2 * pad_x, r.w);
-    r.h = NK_MAX(2 * pad_y, r.h);
+    r.w = std::max(2 * pad_x, r.w);
+    r.h = std::max(2 * pad_y, r.h);
     r.w = r.w - 2 * pad_x;
     r.h = r.h - 2 * pad_y;
 

@@ -1,6 +1,7 @@
 #include <cmath>
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -38,7 +39,7 @@ namespace nk {
        2 = +y -x    3 = -y -x */
     const auto signs = (y < 0) | ((x < 0) << 1);
 
-    if (y == 0.0 && x == 0.0)
+    if (y == 0.0f && x == 0.0f)
       return 0.0f;
     float a = (ay > ax)
                   ? NK_PI_HALF - NK_ATAN(ax / ay)
@@ -88,14 +89,14 @@ namespace nk {
 
       /* account for dead space applied when drawing */
       angle *= 1.0f / (1.0f - dead_zone_percent);
-      angle = NK_CLAMP(-NK_PI, angle, NK_PI);
+      angle = std::clamp(-NK_PI, angle, NK_PI);
 
       /* convert -pi -> pi range to 0.0 -> 1.0 */
       angle = (angle + NK_PI) / (NK_PI * 2);
 
       /* click to closest step */
       knob_value = knob_min + (angle * knob_steps + (knob_step / 2.f)) * knob_step;
-      knob_value = NK_CLAMP(knob_min, knob_value, knob_max);
+      knob_value = std::clamp(knob_min, knob_value, knob_max);
     }
 
     /* knob widget state */
@@ -113,7 +114,7 @@ namespace nk {
       }
       /* easiest way to disable scrolling of parent panels..knob eats scrolling */
       in->mouse.scroll_delta.y = 0;
-      knob_value = NK_CLAMP(knob_min, knob_value, knob_max);
+      knob_value = std::clamp(knob_min, knob_value, knob_max);
     }
     if (*state & NK_WIDGET_STATE_HOVER &&
         !input_is_mouse_prev_hovering_rect(in, bounds))
@@ -223,8 +224,8 @@ namespace nk {
     /* remove padding from knob bounds */
     bounds.y = bounds.y + style->padding.y;
     bounds.x = bounds.x + style->padding.x;
-    bounds.h = NK_MAX(bounds.h, 2 * style->padding.y);
-    bounds.w = NK_MAX(bounds.w, 2 * style->padding.x);
+    bounds.h = std::max(bounds.h, 2 * style->padding.y);
+    bounds.w = std::max(bounds.w, 2 * style->padding.x);
     bounds.w -= 2 * style->padding.x;
     bounds.h -= 2 * style->padding.y;
     if (bounds.h < bounds.w) {
@@ -233,9 +234,9 @@ namespace nk {
     }
 
     /* make sure the provided values are correct */
-    float knob_max = NK_MAX(min, max);
-    float knob_min = NK_MIN(min, max);
-    float knob_value = NK_CLAMP(knob_min, val, knob_max);
+    float knob_max = std::max(min, max);
+    float knob_min = std::min(min, max);
+    float knob_value = std::clamp(knob_min, val, knob_max);
     float knob_range = knob_max - knob_min;
     float knob_steps = knob_range / step;
 

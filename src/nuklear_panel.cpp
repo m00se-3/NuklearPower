@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -308,7 +309,7 @@ namespace nk {
         label.y = header.y + style->window.header.label_padding.y;
         label.h = font->height + 2 * style->window.header.label_padding.y;
         label.w = t + 2 * style->window.header.spacing.x;
-        label.w = NK_CLAMP(0, label.w, header.x + header.w - label.x);
+        label.w = std::clamp(0.0f, label.w, header.x + header.w - label.x);
         widget_text(out, label, (const char*) title, text_len, &text, NK_TEXT_LEFT, font);
       }
     }

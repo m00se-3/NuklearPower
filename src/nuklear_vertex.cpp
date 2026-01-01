@@ -372,32 +372,32 @@ namespace nk {
           NK_ASSERT(0 && "invalid vertex layout format");
           break;
         case NK_FORMAT_SCHAR: {
-          char value = (char) NK_CLAMP((float) NK_SCHAR_MIN, values[value_index], (float) NK_SCHAR_MAX);
+          char value = (char) std::clamp((float) NK_SCHAR_MIN, values[value_index], (float) NK_SCHAR_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(char));
         } break;
         case NK_FORMAT_SSHORT: {
-          short value = (short) NK_CLAMP((float) NK_SSHORT_MIN, values[value_index], (float) NK_SSHORT_MAX);
+          short value = (short) std::clamp((float) NK_SSHORT_MIN, values[value_index], (float) NK_SSHORT_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(value));
         } break;
         case NK_FORMAT_SINT: {
-          int value = (int) NK_CLAMP((float) NK_SINT_MIN, values[value_index], (float) NK_SINT_MAX);
+          int value = (int) std::clamp((float) NK_SINT_MIN, values[value_index], (float) NK_SINT_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(int));
         } break;
         case NK_FORMAT_UCHAR: {
-          unsigned char value = (unsigned char) NK_CLAMP((float) NK_UCHAR_MIN, values[value_index], (float) NK_UCHAR_MAX);
+          unsigned char value = (unsigned char) std::clamp((float) NK_UCHAR_MIN, values[value_index], (float) NK_UCHAR_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(unsigned char));
         } break;
         case NK_FORMAT_USHORT: {
-          unsigned short value = (unsigned short) NK_CLAMP((float) unsigned short_MIN, values[value_index], (float) unsigned short_MAX);
+          unsigned short value = (unsigned short) std::clamp((float) unsigned short_MIN, values[value_index], (float) unsigned short_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(value));
         } break;
         case NK_FORMAT_UINT: {
-          std::uint32_t value = (std::uint32_t) NK_CLAMP((float) unsigned int_MIN, values[value_index], (float) unsigned int_MAX);
+          std::uint32_t value = (std::uint32_t) std::clamp((float) unsigned int_MIN, values[value_index], (float) unsigned int_MAX);
           std::memcpy(attribute, &value, sizeof(value));
           attribute = (void*) ((char*) attribute + sizeof(std::uint32_t));
         } break;
@@ -545,7 +545,7 @@ namespace nk {
           dmr2 = dm.x * dm.x + dm.y * dm.y;
           if (dmr2 > 0.000001f) {
             float scale = 1.0f / dmr2;
-            scale = NK_MIN(100.0f, scale);
+            scale = std::min(100.0f, scale);
             dm = vec2_muls(dm, scale);
           }
 
@@ -609,7 +609,7 @@ namespace nk {
           float dmr2 = dm.x * dm.x + dm.y * dm.y;
           if (dmr2 > 0.000001f) {
             float scale = 1.0f / dmr2;
-            scale = NK_MIN(100.0f, scale);
+            scale = std::min(100.0f, scale);
             dm = vec2_muls(dm, scale);
           }
 
@@ -791,7 +791,7 @@ namespace nk {
         float dmr2 = dm.x * dm.x + dm.y * dm.y;
         if (dmr2 > 0.000001f) {
           float scale = 1.0f / dmr2;
-          scale = NK_MIN(scale, 100.0f);
+          scale = std::min(scale, 100.0f);
           dm = vec2_muls(dm, scale);
         }
         dm = vec2_muls(dm, AA_SIZE * 0.5f);
@@ -931,8 +931,8 @@ namespace nk {
     if (!list)
       return;
     r = rounding;
-    r = NK_MIN(r, ((b.x - a.x) < 0) ? -(b.x - a.x) : (b.x - a.x));
-    r = NK_MIN(r, ((b.y - a.y) < 0) ? -(b.y - a.y) : (b.y - a.y));
+    r = std::min(r, ((b.x - a.x) < 0) ? -(b.x - a.x) : (b.x - a.x));
+    r = std::min(r, ((b.y - a.y) < 0) ? -(b.y - a.y) : (b.y - a.y));
 
     if (r == 0.0f) {
       draw_list_path_line_to(list, a);
@@ -957,7 +957,7 @@ namespace nk {
     NK_ASSERT(list->path_count);
     if (!list || !list->path_count)
       return;
-    num_segments = NK_MAX(num_segments, 1);
+    num_segments = std::max(num_segments, 1);
 
     p1 = draw_list_path_last(list);
     t_step = 1.0f / (float) num_segments;

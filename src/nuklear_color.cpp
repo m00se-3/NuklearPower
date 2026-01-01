@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ==============================================================
@@ -35,10 +36,10 @@ namespace nk {
   NK_API color
   rgba(const int r, const int g, const int b, const int a) {
     color ret;
-    ret.r = (std::uint8_t) NK_CLAMP(0, r, 255);
-    ret.g = (std::uint8_t) NK_CLAMP(0, g, 255);
-    ret.b = (std::uint8_t) NK_CLAMP(0, b, 255);
-    ret.a = (std::uint8_t) NK_CLAMP(0, a, 255);
+    ret.r = (std::uint8_t) std::clamp(0, r, 255);
+    ret.g = (std::uint8_t) std::clamp(0, g, 255);
+    ret.b = (std::uint8_t) std::clamp(0, b, 255);
+    ret.a = (std::uint8_t) std::clamp(0, a, 255);
     return ret;
   }
   NK_API color
@@ -102,9 +103,9 @@ namespace nk {
   NK_API color
   rgb(const int r, const int g, const int b) {
     color ret;
-    ret.r = (std::uint8_t) NK_CLAMP(0, r, 255);
-    ret.g = (std::uint8_t) NK_CLAMP(0, g, 255);
-    ret.b = (std::uint8_t) NK_CLAMP(0, b, 255);
+    ret.r = (std::uint8_t) std::clamp(0, r, 255);
+    ret.g = (std::uint8_t) std::clamp(0, g, 255);
+    ret.b = (std::uint8_t) std::clamp(0, b, 255);
     ret.a = (std::uint8_t) 255;
     return ret;
   }
@@ -181,10 +182,10 @@ namespace nk {
   }
   NK_API color
   hsva(const int h, const int s, const int v, const int a) {
-    float hf = ((float) NK_CLAMP(0, h, 255)) / 255.0f;
-    float sf = ((float) NK_CLAMP(0, s, 255)) / 255.0f;
-    float vf = ((float) NK_CLAMP(0, v, 255)) / 255.0f;
-    float af = ((float) NK_CLAMP(0, a, 255)) / 255.0f;
+    float hf = ((float) std::clamp(0, h, 255)) / 255.0f;
+    float sf = ((float) std::clamp(0, s, 255)) / 255.0f;
+    float vf = ((float) std::clamp(0, v, 255)) / 255.0f;
+    float af = ((float) std::clamp(0, a, 255)) / 255.0f;
     return hsva_f(hf, sf, vf, af);
   }
   NK_API color

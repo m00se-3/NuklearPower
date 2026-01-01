@@ -149,7 +149,7 @@ namespace nk {
     if (type == buffer_allocation_type::BUFFER_FRONT)
       full = ((b->allocated + size + alignment) > b->size);
     else
-      full = ((b->size - NK_MIN(b->size, (size + alignment))) <= b->allocated);
+      full = ((b->size - std::min(b->size, (size + alignment))) <= b->allocated);
 
     if (full) {
       if (b->type != allocation_type::BUFFER_DYNAMIC)
@@ -161,7 +161,7 @@ namespace nk {
       /* buffer is full so allocate bigger buffer if dynamic */
       // TODO: This is a code smell.
       auto capacity = static_cast<std::size_t>(static_cast<float>(b->memory.size) * b->grow_factor);
-      capacity = NK_MAX(capacity, round_up_pow2((unsigned int) (b->allocated + size)));
+      capacity = std::max(capacity, round_up_pow2( b->allocated + size));
       b->memory.ptr = buffer_realloc(b, capacity, &b->memory.size);
       if (!b->memory.ptr)
         return 0;

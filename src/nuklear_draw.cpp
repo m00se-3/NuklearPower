@@ -82,8 +82,8 @@ namespace nk {
       return;
     cmd->x = (short) r.x;
     cmd->y = (short) r.y;
-    cmd->w = (unsigned short) NK_MAX(0, r.w);
-    cmd->h = (unsigned short) NK_MAX(0, r.h);
+    cmd->w = (unsigned short) std::max(0.0f, r.w);
+    cmd->h = (unsigned short) std::max(0.0f, r.h);
   }
   NK_API void
   stroke_line(command_buffer* b, float x0, float y0,
@@ -145,8 +145,8 @@ namespace nk {
     cmd->line_thickness = (unsigned short) line_thickness;
     cmd->x = (short) rect.x;
     cmd->y = (short) rect.y;
-    cmd->w = (unsigned short) NK_MAX(0, rect.w);
-    cmd->h = (unsigned short) NK_MAX(0, rect.h);
+    cmd->w = (unsigned short) std::max(0.0f, rect.w);
+    cmd->h = (unsigned short) std::max(0.0f, rect.h);
     cmd->color = c;
   }
   NK_API void
@@ -169,8 +169,8 @@ namespace nk {
     cmd->rounding = (unsigned short) rounding;
     cmd->x = (short) rect.x;
     cmd->y = (short) rect.y;
-    cmd->w = (unsigned short) NK_MAX(0, rect.w);
-    cmd->h = (unsigned short) NK_MAX(0, rect.h);
+    cmd->w = (unsigned short) std::max(0.0f, rect.w);
+    cmd->h = (unsigned short) std::max(0.0f, rect.h);
     cmd->color = c;
   }
   NK_API void
@@ -193,8 +193,8 @@ namespace nk {
       return;
     cmd->x = (short) rect.x;
     cmd->y = (short) rect.y;
-    cmd->w = (unsigned short) NK_MAX(0, rect.w);
-    cmd->h = (unsigned short) NK_MAX(0, rect.h);
+    cmd->w = (unsigned short) std::max(0.0f, rect.w);
+    cmd->h = (unsigned short) std::max(0.0f, rect.h);
     cmd->left = left;
     cmd->top = top;
     cmd->right = right;
@@ -218,8 +218,8 @@ namespace nk {
     cmd->line_thickness = (unsigned short) line_thickness;
     cmd->x = (short) r.x;
     cmd->y = (short) r.y;
-    cmd->w = (unsigned short) NK_MAX(r.w, 0);
-    cmd->h = (unsigned short) NK_MAX(r.h, 0);
+    cmd->w = (unsigned short) std::max(r.w, 0.0f);
+    cmd->h = (unsigned short) std::max(r.h, 0.0f);
     cmd->color = c;
   }
   NK_API void
@@ -239,8 +239,8 @@ namespace nk {
       return;
     cmd->x = (short) r.x;
     cmd->y = (short) r.y;
-    cmd->w = (unsigned short) NK_MAX(r.w, 0);
-    cmd->h = (unsigned short) NK_MAX(r.h, 0);
+    cmd->w = (unsigned short) std::max(r.w, 0.0f);
+    cmd->h = (unsigned short) std::max(r.h, 0.0f);
     cmd->color = c;
   }
   NK_API void
@@ -413,8 +413,8 @@ namespace nk {
       return;
     cmd->x = (short) r.x;
     cmd->y = (short) r.y;
-    cmd->w = (unsigned short) NK_MAX(0, r.w);
-    cmd->h = (unsigned short) NK_MAX(0, r.h);
+    cmd->w = (unsigned short) std::max(0.0f, r.w);
+    cmd->h = (unsigned short) std::max(0.0f, r.h);
     cmd->img = *img;
     cmd->col = col;
   }
@@ -515,8 +515,8 @@ namespace nk {
       return;
     cmd->x = (short) r.x;
     cmd->y = (short) r.y;
-    cmd->w = (unsigned short) NK_MAX(0, r.w);
-    cmd->h = (unsigned short) NK_MAX(0, r.h);
+    cmd->w = (unsigned short) std::max(0.0f, r.w);
+    cmd->h = (unsigned short) std::max(0.0f, r.h);
     cmd->callback_data = usr;
     cmd->callback = cb;
   }

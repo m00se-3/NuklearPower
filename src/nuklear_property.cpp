@@ -1,6 +1,7 @@
 #include <cstring>
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -113,15 +114,15 @@ namespace nk {
           break;
         case NK_PROPERTY_INT:
           variant->value.i = variant->value.i + (int) delta;
-          variant->value.i = NK_CLAMP(variant->min_value.i, variant->value.i, variant->max_value.i);
+          variant->value.i = std::clamp(variant->min_value.i, variant->value.i, variant->max_value.i);
           break;
         case NK_PROPERTY_FLOAT:
           variant->value.f = variant->value.f + (float) delta;
-          variant->value.f = NK_CLAMP(variant->min_value.f, variant->value.f, variant->max_value.f);
+          variant->value.f = std::clamp(variant->min_value.f, variant->value.f, variant->max_value.f);
           break;
         case NK_PROPERTY_DOUBLE:
           variant->value.d = variant->value.d + (double) delta;
-          variant->value.d = NK_CLAMP(variant->min_value.d, variant->value.d, variant->max_value.d);
+          variant->value.d = std::clamp(variant->min_value.d, variant->value.d, variant->max_value.d);
           break;
       }
       *state = NK_WIDGET_STATE_ACTIVE;
@@ -272,7 +273,7 @@ namespace nk {
     }
 
     edit.w = (float) size + 2 * style->padding.x;
-    edit.w = NK_MIN(edit.w, right.x - (label.x + label.w));
+    edit.w = std::min(edit.w, right.x - (label.x + label.w));
     edit.x = right.x - (edit.w + style->padding.x);
     edit.y = property.y + style->border;
     edit.h = property.h - (2 * style->border);
@@ -300,13 +301,13 @@ namespace nk {
         default:
           break;
         case NK_PROPERTY_INT:
-          variant->value.i = NK_CLAMP(variant->min_value.i, variant->value.i - variant->step.i, variant->max_value.i);
+          variant->value.i = std::clamp(variant->min_value.i, variant->value.i - variant->step.i, variant->max_value.i);
           break;
         case NK_PROPERTY_FLOAT:
-          variant->value.f = NK_CLAMP(variant->min_value.f, variant->value.f - variant->step.f, variant->max_value.f);
+          variant->value.f = std::clamp(variant->min_value.f, variant->value.f - variant->step.f, variant->max_value.f);
           break;
         case NK_PROPERTY_DOUBLE:
-          variant->value.d = NK_CLAMP(variant->min_value.d, variant->value.d - variant->step.d, variant->max_value.d);
+          variant->value.d = std::clamp(variant->min_value.d, variant->value.d - variant->step.d, variant->max_value.d);
           break;
       }
     }
@@ -316,13 +317,13 @@ namespace nk {
         default:
           break;
         case NK_PROPERTY_INT:
-          variant->value.i = NK_CLAMP(variant->min_value.i, variant->value.i + variant->step.i, variant->max_value.i);
+          variant->value.i = std::clamp(variant->min_value.i, variant->value.i + variant->step.i, variant->max_value.i);
           break;
         case NK_PROPERTY_FLOAT:
-          variant->value.f = NK_CLAMP(variant->min_value.f, variant->value.f + variant->step.f, variant->max_value.f);
+          variant->value.f = std::clamp(variant->min_value.f, variant->value.f + variant->step.f, variant->max_value.f);
           break;
         case NK_PROPERTY_DOUBLE:
-          variant->value.d = NK_CLAMP(variant->min_value.d, variant->value.d + variant->step.d, variant->max_value.d);
+          variant->value.d = std::clamp(variant->min_value.d, variant->value.d + variant->step.d, variant->max_value.d);
           break;
       }
     }
@@ -341,9 +342,9 @@ namespace nk {
     textedit_clear_state(text_edit, text_edit_type::TEXT_EDIT_SINGLE_LINE, filters[filter]);
     text_edit->active = (unsigned char) active;
     text_edit->string.len = *length;
-    text_edit->cursor = NK_CLAMP(0, *cursor, *length);
-    text_edit->select_start = NK_CLAMP(0, *select_begin, *length);
-    text_edit->select_end = NK_CLAMP(0, *select_end, *length);
+    text_edit->cursor = std::clamp(0, *cursor, *length);
+    text_edit->select_start = std::clamp(0, *select_begin, *length);
+    text_edit->select_end = std::clamp(0, *select_end, *length);
     text_edit->string.buffer.allocated = (std::size_t) *length;
     text_edit->string.buffer.memory.size = NK_MAX_NUMBER_BUFFER;
     text_edit->string.buffer.memory.ptr = dst;
@@ -368,17 +369,17 @@ namespace nk {
           break;
         case NK_PROPERTY_INT:
           variant->value.i = strtoi(buffer, 0);
-          variant->value.i = NK_CLAMP(variant->min_value.i, variant->value.i, variant->max_value.i);
+          variant->value.i = std::clamp(variant->min_value.i, variant->value.i, variant->max_value.i);
           break;
         case NK_PROPERTY_FLOAT:
           string_float_limit(buffer, NK_MAX_FLOAT_PRECISION);
           variant->value.f = strtof(buffer, 0);
-          variant->value.f = NK_CLAMP(variant->min_value.f, variant->value.f, variant->max_value.f);
+          variant->value.f = std::clamp(variant->min_value.f, variant->value.f, variant->max_value.f);
           break;
         case NK_PROPERTY_DOUBLE:
           string_float_limit(buffer, NK_MAX_FLOAT_PRECISION);
           variant->value.d = strtod(buffer, 0);
-          variant->value.d = NK_CLAMP(variant->min_value.d, variant->value.d, variant->max_value.d);
+          variant->value.d = std::clamp(variant->min_value.d, variant->value.d, variant->max_value.d);
           break;
       }
     }

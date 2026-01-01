@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -34,13 +35,13 @@ namespace nk {
       if (o == orientation::VERTICAL) {
         pixel = in->mouse.delta.y;
         delta = (pixel / scroll->h) * target;
-        scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->h);
+        scroll_offset = std::clamp(0.0f, scroll_offset + delta, target - scroll->h);
         float cursor_y = scroll->y + ((scroll_offset / target) * scroll->h);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.y = cursor_y + cursor->h / 2.0f;
       } else {
         pixel = in->mouse.delta.x;
         delta = (pixel / scroll->w) * target;
-        scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->w);
+        scroll_offset = std::clamp(0.0f, scroll_offset + delta, target - scroll->w);
         float cursor_x = scroll->x + ((scroll_offset / target) * scroll->w);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = cursor_x + cursor->w / 2.0f;
       }
@@ -48,24 +49,24 @@ namespace nk {
                button_behavior(&ws, *empty0, in, btn_behavior::BUTTON_DEFAULT)) {
       /* scroll page up by click on empty space or shortcut */
       if (o == orientation::VERTICAL)
-        scroll_offset = NK_MAX(0, scroll_offset - scroll->h);
+        scroll_offset = std::max(0.0f, scroll_offset - scroll->h);
       else
-        scroll_offset = NK_MAX(0, scroll_offset - scroll->w);
+        scroll_offset = std::max(0.0f, scroll_offset - scroll->w);
     } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_DOWN) && o == orientation::VERTICAL && has_scrolling) ||
                button_behavior(&ws, *empty1, in, btn_behavior::BUTTON_DEFAULT)) {
       /* scroll page down by click on empty space or shortcut */
       if (o == orientation::VERTICAL)
-        scroll_offset = NK_MIN(scroll_offset + scroll->h, target - scroll->h);
+        scroll_offset = std::min(scroll_offset + scroll->h, target - scroll->h);
       else
-        scroll_offset = NK_MIN(scroll_offset + scroll->w, target - scroll->w);
+        scroll_offset = std::min(scroll_offset + scroll->w, target - scroll->w);
     } else if (has_scrolling) {
       if ((scroll_delta < 0 || (scroll_delta > 0))) {
         /* update cursor by mouse scrolling */
         scroll_offset = scroll_offset + scroll_step * (-scroll_delta);
         if (o == orientation::VERTICAL)
-          scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->h);
+          scroll_offset = std::clamp(0.0f, scroll_offset, target - scroll->h);
         else
-          scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->w);
+          scroll_offset = std::clamp(0.0f, scroll_offset, target - scroll->w);
       } else if (input_is_key_pressed(in, NK_KEY_SCROLL_START)) {
         /* update cursor to the beginning  */
         if (o == orientation::VERTICAL)
@@ -147,8 +148,8 @@ namespace nk {
     if (!out || !style)
       return 0;
 
-    scroll.w = NK_MAX(scroll.w, 1);
-    scroll.h = NK_MAX(scroll.h, 0);
+    scroll.w = std::max(scroll.w, 1.0f);
+    scroll.h = std::max(scroll.h, 0.0f);
     if (target <= scroll.h)
       return 0;
 
@@ -161,8 +162,8 @@ namespace nk {
       button.w = scroll.w;
       button.h = scroll.w;
 
-      float scroll_h = NK_MAX(scroll.h - 2 * button.h, 0);
-      scroll_step = NK_MIN(step, button_pixel_inc);
+      float scroll_h = std::max(scroll.h - 2.0f * button.h, 0.0f);
+      scroll_step = std::min(step, button_pixel_inc);
 
       /* decrement button */
       button.y = scroll.y;
@@ -181,13 +182,13 @@ namespace nk {
     }
 
     /* calculate scrollbar constants */
-    scroll_step = NK_MIN(step, scroll.h);
-    float scroll_offset = NK_CLAMP(0, offset, target - scroll.h);
+    scroll_step = std::min(step, scroll.h);
+    float scroll_offset = std::clamp(0.0f, offset, target - scroll.h);
     float scroll_ratio = scroll.h / target;
     float scroll_off = scroll_offset / target;
 
     /* calculate scrollbar cursor bounds */
-    cursor.h = NK_MAX((scroll_ratio * scroll.h) - (2 * style->border + 2 * style->padding.y), 0);
+    cursor.h = std::max((scroll_ratio * scroll.h) - (2.0f * style->border + 2.0f * style->padding.y), 0.0f);
     cursor.y = scroll.y + (scroll_off * scroll.h) + style->border + style->padding.y;
     cursor.w = scroll.w - (2 * style->border + 2 * style->padding.x);
     cursor.x = scroll.x + style->border + style->padding.x;
@@ -196,12 +197,12 @@ namespace nk {
     empty_north.x = scroll.x;
     empty_north.y = scroll.y;
     empty_north.w = scroll.w;
-    empty_north.h = NK_MAX(cursor.y - scroll.y, 0);
+    empty_north.h = std::max(cursor.y - scroll.y, 0.0f);
 
     empty_south.x = scroll.x;
     empty_south.y = cursor.y + cursor.h;
     empty_south.w = scroll.w;
-    empty_south.h = NK_MAX((scroll.y + scroll.h) - (cursor.y + cursor.h), 0);
+    empty_south.h = std::max((scroll.y + scroll.h) - (cursor.y + cursor.h), 0.0f);
 
     /* update scrollbar */
     scroll_offset = scrollbar_behavior(state, in, has_scrolling, &scroll, &cursor,
@@ -235,8 +236,8 @@ namespace nk {
       return 0;
 
     /* scrollbar background */
-    scroll.h = NK_MAX(scroll.h, 1);
-    scroll.w = NK_MAX(scroll.w, 2 * scroll.h);
+    scroll.h = std::max(scroll.h, 1.0f);
+    scroll.w = std::max(scroll.w, 2 * scroll.h);
     if (target <= scroll.w)
       return 0;
 
@@ -249,7 +250,7 @@ namespace nk {
       button.h = scroll.h;
 
       float scroll_w = scroll.w - 2 * button.w;
-      scroll_step = NK_MIN(step, button_pixel_inc);
+      scroll_step = std::min(step, button_pixel_inc);
 
       /* decrement button */
       button.x = scroll.x;
@@ -268,8 +269,8 @@ namespace nk {
     }
 
     /* calculate scrollbar constants */
-    scroll_step = NK_MIN(step, scroll.w);
-    float scroll_offset = NK_CLAMP(0, offset, target - scroll.w);
+    scroll_step = std::min(step, scroll.w);
+    float scroll_offset = std::clamp(0.0f, offset, target - scroll.w);
     float scroll_ratio = scroll.w / target;
     float scroll_off = scroll_offset / target;
 

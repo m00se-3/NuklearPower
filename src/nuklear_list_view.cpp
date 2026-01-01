@@ -21,7 +21,7 @@ namespace nk {
     window* win = ctx->current;
     const style* style = &ctx->style;
     const vec2f item_spacing = style->window.spacing;
-    row_height += NK_MAX(0, (int) item_spacing.y);
+    row_height += std::max(0, (int) item_spacing.y);
 
     /* find persistent list view scrollbar offset */
     const int title_len = (int) strlen(title);
@@ -46,10 +46,10 @@ namespace nk {
     win = ctx->current;
     const panel* layout = win->layout;
 
-    view->total_height = row_height * NK_MAX(row_count, 1);
-    view->begin = (int) NK_MAX(((float) view->scroll_value / (float) row_height), 0.0f);
-    view->count = (int) NK_MAX(iceilf((layout->clip.h) / (float) row_height), 0);
-    view->count = NK_MIN(view->count, row_count - view->begin);
+    view->total_height = row_height * std::max(row_count, 1);
+    view->begin = (int) std::max(((float) view->scroll_value / (float) row_height), 0.0f);
+    view->count = (int) std::max(iceilf((layout->clip.h) / (float) row_height), 0);
+    view->count = std::min(view->count, row_count - view->begin);
     view->end = view->begin + view->count;
     view->ctx = ctx;
     return result;

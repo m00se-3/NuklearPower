@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -24,8 +25,8 @@ namespace nk {
 
     if (in && left_mouse_down && left_mouse_click_in_cursor) {
       if (left_mouse_down && left_mouse_click_in_cursor) {
-        float ratio = NK_MAX(0, (float) (in->mouse.pos.x - cursor.x)) / (float) cursor.w;
-        value = (std::size_t) NK_CLAMP(0, (float) max * ratio, (float) max);
+        float ratio = std::max(0.0f, (float) (in->mouse.pos.x - cursor.x)) / (float) cursor.w;
+        value = (std::size_t) std::clamp(0.0f, (float) max * ratio, (float) max);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = cursor.x + cursor.w / 2.0f;
         *state |= NK_WIDGET_STATE_ACTIVE;
       }
@@ -100,13 +101,13 @@ namespace nk {
       return 0;
 
     /* calculate progressbar cursor */
-    cursor.w = NK_MAX(bounds.w, 2 * style->padding.x + 2 * style->border);
-    cursor.h = NK_MAX(bounds.h, 2 * style->padding.y + 2 * style->border);
+    cursor.w = std::max(bounds.w, 2 * style->padding.x + 2 * style->border);
+    cursor.h = std::max(bounds.h, 2 * style->padding.y + 2 * style->border);
     cursor = pad_rect(bounds, vec2_from_floats(style->padding.x + style->border, style->padding.y + style->border));
     float prog_scale = (float) value / (float) max;
 
     /* update progressbar */
-    std::size_t prog_value = NK_MIN(value, max);
+    std::size_t prog_value = std::min(value, max);
     prog_value = progress_behavior(state, in, bounds, cursor, max, prog_value, modifiable);
     cursor.w = cursor.w * prog_scale;
 

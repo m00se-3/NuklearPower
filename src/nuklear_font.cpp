@@ -214,7 +214,7 @@ namespace nk {
 
         stbtt_PackSetOversampling(&baker->spc, 1, 1);
         stbrp_pack_rects((struct stbrp_context*) baker->spc.pack_info, &custom_space, 1);
-        *height = NK_MAX(*height, (int) (custom_space.y + custom_space.h));
+        *height = std::max(*height, (int) (custom_space.y + custom_space.h));
 
         custom->x = (short) custom_space.x;
         custom->y = (short) custom_space.y;
@@ -265,7 +265,7 @@ namespace nk {
           /* texture height */
           for (i = 0; i < n; ++i) {
             if (tmp->rects[i].was_packed)
-              *height = NK_MAX(*height, tmp->rects[i].y + tmp->rects[i].h);
+              *height = std::max(*height, tmp->rects[i].y + tmp->rects[i].h);
           }
         } while ((it = it->n) != config_iter);
       }

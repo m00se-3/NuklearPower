@@ -19,7 +19,6 @@
  * ===============================================================
  */
 
-#define NK_UNDEFINED (-1.0f)
 #define NK_UTF_INVALID 0xFFFD /**< internal invalid utf8 rune */
 #define NK_UTF_SIZE 4 /**< describes the number of bytes a glyph consists of*/
 #ifndef NK_INPUT_MAX
@@ -65,10 +64,7 @@
 #define NK_GLOBAL inline
 
 #define NK_STRINGIFY(x) #x
-#define NK_MACRO_STRINGIFY(x) NK_STRINGIFY(x)
-#define NK_STRING_JOIN_IMMEDIATE(arg1, arg2) arg1##arg2
-#define NK_STRING_JOIN_DELAY(arg1, arg2) NK_STRING_JOIN_IMMEDIATE(arg1, arg2)
-#define NK_STRING_JOIN(arg1, arg2) NK_STRING_JOIN_DELAY(arg1, arg2)
+#define NK_STRING_JOIN(arg1, arg2) arg1##arg2
 
 #ifdef _MSC_VER
 #define NK_UNIQUE_NAME(name) NK_STRING_JOIN(name, __COUNTER__)
@@ -82,15 +78,11 @@
 
 #ifndef NK_FILE_LINE
 #ifdef _MSC_VER
-#define NK_FILE_LINE __FILE__ ":" NK_MACRO_STRINGIFY(__COUNTER__)
+#define NK_FILE_LINE __FILE__ ":" NK_STRINGIFY(__COUNTER__)
 #else
-#define NK_FILE_LINE __FILE__ ":" NK_MACRO_STRINGIFY(__LINE__)
+#define NK_FILE_LINE __FILE__ ":" NK_STRINGIFY(__LINE__)
 #endif
 #endif
-
-#define NK_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define NK_MAX(a, b) ((a) < (b) ? (b) : (a))
-#define NK_CLAMP(i, v, x) (NK_MAX(NK_MIN(v, x), i))
 
 #if __cpp_lib_is_scoped_enum
 template<typename T>
@@ -5667,7 +5659,7 @@ namespace nk {
    *                          CONTEXT
    * =============================================================*/
 #define NK_VALUE_PAGE_CAPACITY \
-  (((NK_MAX(sizeof(struct window), sizeof(struct panel)) / sizeof(std::uint32_t))) / 2)
+  (((std::max(sizeof(struct window), sizeof(struct panel)) / sizeof(std::uint32_t))) / 2)
 
   struct table {
     unsigned int seq;
@@ -5756,7 +5748,7 @@ namespace nk {
 #define NK_MAX_FLOAT_PRECISION 2
 
 #define NK_UNUSED(x) ((void) (x))
-#define NK_SATURATE(x) (NK_MAX(0, NK_MIN(1.0f, x)))
+#define NK_SATURATE(x) (std::max(0.0f, std::min(1.0f, x)))
 #define NK_LEN(a) (sizeof(a) / sizeof(a)[0])
 #define NK_ABS(a) (((a) < 0) ? -(a) : (a))
 #define NK_BETWEEN(x, a, b) ((a) <= (x) && (x) < (b))

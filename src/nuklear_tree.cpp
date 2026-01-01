@@ -96,7 +96,7 @@ namespace nk {
 
     { /* draw label */
       rectf label;
-      header.w = NK_MAX(header.w, sym.w + item_spacing.x);
+      header.w = std::max(header.w, sym.w + item_spacing.x);
       label.x = sym.x + sym.w + item_spacing.x;
       label.y = sym.y;
       label.w = header.w - (sym.w + item_spacing.y + style->tab.indent);
@@ -110,7 +110,7 @@ namespace nk {
     /* increase x-axis cursor widget position pointer */
     if (*state == collapse_states::MAXIMIZED) {
       layout->at_x = header.x + (float) *layout->offset_x + style->tab.indent;
-      layout->bounds.w = NK_MAX(layout->bounds.w, style->tab.indent);
+      layout->bounds.w = std::max(layout->bounds.w, style->tab.indent);
       layout->bounds.w -= (style->tab.indent + style->window.padding.x);
       layout->row.tree_depth++;
       return true;
@@ -269,10 +269,10 @@ namespace nk {
       float text_width = style->font->width(style->font->userdata, style->font->height, title, text_len);
       text_width += (4 * padding.x);
 
-      header.w = NK_MAX(header.w, sym.w + item_spacing.x);
+      header.w = std::max(header.w, sym.w + item_spacing.x);
       label.x = sym.x + sym.w + item_spacing.x;
       label.y = sym.y;
-      label.w = NK_MIN(header.w - (sym.w + item_spacing.y + style->tab.indent), text_width);
+      label.w = std::min(header.w - (sym.w + item_spacing.y + style->tab.indent), text_width);
       label.h = style->font->height;
 
       if (img) {
@@ -285,7 +285,7 @@ namespace nk {
     /* increase x-axis cursor widget position pointer */
     if (*state == collapse_states::MAXIMIZED) {
       layout->at_x = header.x + (float) *layout->offset_x + style->tab.indent;
-      layout->bounds.w = NK_MAX(layout->bounds.w, style->tab.indent);
+      layout->bounds.w = std::max(layout->bounds.w, style->tab.indent);
       layout->bounds.w -= (style->tab.indent + style->window.padding.x);
       layout->row.tree_depth++;
       return true;

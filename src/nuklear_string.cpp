@@ -1,6 +1,7 @@
 #include <cstring>
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -285,7 +286,7 @@ namespace nk {
     NK_ASSERT(s);
     NK_ASSERT(s->len >= pos + len);
     if (s->len < pos + len)
-      len = NK_CLAMP(0, (s->len - pos), s->len);
+      len = std::clamp(0, (s->len - pos), s->len);
     if (!len)
       return;
 

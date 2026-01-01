@@ -1,5 +1,6 @@
 #include "nuklear.h"
 #include "nuklear_internal.h"
+#include <algorithm>
 
 namespace nk {
   /* ===============================================================
@@ -44,7 +45,7 @@ namespace nk {
     const vec2f spacing = style->window.spacing;
 
     /* calculate the usable panel space */
-    float panel_spacing = (float) NK_MAX(columns - 1, 0) * spacing.x;
+    float panel_spacing = (float) std::max(columns - 1, 0) * spacing.x;
     float panel_space = total_space - panel_spacing;
     return panel_space;
   }
@@ -79,7 +80,7 @@ namespace nk {
     layout->at_y += layout->row.height;
     layout->row.columns = cols;
     if (height == 0.0f)
-      layout->row.height = NK_MAX(height, layout->row.min_height) + item_spacing.y;
+      layout->row.height = std::max(height, layout->row.min_height) + item_spacing.y;
     else
       layout->row.height = height + item_spacing.y;
 
@@ -123,7 +124,7 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
     const window* win = ctx->current;
-    return NK_CLAMP(0.0f, pixel_width / win->bounds.x, 1.0f);
+    return std::clamp(0.0f, pixel_width / win->bounds.x, 1.0f);
   }
   NK_API void
   layout_row_dynamic(context* ctx, float height, const int cols) {
@@ -346,7 +347,7 @@ namespace nk {
       } else if (width < -1.0f) {
         width = -width;
         total_fixed_width += width;
-        max_variable_width = NK_MAX(max_variable_width, width);
+        max_variable_width = std::max(max_variable_width, width);
         variable_count++;
       } else {
         min_variable_count++;
@@ -356,10 +357,10 @@ namespace nk {
     if (variable_count) {
       float space = layout_row_calculate_usable_space(&ctx->style, layout->type,
                                                       layout->bounds.w, layout->row.columns);
-      float var_width = (NK_MAX(space - min_fixed_width, 0.0f)) / (float) variable_count;
+      float var_width = (std::max(space - min_fixed_width, 0.0f)) / (float) variable_count;
       const int enough_space = var_width >= max_variable_width;
       if (!enough_space)
-        var_width = (NK_MAX(space - total_fixed_width, 0)) / (float) min_variable_count;
+        var_width = (std::max(space - total_fixed_width, 0.0f)) / (float) min_variable_count;
       for (i = 0; i < layout->row.columns; ++i) {
         float* width = &layout->row.templates[i];
         *width = (*width >= 0.0f) ? *width : (*width < -1.0f && !enough_space) ? -(*width)
@@ -447,7 +448,7 @@ namespace nk {
 
     ret.x = layout->at_x;
     ret.y = layout->at_y;
-    ret.w = layout->bounds.w - NK_MAX(layout->at_x - layout->bounds.x, 0);
+    ret.w = layout->bounds.w - std::max(layout->at_x - layout->bounds.x, 0.0f);
     ret.h = layout->row.height;
     return ret;
   }
@@ -539,7 +540,7 @@ namespace nk {
     switch (layout->row.type) {
       case panel_row_layout_type::LAYOUT_DYNAMIC_FIXED: {
         /* scaling fixed size widgets item width */
-        float w = NK_MAX(1.0f, panel_space) / (float) layout->row.columns;
+        float w = std::max(1.0f, panel_space) / (float) layout->row.columns;
         item_offset = (float) layout->row.index * w;
         item_width = w + NK_FRAC(item_offset);
         item_spacing = (float) layout->row.index * spacing.x;

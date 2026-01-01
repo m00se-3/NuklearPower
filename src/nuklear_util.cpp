@@ -599,8 +599,8 @@ namespace nk {
         long value = 0;
         const char* num_iter;
         int num_len, num_print, padding;
-        int cur_precision = NK_MAX(precision, 1);
-        int cur_width = NK_MAX(width, 0);
+        int cur_precision = std::max(precision, 1);
+        int cur_width = std::max(width, 0);
 
         /* retrieve correct value type */
         if (arg_type == NK_ARG_TYPE_CHAR)
@@ -617,9 +617,9 @@ namespace nk {
         /* convert number to string */
         itoa(number_buffer, value);
         num_len = strlen(number_buffer);
-        padding = NK_MAX(cur_width - NK_MAX(cur_precision, num_len), 0);
+        padding = std::max(cur_width - std::max(cur_precision, num_len), 0);
         if ((flag & NK_ARG_FLAG_PLUS) || (flag & NK_ARG_FLAG_SPACE))
-          padding = NK_MAX(padding - 1, 0);
+          padding = std::max(padding - 1, 0);
 
         /* fill left padding up to a total of `width` characters */
         if (!(flag & NK_ARG_FLAG_LEFT)) {
@@ -638,7 +638,7 @@ namespace nk {
           buf[len++] = ' ';
 
         /* fill up to precision number of digits with '0' */
-        num_print = NK_MAX(cur_precision, num_len);
+        num_print = std::max(cur_precision, num_len);
         while (precision && (num_print > num_len) && (len < buf_size)) {
           buf[len++] = '0';
           num_print--;
@@ -658,8 +658,8 @@ namespace nk {
         /* unsigned integer */
         unsigned long value = 0;
         int num_len = 0, num_print, padding = 0;
-        int cur_precision = NK_MAX(precision, 1);
-        int cur_width = NK_MAX(width, 0);
+        int cur_precision = std::max(precision, 1);
+        int cur_width = std::max(width, 0);
         unsigned int base = (*iter == 'o') ? 8 : (*iter == 'u') ? 10
                                                                 : 16;
 
@@ -686,10 +686,10 @@ namespace nk {
           value /= base;
         } while (value > 0);
 
-        num_print = NK_MAX(cur_precision, num_len);
-        padding = NK_MAX(cur_width - NK_MAX(cur_precision, num_len), 0);
+        num_print = std::max(cur_precision, num_len);
+        padding = std::max(cur_width - std::max(cur_precision, num_len), 0);
         if (flag & NK_ARG_FLAG_NUM)
-          padding = NK_MAX(padding - 1, 0);
+          padding = std::max(padding - 1, 0);
 
         /* fill left padding up to a total of `width` characters */
         if (!(flag & NK_ARG_FLAG_LEFT)) {
@@ -734,7 +734,7 @@ namespace nk {
         /* floating point */
         const char* num_iter;
         int cur_precision = (precision < 0) ? 6 : precision;
-        int prefix, cur_width = NK_MAX(width, 0);
+        int prefix, cur_width = std::max(width, 0);
         double value = va_arg(args, double);
         int num_len = 0, frac_len = 0, dot = 0;
         int padding = 0;
@@ -749,9 +749,9 @@ namespace nk {
           num_iter++;
 
         prefix = (*num_iter == '.') ? (int) (num_iter - number_buffer) + 1 : 0;
-        padding = NK_MAX(cur_width - (prefix + NK_MIN(cur_precision, num_len - prefix)), 0);
+        padding = std::max(cur_width - (prefix + std::min(cur_precision, num_len - prefix)), 0);
         if ((flag & NK_ARG_FLAG_PLUS) || (flag & NK_ARG_FLAG_SPACE))
-          padding = NK_MAX(padding - 1, 0);
+          padding = std::max(padding - 1, 0);
 
         /* fill left padding up to a total of `width` characters */
         if (!(flag & NK_ARG_FLAG_LEFT)) {
@@ -939,7 +939,7 @@ namespace nk {
     int sep_len = 0;
     int sep_g = 0;
     float sep_width = 0;
-    sep_count = NK_MAX(sep_count, 0);
+    sep_count = std::max(sep_count, 0);
 
     glyph_len = utf_decode(text, &unicode, text_len);
     while (glyph_len && (width < space) && (len < text_len)) {
@@ -993,7 +993,7 @@ namespace nk {
     *glyphs = 0;
     while ((text_len < byte_len) && glyph_len) {
       if (unicode == '\n') {
-        text_size.x = NK_MAX(text_size.x, line_width);
+        text_size.x = std::max(text_size.x, line_width);
         text_size.y += line_height;
         line_width = 0;
         *glyphs += 1;

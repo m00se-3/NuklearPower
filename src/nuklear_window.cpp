@@ -170,7 +170,7 @@ namespace nk {
       win->flags = flags;
       win->bounds = bounds;
       win->name = name_hash;
-      name_length = NK_MIN(name_length, NK_WINDOW_MAX_NAME - 1);
+      name_length = std::min(name_length, NK_WINDOW_MAX_NAME - 1uz);
       std::memcpy(win->name_string, name, name_length);
       win->name_string[name_length] = 0;
       win->popup.win = 0;
