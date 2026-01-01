@@ -8,12 +8,11 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB float
-  scrollbar_behavior(flag *state, struct input *in,
-      int has_scrolling, const rectf *scroll,
-      const rectf *cursor, const rectf *empty0,
-      const rectf *empty1, float scroll_offset,
-      float target, float scroll_step, enum orientation o)
-  {
+  scrollbar_behavior(flag* state, struct input* in,
+                     int has_scrolling, const rectf* scroll,
+                     const rectf* cursor, const rectf* empty0,
+                     const rectf* empty1, float scroll_offset,
+                     float target, float scroll_step, enum orientation o) {
     flag ws = 0;
     int left_mouse_down;
     unsigned int left_mouse_clicked;
@@ -21,16 +20,17 @@ namespace nk {
     float scroll_delta;
 
     nk::widget_state_reset(state);
-    if (!in) return scroll_offset;
+    if (!in)
+      return scroll_offset;
 
     left_mouse_down = in->mouse.buttons[NK_BUTTON_LEFT].down;
     left_mouse_clicked = in->mouse.buttons[NK_BUTTON_LEFT].clicked;
     left_mouse_click_in_cursor = input_has_mouse_click_down_in_rect(in,
-        NK_BUTTON_LEFT, *cursor, true);
+                                                                    NK_BUTTON_LEFT, *cursor, true);
     if (input_is_mouse_hovering_rect(in, *scroll))
       *state = NK_WIDGET_STATE_HOVERED;
 
-    scroll_delta = (o == orientation::VERTICAL) ? in->mouse.scroll_delta.y: in->mouse.scroll_delta.x;
+    scroll_delta = (o == orientation::VERTICAL) ? in->mouse.scroll_delta.y : in->mouse.scroll_delta.x;
     if (left_mouse_down && left_mouse_click_in_cursor && !left_mouse_clicked) {
       /* update cursor by mouse dragging */
       float pixel, delta;
@@ -40,43 +40,48 @@ namespace nk {
         pixel = in->mouse.delta.y;
         delta = (pixel / scroll->h) * target;
         scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->h);
-        cursor_y = scroll->y + ((scroll_offset/target) * scroll->h);
-        in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.y = cursor_y + cursor->h/2.0f;
+        cursor_y = scroll->y + ((scroll_offset / target) * scroll->h);
+        in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.y = cursor_y + cursor->h / 2.0f;
       } else {
         float cursor_x;
         pixel = in->mouse.delta.x;
         delta = (pixel / scroll->w) * target;
         scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->w);
-        cursor_x = scroll->x + ((scroll_offset/target) * scroll->w);
-        in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = cursor_x + cursor->w/2.0f;
+        cursor_x = scroll->x + ((scroll_offset / target) * scroll->w);
+        in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = cursor_x + cursor->w / 2.0f;
       }
-    } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_UP) && o == orientation::VERTICAL && has_scrolling)||
-            button_behavior(&ws, *empty0, in, btn_behavior::BUTTON_DEFAULT)) {
+    } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_UP) && o == orientation::VERTICAL && has_scrolling) ||
+               button_behavior(&ws, *empty0, in, btn_behavior::BUTTON_DEFAULT)) {
       /* scroll page up by click on empty space or shortcut */
       if (o == orientation::VERTICAL)
         scroll_offset = NK_MAX(0, scroll_offset - scroll->h);
-      else scroll_offset = NK_MAX(0, scroll_offset - scroll->w);
-            } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_DOWN) && o == orientation::VERTICAL && has_scrolling) ||
-                button_behavior(&ws, *empty1, in, btn_behavior::BUTTON_DEFAULT)) {
-              /* scroll page down by click on empty space or shortcut */
-              if (o == orientation::VERTICAL)
-                scroll_offset = NK_MIN(scroll_offset + scroll->h, target - scroll->h);
-              else scroll_offset = NK_MIN(scroll_offset + scroll->w, target - scroll->w);
-                } else if (has_scrolling) {
-                  if ((scroll_delta < 0 || (scroll_delta > 0))) {
-                    /* update cursor by mouse scrolling */
-                    scroll_offset = scroll_offset + scroll_step * (-scroll_delta);
-                    if (o == orientation::VERTICAL)
-                      scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->h);
-                    else scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->w);
-                  } else if (input_is_key_pressed(in, NK_KEY_SCROLL_START)) {
-                    /* update cursor to the beginning  */
-                    if (o == orientation::VERTICAL) scroll_offset = 0;
-                  } else if (input_is_key_pressed(in, NK_KEY_SCROLL_END)) {
-                    /* update cursor to the end */
-                    if (o == orientation::VERTICAL) scroll_offset = target - scroll->h;
-                  }
-                }
+      else
+        scroll_offset = NK_MAX(0, scroll_offset - scroll->w);
+    } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_DOWN) && o == orientation::VERTICAL && has_scrolling) ||
+               button_behavior(&ws, *empty1, in, btn_behavior::BUTTON_DEFAULT)) {
+      /* scroll page down by click on empty space or shortcut */
+      if (o == orientation::VERTICAL)
+        scroll_offset = NK_MIN(scroll_offset + scroll->h, target - scroll->h);
+      else
+        scroll_offset = NK_MIN(scroll_offset + scroll->w, target - scroll->w);
+    } else if (has_scrolling) {
+      if ((scroll_delta < 0 || (scroll_delta > 0))) {
+        /* update cursor by mouse scrolling */
+        scroll_offset = scroll_offset + scroll_step * (-scroll_delta);
+        if (o == orientation::VERTICAL)
+          scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->h);
+        else
+          scroll_offset = NK_CLAMP(0, scroll_offset, target - scroll->w);
+      } else if (input_is_key_pressed(in, NK_KEY_SCROLL_START)) {
+        /* update cursor to the beginning  */
+        if (o == orientation::VERTICAL)
+          scroll_offset = 0;
+      } else if (input_is_key_pressed(in, NK_KEY_SCROLL_END)) {
+        /* update cursor to the end */
+        if (o == orientation::VERTICAL)
+          scroll_offset = target - scroll->h;
+      }
+    }
     if (*state & NK_WIDGET_STATE_HOVER && !input_is_mouse_prev_hovering_rect(in, *scroll))
       *state |= NK_WIDGET_STATE_ENTERED;
     else if (input_is_mouse_prev_hovering_rect(in, *scroll))
@@ -84,12 +89,11 @@ namespace nk {
     return scroll_offset;
   }
   NK_LIB void
-  draw_scrollbar(struct command_buffer *out, flag state,
-      const struct style_scrollbar *style, const rectf *bounds,
-      const rectf *scroll)
-  {
-    const struct style_item *background;
-    const struct style_item *cursor;
+  draw_scrollbar(struct command_buffer* out, flag state,
+                 const struct style_scrollbar* style, const rectf* bounds,
+                 const rectf* scroll) {
+    const struct style_item* background;
+    const struct style_item* cursor;
 
     /* select correct colors/images to draw */
     if (state & NK_WIDGET_STATE_ACTIVED) {
@@ -132,12 +136,11 @@ namespace nk {
     }
   }
   NK_LIB float
-  do_scrollbarv(flag *state,
-      struct command_buffer *out, rectf scroll, int has_scrolling,
-      float offset, float target, float step, float button_pixel_inc,
-      const struct style_scrollbar *style, struct input *in,
-      const struct user_font *font)
-  {
+  do_scrollbarv(flag* state,
+                struct command_buffer* out, rectf scroll, int has_scrolling,
+                float offset, float target, float step, float button_pixel_inc,
+                const struct style_scrollbar* style, struct input* in,
+                const struct user_font* font) {
     rectf empty_north;
     rectf empty_south;
     rectf cursor;
@@ -150,11 +153,13 @@ namespace nk {
     NK_ASSERT(out);
     NK_ASSERT(style);
     NK_ASSERT(state);
-    if (!out || !style) return 0;
+    if (!out || !style)
+      return 0;
 
     scroll.w = NK_MAX(scroll.w, 1);
     scroll.h = NK_MAX(scroll.h, 0);
-    if (target <= scroll.h) return 0;
+    if (target <= scroll.h)
+      return 0;
 
     /* optional scrollbar buttons */
     if (style->show_buttons) {
@@ -166,19 +171,19 @@ namespace nk {
       button.w = scroll.w;
       button.h = scroll.w;
 
-      scroll_h = NK_MAX(scroll.h - 2 * button.h,0);
+      scroll_h = NK_MAX(scroll.h - 2 * button.h, 0);
       scroll_step = NK_MIN(step, button_pixel_inc);
 
       /* decrement button */
       button.y = scroll.y;
       if (do_button_symbol(&ws, out, button, style->dec_symbol,
-        btn_behavior::BUTTON_REPEATER, &style->dec_button, in, font))
+                           btn_behavior::BUTTON_REPEATER, &style->dec_button, in, font))
         offset = offset - scroll_step;
 
       /* increment button */
       button.y = scroll.y + scroll.h - button.h;
       if (do_button_symbol(&ws, out, button, style->inc_symbol,
-        btn_behavior::BUTTON_REPEATER, &style->inc_button, in, font))
+                           btn_behavior::BUTTON_REPEATER, &style->inc_button, in, font))
         offset = offset + scroll_step;
 
       scroll.y = scroll.y + button.h;
@@ -192,7 +197,7 @@ namespace nk {
     scroll_off = scroll_offset / target;
 
     /* calculate scrollbar cursor bounds */
-    cursor.h = NK_MAX((scroll_ratio * scroll.h) - (2*style->border + 2*style->padding.y), 0);
+    cursor.h = NK_MAX((scroll_ratio * scroll.h) - (2 * style->border + 2 * style->padding.y), 0);
     cursor.y = scroll.y + (scroll_off * scroll.h) + style->border + style->padding.y;
     cursor.w = scroll.w - (2 * style->border + 2 * style->padding.x);
     cursor.x = scroll.x + style->border + style->padding.x;
@@ -210,23 +215,24 @@ namespace nk {
 
     /* update scrollbar */
     scroll_offset = scrollbar_behavior(state, in, has_scrolling, &scroll, &cursor,
-        &empty_north, &empty_south, scroll_offset, target, scroll_step, orientation::VERTICAL);
+                                       &empty_north, &empty_south, scroll_offset, target, scroll_step, orientation::VERTICAL);
     scroll_off = scroll_offset / target;
     cursor.y = scroll.y + (scroll_off * scroll.h) + style->border_cursor + style->padding.y;
 
     /* draw scrollbar */
-    if (style->draw_begin) style->draw_begin(out, style->userdata);
+    if (style->draw_begin)
+      style->draw_begin(out, style->userdata);
     draw_scrollbar(out, *state, style, &scroll, &cursor);
-    if (style->draw_end) style->draw_end(out, style->userdata);
+    if (style->draw_end)
+      style->draw_end(out, style->userdata);
     return scroll_offset;
   }
   NK_LIB float
-  do_scrollbarh(flag *state,
-      struct command_buffer *out, rectf scroll, int has_scrolling,
-      float offset, float target, float step, float button_pixel_inc,
-      const struct style_scrollbar *style, struct input *in,
-      const struct user_font *font)
-  {
+  do_scrollbarh(flag* state,
+                struct command_buffer* out, rectf scroll, int has_scrolling,
+                float offset, float target, float step, float button_pixel_inc,
+                const struct style_scrollbar* style, struct input* in,
+                const struct user_font* font) {
     rectf cursor;
     rectf empty_west;
     rectf empty_east;
@@ -238,12 +244,14 @@ namespace nk {
 
     NK_ASSERT(out);
     NK_ASSERT(style);
-    if (!out || !style) return 0;
+    if (!out || !style)
+      return 0;
 
     /* scrollbar background */
     scroll.h = NK_MAX(scroll.h, 1);
     scroll.w = NK_MAX(scroll.w, 2 * scroll.h);
-    if (target <= scroll.w) return 0;
+    if (target <= scroll.w)
+      return 0;
 
     /* optional scrollbar buttons */
     if (style->show_buttons) {
@@ -260,13 +268,13 @@ namespace nk {
       /* decrement button */
       button.x = scroll.x;
       if (do_button_symbol(&ws, out, button, style->dec_symbol,
-        btn_behavior::BUTTON_REPEATER, &style->dec_button, in, font))
+                           btn_behavior::BUTTON_REPEATER, &style->dec_button, in, font))
         offset = offset - scroll_step;
 
       /* increment button */
       button.x = scroll.x + scroll.w - button.w;
       if (do_button_symbol(&ws, out, button, style->inc_symbol,
-        btn_behavior::BUTTON_REPEATER, &style->inc_button, in, font))
+                           btn_behavior::BUTTON_REPEATER, &style->inc_button, in, font))
         offset = offset + scroll_step;
 
       scroll.x = scroll.x + button.w;
@@ -280,7 +288,7 @@ namespace nk {
     scroll_off = scroll_offset / target;
 
     /* calculate cursor bounds */
-    cursor.w = (scroll_ratio * scroll.w) - (2*style->border + 2*style->padding.x);
+    cursor.w = (scroll_ratio * scroll.w) - (2 * style->border + 2 * style->padding.x);
     cursor.x = scroll.x + (scroll_off * scroll.w) + style->border + style->padding.x;
     cursor.h = scroll.h - (2 * style->border + 2 * style->padding.y);
     cursor.y = scroll.y + style->border + style->padding.y;
@@ -298,14 +306,16 @@ namespace nk {
 
     /* update scrollbar */
     scroll_offset = scrollbar_behavior(state, in, has_scrolling, &scroll, &cursor,
-        &empty_west, &empty_east, scroll_offset, target, scroll_step, orientation::HORIZONTAL);
+                                       &empty_west, &empty_east, scroll_offset, target, scroll_step, orientation::HORIZONTAL);
     scroll_off = scroll_offset / target;
     cursor.x = scroll.x + (scroll_off * scroll.w);
 
     /* draw scrollbar */
-    if (style->draw_begin) style->draw_begin(out, style->userdata);
+    if (style->draw_begin)
+      style->draw_begin(out, style->userdata);
     draw_scrollbar(out, *state, style, &scroll, &cursor);
-    if (style->draw_end) style->draw_end(out, style->userdata);
+    if (style->draw_end)
+      style->draw_end(out, style->userdata);
     return scroll_offset;
   }
-}
+} // namespace nk

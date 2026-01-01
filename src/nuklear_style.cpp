@@ -790,20 +790,20 @@ namespace nk {
     return 1;                                                                               \
   }
 
-#define NK_STYLE_POP_IMPLEMENATION(type, stack)          \
-  style_pop_##type(struct context* ctx) {                \
-    struct config_stack_##type* type_stack;              \
-    struct config_stack_##type##_element* element;       \
-    NK_ASSERT(ctx);                                      \
-    if (!ctx)                                            \
-      return 0;                                          \
-    type_stack = &ctx->stacks.stack;                     \
-    NK_ASSERT(type_stack->head > 0);                     \
-    if (type_stack->head < 1)                            \
-      return 0;                                          \
+#define NK_STYLE_POP_IMPLEMENATION(type, stack)                                    \
+  style_pop_##type(struct context* ctx) {                                          \
+    struct config_stack_##type* type_stack;                                        \
+    struct config_stack_##type##_element* element;                                 \
+    NK_ASSERT(ctx);                                                                \
+    if (!ctx)                                                                      \
+      return 0;                                                                    \
+    type_stack = &ctx->stacks.stack;                                               \
+    NK_ASSERT(type_stack->head > 0);                                               \
+    if (type_stack->head < 1)                                                      \
+      return 0;                                                                    \
     element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)]; \
-    *element->address = element->old_value;              \
-    return 1;                                            \
+    *element->address = element->old_value;                                        \
+    return 1;                                                                      \
   }
 
   NK_API bool style_push_style_item(context* ctx, style_item* address, style_item value) {
@@ -856,7 +856,7 @@ namespace nk {
     *address = value;
     return 1;
   }
-  
+
   NK_API bool style_push_flags(context* ctx, flag* address, flag value) {
     struct config_stack_flags* type_stack;
     struct config_stack_flags_element* element;
@@ -873,7 +873,7 @@ namespace nk {
     *address = value;
     return 1;
   }
-  
+
   NK_API bool style_push_color(context* ctx, color* address, color value) {
     struct config_stack_color* type_stack;
     struct config_stack_color_element* element;
@@ -901,7 +901,7 @@ namespace nk {
     style = &ctx->style;
     style->cursors[static_cast<std::size_t>(cur)] = c;
   }
-  
+
   NK_API void
   style_load_all_cursors(context* ctx, const cursor* cursors) {
     int i = 0;
@@ -914,7 +914,7 @@ namespace nk {
       style->cursors[i] = &cursors[i];
     style->cursor_visible = true;
   }
-  
+
   NK_API bool
   style_set_cursor(context* ctx, style_cursor c) {
     style* style;
@@ -928,12 +928,12 @@ namespace nk {
     }
     return 0;
   }
-  
+
   NK_API void
   style_show_cursor(context* ctx) {
     ctx->style.cursor_visible = true;
   }
-  
+
   NK_API void
   style_hide_cursor(context* ctx) {
     ctx->style.cursor_visible = false;
@@ -953,7 +953,7 @@ namespace nk {
     *element->address = element->old_value;
     return 1;
   }
-  
+
   NK_API bool style_pop_vec2(context* ctx) {
     config_stack_vec2* type_stack;
     config_stack_vec2_element* element;
@@ -968,7 +968,7 @@ namespace nk {
     *element->address = element->old_value;
     return 1;
   }
-  
+
   NK_API bool style_pop_style_item(context* ctx) {
     config_stack_style_item* type_stack;
     struct config_stack_style_item_element* element;
@@ -983,7 +983,7 @@ namespace nk {
     *element->address = element->old_value;
     return 1;
   }
-  
+
   NK_API bool style_pop_flags(context* ctx) {
     config_stack_flags* type_stack;
     config_stack_flags_element* element;
@@ -998,7 +998,7 @@ namespace nk {
     *element->address = element->old_value;
     return 1;
   }
-  
+
   NK_API bool style_pop_color(context* ctx) {
     config_stack_color* type_stack;
     config_stack_color_element* element;

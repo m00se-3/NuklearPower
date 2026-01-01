@@ -8,12 +8,11 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  popup_begin(struct context *ctx, enum popup_type type,
-      const char *title, flag flags, rectf rect)
-  {
-    struct window *popup;
-    struct window *win;
-    struct panel *panel;
+  popup_begin(struct context* ctx, enum popup_type type,
+              const char* title, flag flags, rectf rect) {
+    struct window* popup;
+    struct window* win;
+    struct panel* panel;
 
     int title_len;
     hash title_hash;
@@ -28,14 +27,14 @@ namespace nk {
 
     win = ctx->current;
     panel = win->layout;
-    NK_ASSERT(!((int)panel->type & static_cast<int>(panel_set::PANEL_SET_POPUP)) && "popups are not allowed to have popups");
-    (void)panel;
-    title_len = (int)strlen(title);
-    title_hash = murmur_hash(title, (int)title_len, static_cast<hash>(panel_type::PANEL_POPUP));
+    NK_ASSERT(!((int) panel->type & static_cast<int>(panel_set::PANEL_SET_POPUP)) && "popups are not allowed to have popups");
+    (void) panel;
+    title_len = (int) strlen(title);
+    title_hash = murmur_hash(title, (int) title_len, static_cast<hash>(panel_type::PANEL_POPUP));
 
     popup = win->popup.win;
     if (!popup) {
-      popup = (struct window*)create_window(ctx);
+      popup = (struct window*) create_window(ctx);
       popup->parent = win;
       win->popup.win = popup;
       win->popup.active = 0;
@@ -49,7 +48,8 @@ namespace nk {
         win->popup.name = title_hash;
         win->popup.active = 1;
         win->popup.type = panel_type::PANEL_POPUP;
-      } else return 0;
+      } else
+        return 0;
     }
 
     /* popup position is local to window */
@@ -61,7 +61,7 @@ namespace nk {
     popup->parent = win;
     popup->bounds = rect;
     popup->seq = ctx->seq;
-    popup->layout = (struct panel*)create_panel(ctx);
+    popup->layout = (struct panel*) create_panel(ctx);
     popup->flags = flags;
     popup->flags |= panel_flags::WINDOW_BORDER;
     if (type == popup_type::POPUP_DYNAMIC)
@@ -74,7 +74,7 @@ namespace nk {
 
     if (panel_begin(ctx, title, panel_type::PANEL_POPUP)) {
       /* popup is running therefore invalidate parent panels */
-      struct panel *root;
+      struct panel* root;
       root = win->layout;
       while (root) {
         root->flags |= window_flags::WINDOW_ROM;
@@ -88,7 +88,7 @@ namespace nk {
       return 1;
     } else {
       /* popup was closed/is invalid so cleanup */
-      struct panel *root;
+      struct panel* root;
       root = win->layout;
       while (root) {
         root->flags |= window_flags::WINDOW_REMOVE_ROM;
@@ -104,13 +104,12 @@ namespace nk {
     }
   }
   NK_LIB bool
-  nonblock_begin(struct context *ctx,
-      flag flags, rectf body, rectf header,
-      panel_type::value_type panel_type)
-  {
-    struct window *popup;
-    struct window *win;
-    struct panel *panel;
+  nonblock_begin(struct context* ctx,
+                 flag flags, rectf body, rectf header,
+                 panel_type::value_type panel_type) {
+    struct window* popup;
+    struct window* win;
+    struct panel* panel;
     int is_active = true;
 
     NK_ASSERT(ctx);
@@ -122,12 +121,12 @@ namespace nk {
     /* popups cannot have popups */
     win = ctx->current;
     panel = win->layout;
-    NK_ASSERT(!((int)panel->type & static_cast<int>(panel_set::PANEL_SET_POPUP)));
-    (void)panel;
+    NK_ASSERT(!((int) panel->type & static_cast<int>(panel_set::PANEL_SET_POPUP)));
+    (void) panel;
     popup = win->popup.win;
     if (!popup) {
       /* create window for nonblocking popup */
-      popup = (struct window*)create_window(ctx);
+      popup = (struct window*) create_window(ctx);
       popup->parent = win;
       win->popup.win = popup;
       win->popup.type = panel_type;
@@ -149,7 +148,7 @@ namespace nk {
 
     if (!is_active) {
       /* remove read only mode from all parent panels */
-      struct panel *root = win->layout;
+      struct panel* root = win->layout;
       while (root) {
         root->flags |= window_flags::WINDOW_REMOVE_ROM;
         root = root->parent;
@@ -158,7 +157,7 @@ namespace nk {
     }
     popup->bounds = body;
     popup->parent = win;
-    popup->layout = (struct panel*)create_panel(ctx);
+    popup->layout = (struct panel*) create_panel(ctx);
     popup->flags = flags;
     popup->flags |= panel_flags::WINDOW_BORDER;
     popup->flags |= window_flags::WINDOW_DYNAMIC;
@@ -178,31 +177,32 @@ namespace nk {
     popup->layout->offset_y = &popup->scrollbar.y;
 
     /* set read only mode to all parent panels */
-    {struct panel *root;
+    {
+      struct panel* root;
       root = win->layout;
       while (root) {
         root->flags |= window_flags::WINDOW_ROM;
         root = root->parent;
-      }}
+      }
+    }
     return is_active;
   }
   NK_API void
-  popup_close(struct context *ctx)
-  {
-    struct window *popup;
+  popup_close(struct context* ctx) {
+    struct window* popup;
     NK_ASSERT(ctx);
-    if (!ctx || !ctx->current) return;
+    if (!ctx || !ctx->current)
+      return;
 
     popup = ctx->current;
     NK_ASSERT(popup->parent);
-    NK_ASSERT((int)popup->layout->type & static_cast<int>(panel_set::PANEL_SET_POPUP));
+    NK_ASSERT((int) popup->layout->type & static_cast<int>(panel_set::PANEL_SET_POPUP));
     popup->flags |= window_flags::WINDOW_HIDDEN;
   }
   NK_API void
-  popup_end(struct context *ctx)
-  {
-    struct window *win;
-    struct window *popup;
+  popup_end(struct context* ctx) {
+    struct window* win;
+    struct window* popup;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -211,10 +211,11 @@ namespace nk {
       return;
 
     popup = ctx->current;
-    if (!popup->parent) return;
+    if (!popup->parent)
+      return;
     win = popup->parent;
     if (popup->flags & window_flags::WINDOW_HIDDEN) {
-      struct panel *root;
+      struct panel* root;
       root = win->layout;
       while (root) {
         root->flags |= window_flags::WINDOW_REMOVE_ROM;
@@ -231,9 +232,8 @@ namespace nk {
     push_scissor(&win->buffer, win->layout->clip);
   }
   NK_API void
-  popup_get_scroll(const struct context *ctx, unsigned int *offset_x, unsigned int *offset_y)
-  {
-    struct window *popup;
+  popup_get_scroll(const struct context* ctx, unsigned int* offset_x, unsigned int* offset_y) {
+    struct window* popup;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -248,9 +248,8 @@ namespace nk {
       *offset_y = popup->scrollbar.y;
   }
   NK_API void
-  popup_set_scroll(struct context *ctx, unsigned int offset_x, unsigned int offset_y)
-  {
-    struct window *popup;
+  popup_set_scroll(struct context* ctx, unsigned int offset_x, unsigned int offset_y) {
+    struct window* popup;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -262,4 +261,4 @@ namespace nk {
     popup->scrollbar.x = offset_x;
     popup->scrollbar.y = offset_y;
   }
-}
+} // namespace nk

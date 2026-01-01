@@ -1,7 +1,9 @@
 # Nuklear
+
 ![](https://cloud.githubusercontent.com/assets/8057201/11761525/ae06f0ca-a0c6-11e5-819d-5610b25f6ef4.gif)
 
 ## Contents
+
 1. About section
 2. Highlights section
 3. Features section
@@ -25,6 +27,7 @@
 10. Credits section
 
 ## About
+
 This is a minimal state immediate mode graphical user interface toolkit
 written in ANSI C and licensed under public domain. It was designed as a simple
 embeddable user interface for application and does not have any dependencies,
@@ -35,6 +38,7 @@ layered library that tries to abstract over a number of platform and
 render backends it only focuses on the actual UI.
 
 ## Highlights
+
 - Graphical user interface toolkit
 - Single header library
 - Written in C89 (a.k.a. ANSI C or ISO C90)
@@ -50,6 +54,7 @@ render backends it only focuses on the actual UI.
 - [Code available on github](https://github.com/Immediate-Mode-UI/Nuklear/)
 
 ## Features
+
 - Absolutely no platform dependent code
 - Memory management control ranging from/to
     - Ease of use by allocating everything from standard library
@@ -71,12 +76,13 @@ render backends it only focuses on the actual UI.
 - Can be easily modified to only update on user input instead of frame updates
 
 ## Usage
+
 This library is self contained in one single header file and can be used either
 in header only mode or in implementation mode. The header only mode is used
 by default when included and allows including this header in other headers
 and does not contain the actual implementation. <br /><br />
 
-The implementation mode requires to define  the preprocessor macro
+The implementation mode requires to define the preprocessor macro
 NK_IMPLEMENTATION in *one* .c/.cpp file before #including this file, e.g.:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~C
@@ -89,90 +95,94 @@ below in header and implementation mode if you want to use additional functional
 or need more control over the library.
 
 !!! WARNING
-    Every time nuklear is included define the same compiler flags. This very important not doing so could lead to compiler errors or even worse stack corruptions.
+Every time nuklear is included define the same compiler flags. This very important not doing so could lead to compiler
+errors or even worse stack corruptions.
 
 ### Flags
-Flag                            | Description
---------------------------------|------------------------------------------
-NK_PRIVATE                      | If defined declares all functions as static, so they can only be accessed inside the file that contains the implementation
-NK_INCLUDE_FIXED_TYPES          | If defined it will include header `<stdint.h>` for fixed sized types otherwise nuklear tries to select the correct type. If that fails it will throw a compiler error and you have to select the correct types yourself.
-NK_INCLUDE_DEFAULT_ALLOCATOR    | If defined it will include header `<stdlib.h>` and provide additional functions to use this library without caring for memory allocation control and therefore ease memory management.
-NK_INCLUDE_STANDARD_IO          | If defined it will include header `<stdio.h>` and provide additional functions depending on file loading.
-NK_INCLUDE_STANDARD_VARARGS     | If defined it will include header <stdarg.h> and provide additional functions depending on file loading.
-NK_INCLUDE_STANDARD_BOOL        | If defined it will include header `<stdbool.h>` for bool otherwise nuklear defines bool as int.
-NK_INCLUDE_VERTEX_BUFFER_OUTPUT | Defining this adds a vertex draw command list backend to this library, which allows you to convert queue commands into vertex draw commands. This is mainly if you need a hardware accessible format for OpenGL, DirectX, Vulkan, Metal,...
-NK_INCLUDE_FONT_BAKING          | Defining this adds `stb_truetype` and `stb_rect_pack` implementation to this library and provides font baking and rendering. If you already have font handling or do not want to use this font handler you don't have to define it.
-NK_INCLUDE_DEFAULT_FONT         | Defining this adds the default font: ProggyClean.ttf into this library which can be loaded into a font atlas and allows using this library without having a truetype font
-NK_INCLUDE_COMMAND_USERDATA     | Defining this adds a userdata pointer into each command. Can be useful for example if you want to provide custom shaders depending on the used widget. Can be combined with the style structures.
-NK_BUTTON_TRIGGER_ON_RELEASE    | Different platforms require button clicks occurring either on buttons being pressed (up to down) or released (down to up). By default this library will react on buttons being pressed, but if you define this it will only trigger if a button is released.
-NK_ZERO_COMMAND_MEMORY          | Defining this will zero out memory for each drawing command added to a drawing queue (inside nk_command_buffer_push). Zeroing command memory is very useful for fast checking (using memcmp) if command buffers are equal and avoid drawing frames when nothing on screen has changed since previous frame.
-unsigned int_DRAW_INDEX              | Defining this will set the size of vertex index elements when using NK_VERTEX_BUFFER_OUTPUT to 32bit instead of the default of 16bit
-NK_KEYSTATE_BASED_INPUT         | Define this if your backend uses key state for each frame rather than key press/release events
-NK_IS_WORD_BOUNDARY(c)          | Define this to a function macro that takes a single nk_rune (unsigned int) and returns true if it's a word separator. If not defined, uses the default definition (see nk_is_word_boundary())
+
+ Flag                            | Description                                                                                                                                                                                                                                                                                                 
+---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ NK_PRIVATE                      | If defined declares all functions as static, so they can only be accessed inside the file that contains the implementation                                                                                                                                                                                  
+ NK_INCLUDE_FIXED_TYPES          | If defined it will include header `<stdint.h>` for fixed sized types otherwise nuklear tries to select the correct type. If that fails it will throw a compiler error and you have to select the correct types yourself.                                                                                    
+ NK_INCLUDE_DEFAULT_ALLOCATOR    | If defined it will include header `<stdlib.h>` and provide additional functions to use this library without caring for memory allocation control and therefore ease memory management.                                                                                                                      
+ NK_INCLUDE_STANDARD_IO          | If defined it will include header `<stdio.h>` and provide additional functions depending on file loading.                                                                                                                                                                                                   
+ NK_INCLUDE_STANDARD_VARARGS     | If defined it will include header <stdarg.h> and provide additional functions depending on file loading.                                                                                                                                                                                                    
+ NK_INCLUDE_STANDARD_BOOL        | If defined it will include header `<stdbool.h>` for bool otherwise nuklear defines bool as int.                                                                                                                                                                                                             
+ NK_INCLUDE_VERTEX_BUFFER_OUTPUT | Defining this adds a vertex draw command list backend to this library, which allows you to convert queue commands into vertex draw commands. This is mainly if you need a hardware accessible format for OpenGL, DirectX, Vulkan, Metal,...                                                                 
+ NK_INCLUDE_FONT_BAKING          | Defining this adds `stb_truetype` and `stb_rect_pack` implementation to this library and provides font baking and rendering. If you already have font handling or do not want to use this font handler you don't have to define it.                                                                         
+ NK_INCLUDE_DEFAULT_FONT         | Defining this adds the default font: ProggyClean.ttf into this library which can be loaded into a font atlas and allows using this library without having a truetype font                                                                                                                                   
+ NK_INCLUDE_COMMAND_USERDATA     | Defining this adds a userdata pointer into each command. Can be useful for example if you want to provide custom shaders depending on the used widget. Can be combined with the style structures.                                                                                                           
+ NK_BUTTON_TRIGGER_ON_RELEASE    | Different platforms require button clicks occurring either on buttons being pressed (up to down) or released (down to up). By default this library will react on buttons being pressed, but if you define this it will only trigger if a button is released.                                                
+ NK_ZERO_COMMAND_MEMORY          | Defining this will zero out memory for each drawing command added to a drawing queue (inside nk_command_buffer_push). Zeroing command memory is very useful for fast checking (using memcmp) if command buffers are equal and avoid drawing frames when nothing on screen has changed since previous frame. 
+ unsigned int_DRAW_INDEX         | Defining this will set the size of vertex index elements when using NK_VERTEX_BUFFER_OUTPUT to 32bit instead of the default of 16bit                                                                                                                                                                        
+ NK_KEYSTATE_BASED_INPUT         | Define this if your backend uses key state for each frame rather than key press/release events                                                                                                                                                                                                              
+ NK_IS_WORD_BOUNDARY(c)          | Define this to a function macro that takes a single nk_rune (unsigned int) and returns true if it's a word separator. If not defined, uses the default definition (see nk_is_word_boundary())                                                                                                               
 
 !!! WARNING
-    The following flags will pull in the standard C library:
-    - NK_INCLUDE_DEFAULT_ALLOCATOR
-    - NK_INCLUDE_STANDARD_IO
-    - NK_INCLUDE_STANDARD_VARARGS
+The following flags will pull in the standard C library:
+- NK_INCLUDE_DEFAULT_ALLOCATOR
+- NK_INCLUDE_STANDARD_IO
+- NK_INCLUDE_STANDARD_VARARGS
 
 !!! WARNING
-    The following flags if defined need to be defined for both header and implementation:
-    - NK_INCLUDE_FIXED_TYPES
-    - NK_INCLUDE_DEFAULT_ALLOCATOR
-    - NK_INCLUDE_STANDARD_VARARGS
-    - NK_INCLUDE_STANDARD_BOOL
-    - NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-    - NK_INCLUDE_FONT_BAKING
-    - NK_INCLUDE_DEFAULT_FONT
-    - NK_INCLUDE_STANDARD_VARARGS
-    - NK_INCLUDE_COMMAND_USERDATA
-    - unsigned int_DRAW_INDEX
+The following flags if defined need to be defined for both header and implementation:
+- NK_INCLUDE_FIXED_TYPES
+- NK_INCLUDE_DEFAULT_ALLOCATOR
+- NK_INCLUDE_STANDARD_VARARGS
+- NK_INCLUDE_STANDARD_BOOL
+- NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+- NK_INCLUDE_FONT_BAKING
+- NK_INCLUDE_DEFAULT_FONT
+- NK_INCLUDE_STANDARD_VARARGS
+- NK_INCLUDE_COMMAND_USERDATA
+- unsigned int_DRAW_INDEX
 
 ### Constants
-Define                          | Description
---------------------------------|---------------------------------------
-NK_BUFFER_DEFAULT_INITIAL_SIZE  | Initial buffer size allocated by all buffers while using the default allocator functions included by defining NK_INCLUDE_DEFAULT_ALLOCATOR. If you don't want to allocate the default 4k memory then redefine it.
-NK_MAX_NUMBER_BUFFER            | Maximum buffer size for the conversion buffer between float and string Under normal circumstances this should be more than sufficient.
-NK_INPUT_MAX                    | Defines the max number of bytes which can be added as text input in one frame. Under normal circumstances this should be more than sufficient.
+
+ Define                         | Description                                                                                                                                                                                                       
+--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ NK_BUFFER_DEFAULT_INITIAL_SIZE | Initial buffer size allocated by all buffers while using the default allocator functions included by defining NK_INCLUDE_DEFAULT_ALLOCATOR. If you don't want to allocate the default 4k memory then redefine it. 
+ NK_MAX_NUMBER_BUFFER           | Maximum buffer size for the conversion buffer between float and string Under normal circumstances this should be more than sufficient.                                                                            
+ NK_INPUT_MAX                   | Defines the max number of bytes which can be added as text input in one frame. Under normal circumstances this should be more than sufficient.                                                                    
 
 !!! WARNING
-    The following constants if defined need to be defined for both header and implementation:
-    - NK_MAX_NUMBER_BUFFER
-    - NK_BUFFER_DEFAULT_INITIAL_SIZE
-    - NK_INPUT_MAX
+The following constants if defined need to be defined for both header and implementation:
+- NK_MAX_NUMBER_BUFFER
+- NK_BUFFER_DEFAULT_INITIAL_SIZE
+- NK_INPUT_MAX
 
 ### Dependencies
-Function    | Description
-------------|---------------------------------------------------------------
-NK_ASSERT   | If you don't define this, nuklear will use <assert.h> with assert().
-NK_MEMSET   | You can define this to 'memset' or your own memset implementation replacement. If not nuklear will use its own version.
-NK_MEMCPY   | You can define this to 'memcpy' or your own memcpy implementation replacement. If not nuklear will use its own version.
-NK_INV_SQRT | You can define this to your own inverse sqrt implementation replacement. If not nuklear will use its own slow and not highly accurate version.
-NK_SIN      | You can define this to 'sinf' or your own sine implementation replacement. If not nuklear will use its own approximation implementation.
-NK_COS      | You can define this to 'cosf' or your own cosine implementation replacement. If not nuklear will use its own approximation implementation.
-NK_STRTOD   | You can define this to `strtod` or your own string to double conversion implementation replacement. If not defined nuklear will use its own imprecise and possibly unsafe version (does not handle nan or infinity!).
-NK_DTOA     | You can define this to `dtoa` or your own double to string conversion implementation replacement. If not defined nuklear will use its own imprecise and possibly unsafe version (does not handle nan or infinity!).
-NK_VSNPRINTF| If you define `NK_INCLUDE_STANDARD_VARARGS` as well as `NK_INCLUDE_STANDARD_IO` and want to be safe define this to `vsnprintf` on compilers supporting later versions of C or C++. By default nuklear will check for your stdlib version in C as well as compiler version in C++. if `vsnprintf` is available it will define it to `vsnprintf` directly. If not defined and if you have older versions of C or C++ it will be defined to `vsprintf` which is unsafe.
+
+ Function     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ NK_ASSERT    | If you don't define this, nuklear will use <assert.h> with assert().                                                                                                                                                                                                                                                                                                                                                                                                 
+ NK_MEMSET    | You can define this to 'memset' or your own memset implementation replacement. If not nuklear will use its own version.                                                                                                                                                                                                                                                                                                                                              
+ NK_MEMCPY    | You can define this to 'memcpy' or your own memcpy implementation replacement. If not nuklear will use its own version.                                                                                                                                                                                                                                                                                                                                              
+ NK_INV_SQRT  | You can define this to your own inverse sqrt implementation replacement. If not nuklear will use its own slow and not highly accurate version.                                                                                                                                                                                                                                                                                                                       
+ NK_SIN       | You can define this to 'sinf' or your own sine implementation replacement. If not nuklear will use its own approximation implementation.                                                                                                                                                                                                                                                                                                                             
+ NK_COS       | You can define this to 'cosf' or your own cosine implementation replacement. If not nuklear will use its own approximation implementation.                                                                                                                                                                                                                                                                                                                           
+ NK_STRTOD    | You can define this to `strtod` or your own string to double conversion implementation replacement. If not defined nuklear will use its own imprecise and possibly unsafe version (does not handle nan or infinity!).                                                                                                                                                                                                                                                
+ NK_DTOA      | You can define this to `dtoa` or your own double to string conversion implementation replacement. If not defined nuklear will use its own imprecise and possibly unsafe version (does not handle nan or infinity!).                                                                                                                                                                                                                                                  
+ NK_VSNPRINTF | If you define `NK_INCLUDE_STANDARD_VARARGS` as well as `NK_INCLUDE_STANDARD_IO` and want to be safe define this to `vsnprintf` on compilers supporting later versions of C or C++. By default nuklear will check for your stdlib version in C as well as compiler version in C++. if `vsnprintf` is available it will define it to `vsnprintf` directly. If not defined and if you have older versions of C or C++ it will be defined to `vsprintf` which is unsafe. 
 
 !!! WARNING
-    The following dependencies will pull in the standard C library if not redefined:
-    - NK_ASSERT
+The following dependencies will pull in the standard C library if not redefined:
+- NK_ASSERT
 
 !!! WARNING
-    The following dependencies if defined need to be defined for both header and implementation:
-    - NK_ASSERT
+The following dependencies if defined need to be defined for both header and implementation:
+- NK_ASSERT
 
 !!! WARNING
-    The following dependencies if defined need to be defined only for the implementation part:
-    - NK_MEMSET
-    - NK_MEMCPY
-    - NK_SQRT
-    - NK_SIN
-    - NK_COS
-    - NK_STRTOD
-    - NK_DTOA
-    - NK_VSNPRINTF
+The following dependencies if defined need to be defined only for the implementation part:
+- NK_MEMSET
+- NK_MEMCPY
+- NK_SQRT
+- NK_SIN
+- NK_COS
+- NK_STRTOD
+- NK_DTOA
+- NK_VSNPRINTF
 
 ## Example
 

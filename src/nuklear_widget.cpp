@@ -8,43 +8,39 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API rectf
-  widget_bounds(const struct context *ctx)
-  {
+  widget_bounds(const struct context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
-      return rect(0,0,0,0);
+      return rect(0, 0, 0, 0);
     layout_peek(&bounds, ctx);
     return bounds;
   }
   NK_API vec2f
-  widget_position(const struct context *ctx)
-  {
+  widget_position(const struct context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
-      return vec2_from_floats(0.0f,0.0f);
+      return vec2_from_floats(0.0f, 0.0f);
 
     layout_peek(&bounds, ctx);
     return vec2_from_floats(bounds.x, bounds.y);
   }
   NK_API vec2f
-  widget_size(const struct context *ctx)
-  {
+  widget_size(const struct context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
-      return vec2_from_floats(0.0f,0.0f);
+      return vec2_from_floats(0.0f, 0.0f);
 
     layout_peek(&bounds, ctx);
     return vec2_from_floats(bounds.w, bounds.h);
   }
   NK_API float
-  widget_width(const struct context *ctx)
-  {
+  widget_width(const struct context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -55,8 +51,7 @@ namespace nk {
     return bounds.w;
   }
   NK_API float
-  widget_height(const struct context *ctx)
-  {
+  widget_height(const struct context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -67,8 +62,7 @@ namespace nk {
     return bounds.h;
   }
   NK_API bool
-  widget_is_hovered(const struct context *ctx)
-  {
+  widget_is_hovered(const struct context* ctx) {
     rectf c, v;
     rectf bounds;
     NK_ASSERT(ctx);
@@ -77,10 +71,10 @@ namespace nk {
       return 0;
 
     c = ctx->current->layout->clip;
-    c.x = (float)((int)c.x);
-    c.y = (float)((int)c.y);
-    c.w = (float)((int)c.w);
-    c.h = (float)((int)c.h);
+    c.x = (float) ((int) c.x);
+    c.y = (float) ((int) c.y);
+    c.w = (float) ((int) c.w);
+    c.h = (float) ((int) c.h);
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
@@ -89,8 +83,7 @@ namespace nk {
     return input_is_mouse_hovering_rect(&ctx->input, bounds);
   }
   NK_API bool
-  widget_is_mouse_clicked(const struct context *ctx, enum buttons btn)
-  {
+  widget_is_mouse_clicked(const struct context* ctx, enum buttons btn) {
     rectf c, v;
     rectf bounds;
     NK_ASSERT(ctx);
@@ -99,10 +92,10 @@ namespace nk {
       return 0;
 
     c = ctx->current->layout->clip;
-    c.x = (float)((int)c.x);
-    c.y = (float)((int)c.y);
-    c.w = (float)((int)c.w);
-    c.h = (float)((int)c.h);
+    c.x = (float) ((int) c.x);
+    c.y = (float) ((int) c.y);
+    c.w = (float) ((int) c.w);
+    c.h = (float) ((int) c.h);
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
@@ -111,8 +104,7 @@ namespace nk {
     return input_mouse_clicked(&ctx->input, btn, bounds);
   }
   NK_API bool
-  widget_has_mouse_click_down(const struct context *ctx, enum buttons btn, bool down)
-  {
+  widget_has_mouse_click_down(const struct context* ctx, enum buttons btn, bool down) {
     rectf c, v;
     rectf bounds;
     NK_ASSERT(ctx);
@@ -121,10 +113,10 @@ namespace nk {
       return 0;
 
     c = ctx->current->layout->clip;
-    c.x = (float)((int)c.x);
-    c.y = (float)((int)c.y);
-    c.w = (float)((int)c.w);
-    c.h = (float)((int)c.h);
+    c.x = (float) ((int) c.x);
+    c.y = (float) ((int) c.y);
+    c.w = (float) ((int) c.w);
+    c.h = (float) ((int) c.h);
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
@@ -133,12 +125,11 @@ namespace nk {
     return input_has_mouse_click_down_in_rect(&ctx->input, btn, bounds, down);
   }
   NK_API enum widget_layout_states
-  widget(rectf *bounds, const struct context *ctx)
-  {
+  widget(rectf* bounds, const struct context* ctx) {
     rectf c, v;
-    struct window *win;
-    struct panel *layout;
-    const struct input *in;
+    struct window* win;
+    struct panel* layout;
+    const struct input* in;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -163,15 +154,15 @@ namespace nk {
     NK_ASSERT(!(layout->flags & window_flags::WINDOW_CLOSED));
 
     /* need to convert to int here to remove floating point errors */
-    bounds->x = (float)((int)bounds->x);
-    bounds->y = (float)((int)bounds->y);
-    bounds->w = (float)((int)bounds->w);
-    bounds->h = (float)((int)bounds->h);
+    bounds->x = (float) ((int) bounds->x);
+    bounds->y = (float) ((int) bounds->y);
+    bounds->w = (float) ((int) bounds->w);
+    bounds->h = (float) ((int) bounds->h);
 
-    c.x = (float)((int)c.x);
-    c.y = (float)((int)c.y);
-    c.w = (float)((int)c.w);
-    c.h = (float)((int)c.h);
+    c.x = (float) ((int) c.x);
+    c.y = (float) ((int) c.y);
+    c.w = (float) ((int) c.w);
+    c.h = (float) ((int) c.h);
 
     unify(&v, &c, bounds->x, bounds->y, bounds->x + bounds->w, bounds->y + bounds->h);
     if (!intERSECT(c.x, c.y, c.w, c.h, bounds->x, bounds->y, bounds->w, bounds->h))
@@ -183,9 +174,8 @@ namespace nk {
     return NK_WIDGET_VALID;
   }
   NK_API enum widget_layout_states
-  widget_fitting(rectf *bounds, const struct context *ctx,
-      vec2f item_padding)
-  {
+  widget_fitting(rectf* bounds, const struct context* ctx,
+                 vec2f item_padding) {
     /* update the bounds to stand without padding  */
     enum widget_layout_states state;
     NK_UNUSED(item_padding);
@@ -200,10 +190,9 @@ namespace nk {
     return state;
   }
   NK_API void
-  spacing(struct context *ctx, int cols)
-  {
-    struct window *win;
-    struct panel *layout;
+  spacing(struct context* ctx, int cols) {
+    struct window* win;
+    struct panel* layout;
     rectf none;
     int i, index, rows;
 
@@ -228,11 +217,11 @@ namespace nk {
         layout->row.type != panel_row_layout_type::LAYOUT_STATIC_FIXED) {
       for (i = 0; i < cols; ++i)
         panel_alloc_space(&none, ctx);
-        } layout->row.index = index;
+    }
+    layout->row.index = index;
   }
   NK_API void
-  widget_disable_begin(struct context* ctx)
-  {
+  widget_disable_begin(struct context* ctx) {
     struct window* win;
     struct style* style;
 
@@ -294,8 +283,7 @@ namespace nk {
     style->text.color_factor = style->text.disabled_factor;
   }
   NK_API void
-  widget_disable_end(struct context* ctx)
-  {
+  widget_disable_end(struct context* ctx) {
     struct window* win;
     struct style* style;
 
@@ -356,4 +344,4 @@ namespace nk {
     style->tab.tab_minimize_button.color_factor_background = 1.0f;
     style->text.color_factor = 1.0f;
   }
-}
+} // namespace nk

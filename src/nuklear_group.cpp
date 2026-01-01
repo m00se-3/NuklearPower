@@ -9,23 +9,24 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  group_scrolled_offset_begin(struct context *ctx,
-      unsigned int *x_offset, unsigned int *y_offset, const char *title, flag flags)
-  {
+  group_scrolled_offset_begin(struct context* ctx,
+                              unsigned int* x_offset, unsigned int* y_offset, const char* title, flag flags) {
     struct rectf bounds;
     struct window panel;
-    struct window *win;
+    struct window* win;
 
     win = ctx->current;
     panel_alloc_space(&bounds, ctx);
-    {const struct rectf *c = &win->layout->clip;
+    {
+      const struct rectf* c = &win->layout->clip;
       if (!intERSECT(c->x, c->y, c->w, c->h, bounds.x, bounds.y, bounds.w, bounds.h) &&
           !(flags & panel_flags::WINDOW_MOVABLE)) {
         return false;
-          }}
+      }
+    }
     if ((win->flags & window_flags::WINDOW_ROM) != 0u) {
       flags |= window_flags::WINDOW_ROM;
-}
+    }
 
     /* initialize a fake window to create the panel from */
     zero(&panel, sizeof(panel));
@@ -34,9 +35,9 @@ namespace nk {
     panel.scrollbar.x = *x_offset;
     panel.scrollbar.y = *y_offset;
     panel.buffer = win->buffer;
-    panel.layout = (struct panel*)create_panel(ctx);
+    panel.layout = (struct panel*) create_panel(ctx);
     ctx->current = &panel;
-    panel_begin(ctx, (flags & panel_flags::WINDOW_TITLE) ? title: 0, panel_type::PANEL_GROUP);
+    panel_begin(ctx, (flags & panel_flags::WINDOW_TITLE) ? title : 0, panel_type::PANEL_GROUP);
 
     win->buffer = panel.buffer;
     win->buffer.clip = panel.layout->clip;
@@ -47,8 +48,7 @@ namespace nk {
 
     ctx->current = win;
     if (((panel.layout->flags & window_flags::WINDOW_CLOSED) != 0u) ||
-        ((panel.layout->flags & window_flags::WINDOW_MINIMIZED) != 0u))
-    {
+        ((panel.layout->flags & window_flags::WINDOW_MINIMIZED) != 0u)) {
       flag f = panel.layout->flags;
       group_scrolled_end(ctx);
       if ((f & window_flags::WINDOW_CLOSED) != 0u) {
@@ -61,11 +61,10 @@ namespace nk {
     return 1;
   }
   NK_API void
-  group_scrolled_end(struct context *ctx)
-  {
-    struct window *win;
-    struct panel *parent;
-    struct panel *g;
+  group_scrolled_end(struct context* ctx) {
+    struct window* win;
+    struct panel* parent;
+    struct panel* g;
 
     struct rectf clip;
     struct window pan;
@@ -94,8 +93,8 @@ namespace nk {
     if (g->flags & panel_flags::WINDOW_BORDER) {
       pan.bounds.x -= g->border;
       pan.bounds.y -= g->border;
-      pan.bounds.w += 2*g->border;
-      pan.bounds.h += 2*g->border;
+      pan.bounds.w += 2 * g->border;
+      pan.bounds.h += 2 * g->border;
     }
     if (!(g->flags & panel_flags::WINDOW_NO_SCROLLBAR)) {
       pan.bounds.w += ctx->style.window.scrollbar_size.x;
@@ -111,7 +110,7 @@ namespace nk {
 
     /* make sure group has correct clipping rectangle */
     unify(&clip, &parent->clip, pan.bounds.x, pan.bounds.y,
-        pan.bounds.x + pan.bounds.w, pan.bounds.y + pan.bounds.h + panel_padding.x);
+          pan.bounds.x + pan.bounds.w, pan.bounds.y + pan.bounds.h + panel_padding.x);
     push_scissor(&pan.buffer, clip);
     end(ctx);
 
@@ -123,20 +122,18 @@ namespace nk {
     return;
   }
   NK_API bool
-  group_scrolled_begin(struct context *ctx,
-      struct scroll *scroll, const char *title, flag flags)
-  {
+  group_scrolled_begin(struct context* ctx,
+                       struct scroll* scroll, const char* title, flag flags) {
     return group_scrolled_offset_begin(ctx, &scroll->x, &scroll->y, title, flags);
   }
   NK_API bool
-  group_begin_titled(struct context *ctx, const char *id,
-      const char *title, flag flags)
-  {
+  group_begin_titled(struct context* ctx, const char* id,
+                     const char* title, flag flags) {
     int id_len;
     hash id_hash;
-    struct window *win;
-    unsigned int *x_offset;
-    unsigned int *y_offset;
+    struct window* win;
+    unsigned int* x_offset;
+    unsigned int* y_offset;
 
     NK_ASSERT(ctx);
     NK_ASSERT(id);
@@ -147,38 +144,37 @@ namespace nk {
 
     /* find persistent group scrollbar value */
     win = ctx->current;
-    id_len = (int)strlen(id);
-    id_hash = murmur_hash(id, (int)id_len, static_cast<hash>(panel_type::PANEL_GROUP));
+    id_len = (int) strlen(id);
+    id_hash = murmur_hash(id, (int) id_len, static_cast<hash>(panel_type::PANEL_GROUP));
     x_offset = find_value(win, id_hash);
     if (!x_offset) {
       x_offset = add_value(ctx, win, id_hash, 0);
-      y_offset = add_value(ctx, win, id_hash+1, 0);
+      y_offset = add_value(ctx, win, id_hash + 1, 0);
 
       NK_ASSERT(x_offset);
       NK_ASSERT(y_offset);
-      if (!x_offset || !y_offset) return 0;
+      if (!x_offset || !y_offset)
+        return 0;
       *x_offset = *y_offset = 0;
-    } else y_offset = find_value(win, id_hash+1);
+    } else
+      y_offset = find_value(win, id_hash + 1);
     return group_scrolled_offset_begin(ctx, x_offset, y_offset, title, flags);
   }
   NK_API bool
-  group_begin(struct context *ctx, const char *title, flag flags)
-  {
+  group_begin(struct context* ctx, const char* title, flag flags) {
     return group_begin_titled(ctx, title, title, flags);
   }
   NK_API void
-  group_end(struct context *ctx)
-  {
+  group_end(struct context* ctx) {
     group_scrolled_end(ctx);
   }
   NK_API void
-  group_get_scroll(struct context *ctx, const char *id, unsigned int *x_offset, unsigned int *y_offset)
-  {
+  group_get_scroll(struct context* ctx, const char* id, unsigned int* x_offset, unsigned int* y_offset) {
     int id_len;
     hash id_hash;
-    struct window *win;
-    unsigned int *x_offset_ptr;
-    unsigned int *y_offset_ptr;
+    struct window* win;
+    unsigned int* x_offset_ptr;
+    unsigned int* y_offset_ptr;
 
     NK_ASSERT(ctx);
     NK_ASSERT(id);
@@ -189,31 +185,32 @@ namespace nk {
 
     /* find persistent group scrollbar value */
     win = ctx->current;
-    id_len = (int)strlen(id);
-    id_hash = murmur_hash(id, (int)id_len, static_cast<hash>(panel_type::PANEL_GROUP));
+    id_len = (int) strlen(id);
+    id_hash = murmur_hash(id, (int) id_len, static_cast<hash>(panel_type::PANEL_GROUP));
     x_offset_ptr = find_value(win, id_hash);
     if (!x_offset_ptr) {
       x_offset_ptr = add_value(ctx, win, id_hash, 0);
-      y_offset_ptr = add_value(ctx, win, id_hash+1, 0);
+      y_offset_ptr = add_value(ctx, win, id_hash + 1, 0);
 
       NK_ASSERT(x_offset_ptr);
       NK_ASSERT(y_offset_ptr);
-      if (!x_offset_ptr || !y_offset_ptr) return;
+      if (!x_offset_ptr || !y_offset_ptr)
+        return;
       *x_offset_ptr = *y_offset_ptr = 0;
-    } else y_offset_ptr = find_value(win, id_hash+1);
+    } else
+      y_offset_ptr = find_value(win, id_hash + 1);
     if (x_offset)
       *x_offset = *x_offset_ptr;
     if (y_offset)
       *y_offset = *y_offset_ptr;
   }
   NK_API void
-  group_set_scroll(struct context *ctx, const char *id, unsigned int x_offset, unsigned int y_offset)
-  {
+  group_set_scroll(struct context* ctx, const char* id, unsigned int x_offset, unsigned int y_offset) {
     int id_len;
     hash id_hash;
-    struct window *win;
-    unsigned int *x_offset_ptr;
-    unsigned int *y_offset_ptr;
+    struct window* win;
+    unsigned int* x_offset_ptr;
+    unsigned int* y_offset_ptr;
 
     NK_ASSERT(ctx);
     NK_ASSERT(id);
@@ -224,19 +221,21 @@ namespace nk {
 
     /* find persistent group scrollbar value */
     win = ctx->current;
-    id_len = (int)strlen(id);
-    id_hash = murmur_hash(id, (int)id_len, static_cast<hash>(panel_type::PANEL_GROUP));
+    id_len = (int) strlen(id);
+    id_hash = murmur_hash(id, (int) id_len, static_cast<hash>(panel_type::PANEL_GROUP));
     x_offset_ptr = find_value(win, id_hash);
     if (!x_offset_ptr) {
       x_offset_ptr = add_value(ctx, win, id_hash, 0);
-      y_offset_ptr = add_value(ctx, win, id_hash+1, 0);
+      y_offset_ptr = add_value(ctx, win, id_hash + 1, 0);
 
       NK_ASSERT(x_offset_ptr);
       NK_ASSERT(y_offset_ptr);
-      if (!x_offset_ptr || !y_offset_ptr) return;
+      if (!x_offset_ptr || !y_offset_ptr)
+        return;
       *x_offset_ptr = *y_offset_ptr = 0;
-    } else y_offset_ptr = find_value(win, id_hash+1);
+    } else
+      y_offset_ptr = find_value(win, id_hash + 1);
     *x_offset_ptr = x_offset;
     *y_offset_ptr = y_offset;
   }
-}
+} // namespace nk

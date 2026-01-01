@@ -1,6 +1,6 @@
+#include <cstring>
 #include "nuklear.h"
 #include "nuklear_internal.h"
-#include <cstring>
 
 namespace nk {
   /* ==============================================================
@@ -9,22 +9,22 @@ namespace nk {
    *
    * ===============================================================*/
   INTERN void
-  setup(struct context *ctx, const struct user_font *font)
-  {
+  setup(struct context* ctx, const struct user_font* font) {
     NK_ASSERT(ctx);
-    if (!ctx) return;
+    if (!ctx)
+      return;
     zero_struct(*ctx);
     style_default(ctx);
     ctx->seq = 1;
-    if (font) ctx->style.font = font;
+    if (font)
+      ctx->style.font = font;
 #ifdef NK_INCLUDE_VERTEX_BUFFER_OUTPUT
     draw_list_init(&ctx->draw_list);
 #endif
   }
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
   NK_API bool
-  init_default(struct context *ctx, const struct user_font *font)
-  {
+  init_default(struct context* ctx, const struct user_font* font) {
     struct allocator alloc;
     alloc.userdata.ptr = 0;
     alloc.alloc = malloc;
@@ -33,23 +33,23 @@ namespace nk {
   }
 #endif
   NK_API bool
-  init_fixed(struct context *ctx, void *memory, std::size_t size,
-      const struct user_font *font)
-  {
+  init_fixed(struct context* ctx, void* memory, std::size_t size,
+             const struct user_font* font) {
     NK_ASSERT(memory);
-    if (!memory) return 0;
+    if (!memory)
+      return 0;
     setup(ctx, font);
     buffer_init_fixed(&ctx->memory, memory, size);
     ctx->use_pool = false;
     return 1;
   }
   NK_API bool
-  init_custom(struct context *ctx, struct memory_buffer *cmds,
-      struct memory_buffer *pool, const struct user_font *font)
-  {
+  init_custom(struct context* ctx, struct memory_buffer* cmds,
+              struct memory_buffer* pool, const struct user_font* font) {
     NK_ASSERT(cmds);
     NK_ASSERT(pool);
-    if (!cmds || !pool) return 0;
+    if (!cmds || !pool)
+      return 0;
 
     setup(ctx, font);
     ctx->memory = *cmds;
@@ -58,18 +58,18 @@ namespace nk {
       pool_init_fixed(&ctx->pool, pool->memory.ptr, pool->memory.size);
     } else {
       /* create dynamic pool from buffer allocator */
-      struct allocator *alloc = &pool->pool;
+      struct allocator* alloc = &pool->pool;
       pool_init(&ctx->pool, alloc, NK_POOL_DEFAULT_CAPACITY);
     }
     ctx->use_pool = true;
     return 1;
   }
   NK_API bool
-  init(struct context *ctx, const struct allocator *alloc,
-      const struct user_font *font)
-  {
+  init(struct context* ctx, const struct allocator* alloc,
+       const struct user_font* font) {
     NK_ASSERT(alloc);
-    if (!alloc) return 0;
+    if (!alloc)
+      return 0;
     setup(ctx, font);
     buffer_init(&ctx->memory, alloc, NK_DEFAULT_COMMAND_BUFFER_SIZE);
     pool_init(&ctx->pool, alloc, NK_POOL_DEFAULT_CAPACITY);
@@ -78,19 +78,19 @@ namespace nk {
   }
 #ifdef NK_INCLUDE_COMMAND_USERDATA
   NK_API void
-  set_user_data(struct context *ctx, handle handle)
-  {
-    if (!ctx) return;
+  set_user_data(struct context* ctx, handle handle) {
+    if (!ctx)
+      return;
     ctx->userdata = handle;
     if (ctx->current)
       ctx->current->buffer.userdata = handle;
   }
 #endif
   NK_API void
-  free(struct context *ctx)
-  {
+  free(struct context* ctx) {
     NK_ASSERT(ctx);
-    if (!ctx) return;
+    if (!ctx)
+      return;
     buffer_free(&ctx->memory);
     if (ctx->use_pool)
       pool_free(&ctx->pool);
@@ -109,16 +109,17 @@ namespace nk {
     ctx->count = 0;
   }
   NK_API void
-  clear(struct context *ctx)
-  {
-    struct window *iter;
-    struct window *next;
+  clear(struct context* ctx) {
+    struct window* iter;
+    struct window* next;
     NK_ASSERT(ctx);
 
-    if (!ctx) return;
+    if (!ctx)
+      return;
     if (ctx->use_pool)
       buffer_clear(&ctx->memory);
-    else buffer_reset(&ctx->memory, buffer_allocation_type::BUFFER_FRONT);
+    else
+      buffer_reset(&ctx->memory, buffer_allocation_type::BUFFER_FRONT);
 
     ctx->build = 0;
     ctx->memory.calls = 0;
@@ -135,10 +136,10 @@ namespace nk {
           iter->seq == ctx->seq) {
         iter = iter->next;
         continue;
-          }
+      }
       /* remove hotness from hidden or closed windows*/
       if (((iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_HIDDEN)) ||
-          (iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_CLOSED))) &&
+           (iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_CLOSED))) &&
           iter == ctx->active) {
         ctx->active = iter->prev;
         ctx->end = iter->prev;
@@ -146,14 +147,15 @@ namespace nk {
           ctx->begin = 0;
         if (ctx->active)
           ctx->active->flags &= ~static_cast<decltype(iter->flags)>(window_flags::WINDOW_ROM);
-          }
+      }
       /* free unused popup windows */
       if (iter->popup.win && iter->popup.win->seq != ctx->seq) {
         free_window(ctx, iter->popup.win);
         iter->popup.win = 0;
       }
       /* remove unused window state tables */
-      {struct table *n, *it = iter->tables;
+      {
+        struct table *n, *it = iter->tables;
         while (it) {
           n = it->next;
           if (it->seq != ctx->seq) {
@@ -162,43 +164,45 @@ namespace nk {
             free_table(ctx, it);
             if (it == iter->tables)
               iter->tables = n;
-          } it = n;
-        }}
+          }
+          it = n;
+        }
+      }
       /* window itself is not used anymore so free */
       if (iter->seq != ctx->seq || iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_CLOSED)) {
         next = iter->next;
         remove_window(ctx, iter);
         free_window(ctx, iter);
         iter = next;
-      } else iter = iter->next;
+      } else
+        iter = iter->next;
     }
     ctx->seq++;
   }
   NK_LIB void
-  start_buffer(struct context *ctx, struct command_buffer *buffer)
-  {
+  start_buffer(struct context* ctx, struct command_buffer* buffer) {
     NK_ASSERT(ctx);
     NK_ASSERT(buffer);
-    if (!ctx || !buffer) return;
+    if (!ctx || !buffer)
+      return;
     buffer->begin = ctx->memory.allocated;
     buffer->end = buffer->begin;
     buffer->last = buffer->begin;
     buffer->clip = null_rect;
   }
   NK_LIB void
-  start(struct context *ctx, struct window *win)
-  {
+  start(struct context* ctx, struct window* win) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
     start_buffer(ctx, &win->buffer);
   }
   NK_LIB void
-  start_popup(struct context *ctx, struct window *win)
-  {
-    struct popup_buffer *buf;
+  start_popup(struct context* ctx, struct window* win) {
+    struct popup_buffer* buf;
     NK_ASSERT(ctx);
     NK_ASSERT(win);
-    if (!ctx || !win) return;
+    if (!ctx || !win)
+      return;
 
     /* save buffer fill state for popup */
     buf = &win->popup.buf;
@@ -209,37 +213,38 @@ namespace nk {
     buf->active = true;
   }
   NK_LIB void
-  finish_popup(struct context *ctx, struct window *win)
-  {
-    struct popup_buffer *buf;
+  finish_popup(struct context* ctx, struct window* win) {
+    struct popup_buffer* buf;
     NK_ASSERT(ctx);
     NK_ASSERT(win);
-    if (!ctx || !win) return;
+    if (!ctx || !win)
+      return;
 
     buf = &win->popup.buf;
     buf->last = win->buffer.last;
     buf->end = win->buffer.end;
   }
   NK_LIB void
-  finish_buffer(struct context *ctx, struct command_buffer *buffer)
-  {
+  finish_buffer(struct context* ctx, struct command_buffer* buffer) {
     NK_ASSERT(ctx);
     NK_ASSERT(buffer);
-    if (!ctx || !buffer) return;
+    if (!ctx || !buffer)
+      return;
     buffer->end = ctx->memory.allocated;
   }
   NK_LIB void
-  finish(struct context *ctx, struct window *win)
-  {
-    struct popup_buffer *buf;
-    struct command *parent_last;
-    void *memory;
+  finish(struct context* ctx, struct window* win) {
+    struct popup_buffer* buf;
+    struct command* parent_last;
+    void* memory;
 
     NK_ASSERT(ctx);
     NK_ASSERT(win);
-    if (!ctx || !win) return;
+    if (!ctx || !win)
+      return;
     finish_buffer(ctx, &win->buffer);
-    if (!win->popup.buf.active) return;
+    if (!win->popup.buf.active)
+      return;
 
     buf = &win->popup.buf;
     memory = ctx->memory.memory.ptr;
@@ -247,18 +252,17 @@ namespace nk {
     parent_last->next = buf->end;
   }
   NK_LIB void
-  build(struct context *ctx)
-  {
-    struct window *it = 0;
-    struct command *cmd = 0;
-    std::uint8_t *buffer = 0;
+  build(struct context* ctx) {
+    struct window* it = 0;
+    struct command* cmd = 0;
+    std::uint8_t* buffer = 0;
 
     /* draw cursor overlay */
     if (!ctx->style.cursor_active)
       ctx->style.cursor_active = ctx->style.cursors[static_cast<unsigned>(style_cursor::CURSOR_ARROW)];
     if (ctx->style.cursor_active && !ctx->input.mouse.grabbed && ctx->style.cursor_visible) {
       struct rectf mouse_bounds;
-      const struct cursor *cursor = ctx->style.cursor_active;
+      const struct cursor* cursor = ctx->style.cursor_active;
       command_buffer_init(&ctx->overlay, &ctx->memory, NK_CLIPPING_OFF);
       start_buffer(ctx, &ctx->overlay);
 
@@ -272,26 +276,28 @@ namespace nk {
     }
     /* build one big draw command list out of all window buffers */
     it = ctx->begin;
-    buffer = (std::uint8_t*)ctx->memory.memory.ptr;
+    buffer = (std::uint8_t*) ctx->memory.memory.ptr;
     while (it != 0) {
-      struct window *next = it->next;
-      if (it->buffer.last == it->buffer.begin || (it->flags & static_cast<decltype(it->flags)>(window_flags::WINDOW_HIDDEN))||
+      struct window* next = it->next;
+      if (it->buffer.last == it->buffer.begin || (it->flags & static_cast<decltype(it->flags)>(window_flags::WINDOW_HIDDEN)) ||
           it->seq != ctx->seq)
         goto cont;
 
       cmd = ptr_add(struct command, buffer, it->buffer.last);
       while (next && ((next->buffer.last == next->buffer.begin) ||
-          (next->flags & static_cast<decltype(next->flags)>(window_flags::WINDOW_HIDDEN)) || next->seq != ctx->seq))
+                      (next->flags & static_cast<decltype(next->flags)>(window_flags::WINDOW_HIDDEN)) || next->seq != ctx->seq))
         next = next->next; /* skip empty command buffers */
 
-      if (next) cmd->next = next->buffer.begin;
-      cont: it = next;
+      if (next)
+        cmd->next = next->buffer.begin;
+    cont:
+      it = next;
     }
     /* append all popup draw commands into lists */
     it = ctx->begin;
     while (it != 0) {
-      struct window *next = it->next;
-      struct popup_buffer *buf;
+      struct window* next = it->next;
+      struct popup_buffer* buf;
       if (!it->popup.buf.active)
         goto skip;
 
@@ -299,47 +305,52 @@ namespace nk {
       cmd->next = buf->begin;
       cmd = ptr_add(struct command, buffer, buf->last);
       buf->active = false;
-      skip: it = next;
+    skip:
+      it = next;
     }
     if (cmd) {
       /* append overlay commands */
       if (ctx->overlay.end != ctx->overlay.begin)
         cmd->next = ctx->overlay.begin;
-      else cmd->next = ctx->memory.allocated;
+      else
+        cmd->next = ctx->memory.allocated;
     }
   }
   NK_API const struct command*
-  _begin(struct context *ctx)
-  {
-    struct window *iter;
-    std::uint8_t *buffer;
+  _begin(struct context* ctx) {
+    struct window* iter;
+    std::uint8_t* buffer;
     NK_ASSERT(ctx);
-    if (!ctx) return 0;
-    if (!ctx->count) return 0;
+    if (!ctx)
+      return 0;
+    if (!ctx->count)
+      return 0;
 
-    buffer = (std::uint8_t*)ctx->memory.memory.ptr;
+    buffer = (std::uint8_t*) ctx->memory.memory.ptr;
     if (!ctx->build) {
       build(ctx);
       ctx->build = true;
     }
     iter = ctx->begin;
     while (iter && ((iter->buffer.begin == iter->buffer.end) ||
-        (iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_HIDDEN)) || iter->seq != ctx->seq))
+                    (iter->flags & static_cast<decltype(iter->flags)>(window_flags::WINDOW_HIDDEN)) || iter->seq != ctx->seq))
       iter = iter->next;
-    if (!iter) return 0;
+    if (!iter)
+      return 0;
     return ptr_add_const(struct command, buffer, iter->buffer.begin);
   }
 
   NK_API const struct command*
-  _next(struct context *ctx, const struct command *cmd)
-  {
-    std::uint8_t *buffer;
-    const struct command *next;
+  _next(struct context* ctx, const struct command* cmd) {
+    std::uint8_t* buffer;
+    const struct command* next;
     NK_ASSERT(ctx);
-    if (!ctx || !cmd || !ctx->count) return 0;
-    if (cmd->next >= ctx->memory.allocated) return 0;
-    buffer = (std::uint8_t*)ctx->memory.memory.ptr;
+    if (!ctx || !cmd || !ctx->count)
+      return 0;
+    if (cmd->next >= ctx->memory.allocated)
+      return 0;
+    buffer = (std::uint8_t*) ctx->memory.memory.ptr;
     next = ptr_add_const(struct command, buffer, cmd->next);
     return next;
   }
-}
+} // namespace nk

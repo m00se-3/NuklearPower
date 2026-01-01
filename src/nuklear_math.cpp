@@ -38,11 +38,13 @@ namespace nk {
 #ifndef NK_INV_SQRT
 #define NK_INV_SQRT inv_sqrt
   NK_LIB float
-  inv_sqrt(float n)
-  {
+  inv_sqrt(float n) {
     float x2;
     const float threehalfs = 1.5f;
-    union {unsigned int i; float f;} conv = {0};
+    union {
+      unsigned int i;
+      float f;
+    } conv = {0};
     conv.f = n;
     x2 = n * 0.5f;
     conv.i = 0x5f375A84 - (conv.i >> 1);
@@ -53,8 +55,7 @@ namespace nk {
 #ifndef NK_SIN
 #define NK_SIN sin
   NK_LIB float
-  sin(float x)
-  {
+  sin(float x) {
     NK_STORAGE const float a0 = +1.91059300966915117e-31f;
     NK_STORAGE const float a1 = +1.00086760103908896f;
     NK_STORAGE const float a2 = -1.21276126894734565e-2f;
@@ -63,14 +64,13 @@ namespace nk {
     NK_STORAGE const float a5 = +2.08026600266304389e-2f;
     NK_STORAGE const float a6 = -3.03996055049204407e-3f;
     NK_STORAGE const float a7 = +1.38235642404333740e-4f;
-    return a0 + x*(a1 + x*(a2 + x*(a3 + x*(a4 + x*(a5 + x*(a6 + x*a7))))));
+    return a0 + x * (a1 + x * (a2 + x * (a3 + x * (a4 + x * (a5 + x * (a6 + x * a7))))));
   }
 #endif
 #ifndef NK_COS
 #define NK_COS cos
   NK_LIB float
-  cos(float x)
-  {
+  cos(float x) {
     /* New implementation. Also generated using lolremez. */
     /* Old version significantly deviated from expected results. */
     NK_STORAGE const float a0 = 9.9995999154986614e-1f;
@@ -82,14 +82,13 @@ namespace nk {
     NK_STORAGE const float a6 = -3.8510875386947414e-3f;
     NK_STORAGE const float a7 = 4.7196604604366623e-4f;
     NK_STORAGE const float a8 = -1.8776444013090451e-5f;
-    return a0 + x*(a1 + x*(a2 + x*(a3 + x*(a4 + x*(a5 + x*(a6 + x*(a7 + x*a8)))))));
+    return a0 + x * (a1 + x * (a2 + x * (a3 + x * (a4 + x * (a5 + x * (a6 + x * (a7 + x * a8)))))));
   }
 #endif
 #ifndef NK_ATAN
 #define NK_ATAN atan
   NK_LIB float
-  atan(float x)
-  {
+  atan(float x) {
     /* ./lolremez --progress --float -d 9 -r "0:pi*2" "atan(x)" */
     float u = -1.0989005e-05f;
     NK_ASSERT(x >= 0.0f && "TODO support negative floats");
@@ -108,8 +107,7 @@ namespace nk {
 #ifndef NK_ATAN2
 #define NK_ATAN2 atan2
   NK_LIB float
-  atan2(float y, float x)
-  {
+  atan2(float y, float x) {
     float ax = NK_ABS(x),
           ay = NK_ABS(y);
     /* 0 = +y +x    1 = -y +x
@@ -117,23 +115,27 @@ namespace nk {
     auto signs = (y < 0) | ((x < 0) << 1);
 
     float a;
-    if(y == 0.0 && x == 0.0) return 0.0f;
+    if (y == 0.0 && x == 0.0)
+      return 0.0f;
     a = (ay > ax)
-        ? NK_PI_HALF - NK_ATAN(ax / ay)
-        : NK_ATAN(ay / ax);
+            ? NK_PI_HALF - NK_ATAN(ax / ay)
+            : NK_ATAN(ay / ax);
 
-    switch(signs){
-      case 0: return a;
-      case 1: return -a;
-      case 2: return -a + NK_PI;
-      case 3: return a - NK_PI;
+    switch (signs) {
+      case 0:
+        return a;
+      case 1:
+        return -a;
+      case 2:
+        return -a + NK_PI;
+      case 3:
+        return a - NK_PI;
     }
     return 0.0f; /* prevents warning */
   }
 #endif
   NK_LIB unsigned int
-  round_up_pow2(unsigned int v)
-  {
+  round_up_pow2(unsigned int v) {
     v--;
     v |= v >> 1;
     v |= v >> 2;
@@ -144,8 +146,7 @@ namespace nk {
     return v;
   }
   NK_LIB double
-  pow(double x, int n)
-  {
+  pow(double x, int n) {
     /*  check the sign of n */
     double r = 1;
     int plus = n >= 0;
@@ -159,105 +160,96 @@ namespace nk {
     return plus ? r : 1.0 / r;
   }
   NK_LIB int
-  ifloord(double x)
-  {
-    x = (double)((int)x - ((x < 0.0) ? 1 : 0));
-    return (int)x;
+  ifloord(double x) {
+    x = (double) ((int) x - ((x < 0.0) ? 1 : 0));
+    return (int) x;
   }
   NK_LIB int
-  ifloorf(float x)
-  {
-    x = (float)((int)x - ((x < 0.0f) ? 1 : 0));
-    return (int)x;
+  ifloorf(float x) {
+    x = (float) ((int) x - ((x < 0.0f) ? 1 : 0));
+    return (int) x;
   }
   NK_LIB int
-  iceilf(float x)
-  {
+  iceilf(float x) {
     if (x >= 0) {
-      int i = (int)x;
-      return (x > static_cast<float>(i)) ? i+1: i;
+      int i = (int) x;
+      return (x > static_cast<float>(i)) ? i + 1 : i;
     } else {
-      int t = (int)x;
-      float r = x - (float)t;
-      return (r > 0.0f) ? t+1: t;
+      int t = (int) x;
+      float r = x - (float) t;
+      return (r > 0.0f) ? t + 1 : t;
     }
   }
   NK_LIB int
-  log10(double n)
-  {
+  log10(double n) {
     int neg;
     int ret;
     int exp = 0;
 
     neg = (n < 0) ? 1 : 0;
-    ret = (neg) ? (int)-n : (int)n;
+    ret = (neg) ? (int) -n : (int) n;
     while ((ret / 10) > 0) {
       ret /= 10;
       exp++;
     }
-    if (neg) exp = -exp;
+    if (neg)
+      exp = -exp;
     return exp;
   }
   NK_LIB float
-  roundf(float x)
-  {
-    return (x >= 0.0f) ? (float)ifloorf(x + 0.5f) : (float)iceilf(x - 0.5f);
+  roundf(float x) {
+    return (x >= 0.0f) ? (float) ifloorf(x + 0.5f) : (float) iceilf(x - 0.5f);
   }
   NK_API struct rectf
-  get_null_rect(void)
-  {
+  get_null_rect(void) {
     return null_rect;
   }
   NK_API struct rectf
-  rect(float x, float y, float w, float h)
-  {
+  rect(float x, float y, float w, float h) {
     struct rectf r;
-    r.x = x; r.y = y;
-    r.w = w; r.h = h;
+    r.x = x;
+    r.y = y;
+    r.w = w;
+    r.h = h;
     return r;
   }
   NK_API struct rectf
-  recti(int x, int y, int w, int h)
-  {
+  recti(int x, int y, int w, int h) {
     struct rectf r;
-    r.x = (float)x;
-    r.y = (float)y;
-    r.w = (float)w;
-    r.h = (float)h;
+    r.x = (float) x;
+    r.y = (float) y;
+    r.w = (float) w;
+    r.h = (float) h;
     return r;
   }
   NK_API struct rectf
-  recta(struct vec2f pos, struct vec2f size)
-  {
+  recta(struct vec2f pos, struct vec2f size) {
     return rect(pos.x, pos.y, size.x, size.y);
   }
   NK_API struct rectf
-  rectv(const float *r)
-  {
+  rectv(const float* r) {
     return rect(r[0], r[1], r[2], r[3]);
   }
   NK_API struct rectf
-  rectiv(const int *r)
-  {
+  rectiv(const int* r) {
     return recti(r[0], r[1], r[2], r[3]);
   }
   NK_API struct vec2f
-  rect_pos(struct rectf r)
-  {
+  rect_pos(struct rectf r) {
     struct vec2f ret;
-    ret.x = r.x; ret.y = r.y;
+    ret.x = r.x;
+    ret.y = r.y;
     return ret;
   }
   NK_API struct vec2f
-  rect_size(struct rectf r)
-  {
+  rect_size(struct rectf r) {
     struct vec2f ret;
-    ret.x = r.w; ret.y = r.h;
+    ret.x = r.w;
+    ret.y = r.h;
     return ret;
   }
   NK_LIB struct rectf
-  shrirect(struct rectf r, float amount)
-  {
+  shrirect(struct rectf r, float amount) {
     struct rectf res;
     r.w = NK_MAX(r.w, 2 * amount);
     r.h = NK_MAX(r.h, 2 * amount);
@@ -268,44 +260,40 @@ namespace nk {
     return res;
   }
   NK_LIB struct rectf
-  pad_rect(struct rectf r, struct vec2f pad)
-  {
+  pad_rect(struct rectf r, struct vec2f pad) {
     r.w = NK_MAX(r.w, 2 * pad.x);
     r.h = NK_MAX(r.h, 2 * pad.y);
-    r.x += pad.x; r.y += pad.y;
+    r.x += pad.x;
+    r.y += pad.y;
     r.w -= 2 * pad.x;
     r.h -= 2 * pad.y;
     return r;
   }
   NK_API struct vec2f
-  vec2_from_floats(float x, float y)
-  {
+  vec2_from_floats(float x, float y) {
     struct vec2f ret;
-    ret.x = x; ret.y = y;
+    ret.x = x;
+    ret.y = y;
     return ret;
   }
   NK_API struct vec2f
-  vec2i_from_ints(int x, int y)
-  {
+  vec2i_from_ints(int x, int y) {
     struct vec2f ret;
-    ret.x = (float)x;
-    ret.y = (float)y;
+    ret.x = (float) x;
+    ret.y = (float) y;
     return ret;
   }
   NK_API struct vec2f
-  vec2v(const float *v)
-  {
+  vec2v(const float* v) {
     return vec2_from_floats(v[0], v[1]);
   }
   NK_API struct vec2f
-  vec2iv(const int *v)
-  {
+  vec2iv(const int* v) {
     return vec2i_from_ints(v[0], v[1]);
   }
   NK_LIB void
-  unify(struct rectf *clip, const struct rectf *a, float x0, float y0,
-      float x1, float y1)
-  {
+  unify(struct rectf* clip, const struct rectf* a, float x0, float y0,
+        float x1, float y1) {
     NK_ASSERT(a);
     NK_ASSERT(clip);
     clip->x = NK_MAX(a->x, x0);
@@ -317,9 +305,8 @@ namespace nk {
   }
 
   NK_API void
-  triangle_from_direction(struct vec2f *result, struct rectf r,
-      float pad_x, float pad_y, enum heading direction)
-  {
+  triangle_from_direction(struct vec2f* result, struct rectf r,
+                          float pad_x, float pad_y, enum heading direction) {
     float w_half, h_half;
     NK_ASSERT(result);
 
@@ -352,4 +339,4 @@ namespace nk {
       result[2] = vec2_from_floats(r.x + r.w, r.y + r.h);
     }
   }
-}
+} // namespace nk

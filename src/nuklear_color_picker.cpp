@@ -8,11 +8,10 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB bool
-  color_picker_behavior(flag *state,
-      const struct rectf *bounds, const struct rectf *matrix,
-      const struct rectf *hue_bar, const struct rectf *alpha_bar,
-      struct colorf *color, const struct input *in)
-  {
+  color_picker_behavior(flag* state,
+                        const struct rectf* bounds, const struct rectf* matrix,
+                        const struct rectf* hue_bar, const struct rectf* alpha_bar,
+                        struct colorf* color, const struct input* in) {
     float hsva[4];
     bool value_changed = 0;
     bool hsv_changed = 0;
@@ -25,19 +24,19 @@ namespace nk {
     /* color matrix */
     colorf_hsva_fv(hsva, *color);
     if (button_behavior(state, *matrix, in, btn_behavior::BUTTON_REPEATER)) {
-      hsva[1] = NK_SATURATE((in->mouse.pos.x - matrix->x) / (matrix->w-1));
-      hsva[2] = 1.0f - NK_SATURATE((in->mouse.pos.y - matrix->y) / (matrix->h-1));
+      hsva[1] = NK_SATURATE((in->mouse.pos.x - matrix->x) / (matrix->w - 1));
+      hsva[2] = 1.0f - NK_SATURATE((in->mouse.pos.y - matrix->y) / (matrix->h - 1));
       value_changed = hsv_changed = 1;
     }
     /* hue bar */
     if (button_behavior(state, *hue_bar, in, btn_behavior::BUTTON_REPEATER)) {
-      hsva[0] = NK_SATURATE((in->mouse.pos.y - hue_bar->y) / (hue_bar->h-1));
+      hsva[0] = NK_SATURATE((in->mouse.pos.y - hue_bar->y) / (hue_bar->h - 1));
       value_changed = hsv_changed = 1;
     }
     /* alpha bar */
     if (alpha_bar) {
       if (button_behavior(state, *alpha_bar, in, btn_behavior::BUTTON_REPEATER)) {
-        hsva[3] = 1.0f - NK_SATURATE((in->mouse.pos.y - alpha_bar->y) / (alpha_bar->h-1));
+        hsva[3] = 1.0f - NK_SATURATE((in->mouse.pos.y - alpha_bar->y) / (alpha_bar->h - 1));
         value_changed = 1;
       }
     }
@@ -60,13 +59,12 @@ namespace nk {
     return value_changed;
   }
   NK_LIB void
-  draw_color_picker(struct command_buffer *o, const struct rectf *matrix,
-      const struct rectf *hue_bar, const struct rectf *alpha_bar,
-      struct colorf col)
-  {
-    NK_STORAGE const struct color black = {0,0,0,255};
+  draw_color_picker(struct command_buffer* o, const struct rectf* matrix,
+                    const struct rectf* hue_bar, const struct rectf* alpha_bar,
+                    struct colorf col) {
+    NK_STORAGE const struct color black = {0, 0, 0, 255};
     NK_STORAGE const struct color white = {255, 255, 255, 255};
-    NK_STORAGE const struct color black_trans = {0,0,0,0};
+    NK_STORAGE const struct color black_trans = {0, 0, 0, 0};
 
     const float crosshair_size = 7.0f;
     struct color temp;
@@ -82,26 +80,25 @@ namespace nk {
     colorf_hsva_fv(hsva, col);
     for (i = 0; i < 6; ++i) {
       static const struct color hue_colors[] = {
-        {255, 0, 0, 255}, {255,255,0,255}, {0,255,0,255}, {0, 255,255,255},
-        {0,0,255,255}, {255, 0, 255, 255}, {255, 0, 0, 255}
-      };
+          {255, 0, 0, 255}, {255, 255, 0, 255}, {0, 255, 0, 255}, {0, 255, 255, 255}, {0, 0, 255, 255}, {255, 0, 255, 255}, {255, 0, 0, 255}};
       fill_rect_multi_color(o,
-          rect(hue_bar->x, hue_bar->y + (float)i * (hue_bar->h/6.0f) + 0.5f,
-              hue_bar->w, (hue_bar->h/6.0f) + 0.5f), hue_colors[i], hue_colors[i],
-              hue_colors[i+1], hue_colors[i+1]);
+                            rect(hue_bar->x, hue_bar->y + (float) i * (hue_bar->h / 6.0f) + 0.5f,
+                                 hue_bar->w, (hue_bar->h / 6.0f) + 0.5f),
+                            hue_colors[i], hue_colors[i],
+                            hue_colors[i + 1], hue_colors[i + 1]);
     }
-    line_y = (float)(int)(hue_bar->y + hsva[0] * matrix->h + 0.5f);
-    stroke_line(o, hue_bar->x-1, line_y, hue_bar->x + hue_bar->w + 2,
-        line_y, 1, rgb(255,255,255));
+    line_y = (float) (int) (hue_bar->y + hsva[0] * matrix->h + 0.5f);
+    stroke_line(o, hue_bar->x - 1, line_y, hue_bar->x + hue_bar->w + 2,
+                line_y, 1, rgb(255, 255, 255));
 
     /* draw alpha bar */
     if (alpha_bar) {
       float alpha = NK_SATURATE(col.a);
-      line_y = (float)(int)(alpha_bar->y +  (1.0f - alpha) * matrix->h + 0.5f);
+      line_y = (float) (int) (alpha_bar->y + (1.0f - alpha) * matrix->h + 0.5f);
 
       fill_rect_multi_color(o, *alpha_bar, white, white, black, black);
-      stroke_line(o, alpha_bar->x-1, line_y, alpha_bar->x + alpha_bar->w + 2,
-          line_y, 1, rgb(255,255,255));
+      stroke_line(o, alpha_bar->x - 1, line_y, alpha_bar->x + alpha_bar->w + 2,
+                  line_y, 1, rgb(255, 255, 255));
     }
 
     /* draw color matrix */
@@ -110,21 +107,24 @@ namespace nk {
     fill_rect_multi_color(o, *matrix, black_trans, black_trans, black, black);
 
     /* draw cross-hair */
-    {struct vec2f p; float S = hsva[1]; float V = hsva[2];
-      p.x = (float)(int)(matrix->x + S * matrix->w);
-      p.y = (float)(int)(matrix->y + (1.0f - V) * matrix->h);
-      stroke_line(o, p.x - crosshair_size, p.y, p.x-2, p.y, 1.0f, white);
-      stroke_line(o, p.x + crosshair_size + 1, p.y, p.x+3, p.y, 1.0f, white);
-      stroke_line(o, p.x, p.y + crosshair_size + 1, p.x, p.y+3, 1.0f, white);
-      stroke_line(o, p.x, p.y - crosshair_size, p.x, p.y-2, 1.0f, white);}
+    {
+      struct vec2f p;
+      float S = hsva[1];
+      float V = hsva[2];
+      p.x = (float) (int) (matrix->x + S * matrix->w);
+      p.y = (float) (int) (matrix->y + (1.0f - V) * matrix->h);
+      stroke_line(o, p.x - crosshair_size, p.y, p.x - 2, p.y, 1.0f, white);
+      stroke_line(o, p.x + crosshair_size + 1, p.y, p.x + 3, p.y, 1.0f, white);
+      stroke_line(o, p.x, p.y + crosshair_size + 1, p.x, p.y + 3, 1.0f, white);
+      stroke_line(o, p.x, p.y - crosshair_size, p.x, p.y - 2, 1.0f, white);
+    }
   }
   NK_LIB bool
-  do_color_picker(flag *state,
-      struct command_buffer *out, struct colorf *col,
-      enum color_format fmt, struct rectf bounds,
-      struct vec2f padding, const struct input *in,
-      const struct user_font *font)
-  {
+  do_color_picker(flag* state,
+                  struct command_buffer* out, struct colorf* col,
+                  enum color_format fmt, struct rectf bounds,
+                  struct vec2f padding, const struct input* in,
+                  const struct user_font* font) {
     int ret = 0;
     struct rectf matrix;
     struct rectf hue_bar;
@@ -160,18 +160,17 @@ namespace nk {
     alpha_bar.h = matrix.h;
 
     ret = color_picker_behavior(state, &bounds, &matrix, &hue_bar,
-        (fmt == color_format::RGBA) ? &alpha_bar:0, col, in);
-    draw_color_picker(out, &matrix, &hue_bar, (fmt == color_format::RGBA) ? &alpha_bar:0, *col);
+                                (fmt == color_format::RGBA) ? &alpha_bar : 0, col, in);
+    draw_color_picker(out, &matrix, &hue_bar, (fmt == color_format::RGBA) ? &alpha_bar : 0, *col);
     return ret;
   }
   NK_API bool
-  color_pick(struct context * ctx, struct colorf *color,
-      enum color_format fmt)
-  {
-    struct window *win;
-    struct panel *layout;
-    const struct style *config;
-    const struct input *in;
+  color_pick(struct context* ctx, struct colorf* color,
+             enum color_format fmt) {
+    struct window* win;
+    struct panel* layout;
+    const struct style* config;
+    const struct input* in;
 
     enum widget_layout_states state;
     struct rectf bounds;
@@ -187,16 +186,16 @@ namespace nk {
     config = &ctx->style;
     layout = win->layout;
     state = widget(&bounds, ctx);
-    if (!state) return 0;
+    if (!state)
+      return 0;
     in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || layout->flags & static_cast<decltype(layout->flags)>(window_flags::WINDOW_ROM)) ? 0 : &ctx->input;
     return do_color_picker(&ctx->last_widget_state, &win->buffer, color, fmt, bounds,
-                vec2_from_floats(0,0), in, config->font);
+                           vec2_from_floats(0, 0), in, config->font);
   }
   NK_API struct colorf
-  color_picker(struct context *ctx, struct colorf color,
-      enum color_format fmt)
-  {
+  color_picker(struct context* ctx, struct colorf color,
+               enum color_format fmt) {
     color_pick(ctx, &color, fmt);
     return color;
   }
-}
+} // namespace nk
