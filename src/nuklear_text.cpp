@@ -8,11 +8,10 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB void
-  widget_text(struct command_buffer* o, rectf b,
-              const char* string, int len, const struct text* t,
-              flag a, const struct user_font* f) {
+  widget_text(command_buffer* o, rectf b,
+              const char* string, const int len, const text* t,
+              const flag a, const user_font* f) {
     rectf label;
-    float text_width;
 
     NK_ASSERT(o);
     NK_ASSERT(t);
@@ -25,7 +24,7 @@ namespace nk {
     label.y = b.y + t->padding.y;
     label.h = NK_MIN(f->height, b.h - 2 * t->padding.y);
 
-    text_width = f->width(f->userdata, f->height, (const char*) string, len);
+    float text_width = f->width(f->userdata, f->height, (const char*) string, len);
     text_width += (2.0f * t->padding.x);
 
     /* align in x-axis */
@@ -56,15 +55,15 @@ namespace nk {
     draw_text(o, label, (const char*) string, len, f, t->background, t->txt);
   }
   NK_LIB void
-  widget_text_wrap(struct command_buffer* o, rectf b,
-                   const char* string, int len, const struct text* t,
-                   const struct user_font* f) {
+  widget_text_wrap(command_buffer* o, rectf b,
+                   const char* string, const int len, const text* t,
+                   const user_font* f) {
     float width;
     int glyphs = 0;
     int fitting = 0;
     int done = 0;
     rectf line;
-    struct text text;
+    text text;
     INTERN rune seperator[] = {' '};
 
     NK_ASSERT(o);
@@ -96,14 +95,11 @@ namespace nk {
     }
   }
   NK_API void
-  text_colored(struct context* ctx, const char* str, int len,
-               flag alignment, struct color color) {
-    struct window* win;
-    const struct style* style;
+  text_colored(context* ctx, const char* str, const int len,
+               const flag alignment, const color color) {
 
-    vec2f item_padding;
     rectf bounds;
-    struct text text;
+    text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -111,10 +107,10 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
-    style = &ctx->style;
+    window* win = ctx->current;
+    const style* style = &ctx->style;
     panel_alloc_space(&bounds, ctx);
-    item_padding = style->text.padding;
+    const vec2f item_padding = style->text.padding;
 
     text.padding.x = item_padding.x;
     text.padding.y = item_padding.y;
@@ -123,14 +119,11 @@ namespace nk {
     widget_text(&win->buffer, bounds, str, len, &text, alignment, style->font);
   }
   NK_API void
-  text_wrap_colored(struct context* ctx, const char* str,
-                    int len, struct color color) {
-    struct window* win;
-    const struct style* style;
+  text_wrap_colored(context* ctx, const char* str,
+                    const int len, const color color) {
 
-    vec2f item_padding;
     rectf bounds;
-    struct text text;
+    text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -138,10 +131,10 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
-    style = &ctx->style;
+    window* win = ctx->current;
+    const style* style = &ctx->style;
     panel_alloc_space(&bounds, ctx);
-    item_padding = style->text.padding;
+    const vec2f item_padding = style->text.padding;
 
     text.padding.x = item_padding.x;
     text.padding.y = item_padding.y;
@@ -246,34 +239,34 @@ namespace nk {
   }
 #endif
   NK_API void
-  text_string(struct context* ctx, const char* str, int len, flag alignment) {
+  text_string(context* ctx, const char* str, const int len, const flag alignment) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
     text_colored(ctx, str, len, alignment, ctx->style.text.color);
   }
   NK_API void
-  text_wrap(struct context* ctx, const char* str, int len) {
+  text_wrap(context* ctx, const char* str, const int len) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
     text_wrap_colored(ctx, str, len, ctx->style.text.color);
   }
   NK_API void
-  label(struct context* ctx, const char* str, flag alignment) {
+  label(context* ctx, const char* str, const flag alignment) {
     text_string(ctx, str, strlen(str), alignment);
   }
   NK_API void
-  label_colored(struct context* ctx, const char* str, flag align,
-                struct color color) {
+  label_colored(context* ctx, const char* str, const flag align,
+                const color color) {
     text_colored(ctx, str, strlen(str), align, color);
   }
   NK_API void
-  label_wrap(struct context* ctx, const char* str) {
+  label_wrap(context* ctx, const char* str) {
     text_wrap(ctx, str, strlen(str));
   }
   NK_API void
-  label_colored_wrap(struct context* ctx, const char* str, struct color color) {
+  label_colored_wrap(context* ctx, const char* str, const color color) {
     text_wrap_colored(ctx, str, strlen(str), color);
   }
 } // namespace nk

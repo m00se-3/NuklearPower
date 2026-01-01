@@ -7,7 +7,7 @@ namespace nk {
    *                              STYLE
    *
    * ===============================================================*/
-  NK_API void style_default(struct context* ctx) { style_from_table(ctx, 0); }
+  NK_API void style_default(context* ctx) { style_from_table(ctx, 0); }
 #define NK_COLOR_MAP(NK_COLOR)                                                                        \
   NK_COLOR(NK_COLOR_TEXT, 175, 175, 175, 255)                                                         \
   NK_COLOR(NK_COLOR_WINDOW, 45, 45, 45, 255)                                                          \
@@ -42,7 +42,7 @@ namespace nk {
   NK_COLOR(static_cast<std::size_t>(style_colors::COLOR_KNOB_CURSOR_HOVER), 120, 120, 120, 255)       \
   NK_COLOR(static_cast<std::size_t>(style_colors::COLOR_KNOB_CURSOR_ACTIVE), 150, 150, 150, 255)
 
-  NK_GLOBAL const struct color
+  NK_GLOBAL const color
       default_color_style[static_cast<std::size_t>(style_colors::COLOR_COUNT)] = {
 #define NK_COLOR(a, b, c, d, e) {b, c, d, e},
           NK_COLOR_MAP(NK_COLOR)
@@ -55,70 +55,55 @@ namespace nk {
   };
 
   NK_API const char*
-  style_get_color_by_name(enum style_colors c) {
+  style_get_color_by_name(style_colors c) {
     return color_names[static_cast<std::size_t>(c)];
   }
-  NK_API struct style_item
-  style_item_color(struct color col) {
-    struct style_item i;
+  NK_API style_item
+  style_item_color(const color col) {
+    style_item i;
     i.type = style_item_type::STYLE_ITEM_COLOR;
     i.data.color = col;
     return i;
   }
-  NK_API struct style_item
+  NK_API style_item
   style_item_image(struct image img) {
-    struct style_item i;
+    style_item i;
     i.type = style_item_type::STYLE_ITEM_IMAGE;
     i.data.image = img;
     return i;
   }
-  NK_API struct style_item
-  style_item_nine_slice(struct nine_slice slice) {
-    struct style_item i;
+  NK_API style_item
+  style_item_nine_slice(nine_slice slice) {
+    style_item i;
     i.type = style_item_type::STYLE_ITEM_NINE_SLICE;
     i.data.slice = slice;
     return i;
   }
-  NK_API struct style_item
+  NK_API style_item
   style_item_hide(void) {
-    struct style_item i;
+    style_item i;
     i.type = style_item_type::STYLE_ITEM_COLOR;
     i.data.color = rgba(0, 0, 0, 0);
     return i;
   }
   NK_API void
-  style_from_table(struct context* ctx, const struct color* table) {
-    struct style* style;
-    struct style_text* text;
-    struct style_button* button;
-    struct style_toggle* toggle;
-    struct style_selectable* select;
-    struct style_slider* slider;
-    struct style_knob* knob;
-    struct style_progress* prog;
-    struct style_scrollbar* scroll;
-    struct style_edit* edit;
-    struct style_property* property;
-    struct style_combo* combo;
-    struct style_chart* chart;
-    struct style_tab* tab;
-    struct style_window* win;
+  style_from_table(context* ctx, const color* table) {
 
     NK_ASSERT(ctx);
     if (!ctx)
       return;
-    style = &ctx->style;
+    style* style = &ctx->style;
     table = (!table) ? default_color_style : table;
 
     /* default text */
-    text = &style->text;
+    style_text* text = &style->text;
     text->color = table[static_cast<std::size_t>(style_colors::COLOR_TEXT)];
     text->padding = vec2_from_floats(0, 0);
     text->color_factor = 1.0f;
     text->disabled_factor = NK_WIDGET_DISABLED_FACTOR;
 
     /* default button */
-    button = &style->button;
+    style_button* button = &style->button;
     zero_struct(*button);
     button->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_BUTTON)]);
     button->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_BUTTON_HOVER)]);
@@ -188,7 +173,7 @@ namespace nk {
     button->draw_end = 0;
 
     /* checkbox toggle */
-    toggle = &style->checkbox;
+    style_toggle* toggle = &style->checkbox;
     zero_struct(*toggle);
     toggle->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_TOGGLE)]);
     toggle->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_TOGGLE_HOVER)]);
@@ -230,7 +215,7 @@ namespace nk {
     toggle->disabled_factor = NK_WIDGET_DISABLED_FACTOR;
 
     /* selectable */
-    select = &style->selectable;
+    style_selectable* select = &style->selectable;
     zero_struct(*select);
     select->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SELECT)]);
     select->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SELECT)]);
@@ -255,7 +240,7 @@ namespace nk {
     select->draw_end = 0;
 
     /* slider */
-    slider = &style->slider;
+    style_slider* slider = &style->slider;
     zero_struct(*slider);
     slider->normal = style_item_hide();
     slider->hover = style_item_hide();
@@ -305,7 +290,7 @@ namespace nk {
     style->slider.dec_button = style->slider.inc_button;
 
     /* knob */
-    knob = &style->knob;
+    style_knob* knob = &style->knob;
     zero_struct(*knob);
     knob->normal = style_item_hide();
     knob->hover = style_item_hide();
@@ -331,7 +316,7 @@ namespace nk {
     knob->draw_end = 0;
 
     /* progressbar */
-    prog = &style->progress;
+    style_progress* prog = &style->progress;
     zero_struct(*prog);
     prog->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SLIDER)]);
     prog->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SLIDER)]);
@@ -353,7 +338,7 @@ namespace nk {
     prog->draw_end = 0;
 
     /* scrollbars */
-    scroll = &style->scrollh;
+    style_scrollbar* scroll = &style->scrollh;
     zero_struct(*scroll);
     scroll->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SCROLLBAR)]);
     scroll->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_SCROLLBAR)]);
@@ -404,7 +389,7 @@ namespace nk {
     style->scrollv.dec_button = style->scrollh.inc_button;
 
     /* edit */
-    edit = &style->edit;
+    style_edit* edit = &style->edit;
     zero_struct(*edit);
     edit->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_EDIT)]);
     edit->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_EDIT)]);
@@ -432,7 +417,7 @@ namespace nk {
     edit->disabled_factor = NK_WIDGET_DISABLED_FACTOR;
 
     /* property */
-    property = &style->property;
+    style_property* property = &style->property;
     zero_struct(*property);
     property->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_PROPERTY)]);
     property->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_PROPERTY)]);
@@ -502,7 +487,7 @@ namespace nk {
     edit->disabled_factor = NK_WIDGET_DISABLED_FACTOR;
 
     /* chart */
-    chart = &style->chart;
+    style_chart* chart = &style->chart;
     zero_struct(*chart);
     chart->background = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_CHART)]);
     chart->border_color = table[static_cast<std::size_t>(style_colors::COLOR_BORDER)];
@@ -516,7 +501,7 @@ namespace nk {
     chart->show_markers = true;
 
     /* combo */
-    combo = &style->combo;
+    style_combo* combo = &style->combo;
     combo->normal = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_COMBO)]);
     combo->hover = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_COMBO)]);
     combo->active = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_COMBO)]);
@@ -559,7 +544,7 @@ namespace nk {
     button->draw_end = 0;
 
     /* tab */
-    tab = &style->tab;
+    style_tab* tab = &style->tab;
     tab->background = style_item_color(table[static_cast<std::size_t>(style_colors::COLOR_TAB_HEADER)]);
     tab->border_color = table[static_cast<std::size_t>(style_colors::COLOR_BORDER)];
     tab->text = table[static_cast<std::size_t>(style_colors::COLOR_TEXT)];
@@ -622,7 +607,7 @@ namespace nk {
     style->tab.node_maximize_button = *button;
 
     /* window header */
-    win = &style->window;
+    style_window* win = &style->window;
     win->header.align = style_header_align::HEADER_RIGHT;
     win->header.close_symbol = symbol_type::SYMBOL_X;
     win->header.minimize_symbol = symbol_type::SYMBOL_MINUS;
@@ -720,12 +705,11 @@ namespace nk {
 
   NK_API void
   style_set_font(context* ctx, const user_font* font) {
-    struct style* style;
     NK_ASSERT(ctx);
 
     if (!ctx)
       return;
-    style = &ctx->style;
+    style* style = &ctx->style;
     style->font = font;
     ctx->stacks.fonts.head = 0;
     if (ctx->current)
@@ -734,19 +718,17 @@ namespace nk {
 
   NK_API bool
   style_push_font(context* ctx, const user_font* font) {
-    struct config_stack_user_font* font_stack;
-    struct config_stack_user_font_element* element;
 
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
 
-    font_stack = &ctx->stacks.fonts;
+    config_stack_user_font* font_stack = &ctx->stacks.fonts;
     NK_ASSERT(font_stack->head < (int) NK_LEN(font_stack->elements));
     if (font_stack->head >= (int) NK_LEN(font_stack->elements))
       return 0;
 
-    element = &font_stack->elements[static_cast<std::size_t>(font_stack->head++)];
+    config_stack_user_font_element* element = &font_stack->elements[static_cast<std::size_t>(font_stack->head++)];
     element->address = &ctx->style.font;
     element->old_value = ctx->style.font;
     ctx->style.font = font;
@@ -755,19 +737,17 @@ namespace nk {
 
   NK_API bool
   style_pop_font(context* ctx) {
-    config_stack_user_font* font_stack;
-    config_stack_user_font_element* element;
 
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
 
-    font_stack = &ctx->stacks.fonts;
+    config_stack_user_font* font_stack = &ctx->stacks.fonts;
     NK_ASSERT(font_stack->head > 0);
     if (font_stack->head < 1)
       return 0;
 
-    element = &font_stack->elements[static_cast<std::size_t>(--font_stack->head)];
+    const config_stack_user_font_element* element = &font_stack->elements[static_cast<std::size_t>(--font_stack->head)];
     *element->address = element->old_value;
     return 1;
   }
@@ -807,16 +787,14 @@ namespace nk {
   }
 
   NK_API bool style_push_style_item(context* ctx, style_item* address, style_item value) {
-    struct config_stack_style_item* type_stack;
-    struct config_stack_style_item_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.style_items;
+    config_stack_style_item* type_stack = &ctx->stacks.style_items;
     NK_ASSERT(type_stack->head < (int) NK_LEN(type_stack->elements));
     if (type_stack->head >= (int) NK_LEN(type_stack->elements))
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
+    config_stack_style_item_element* element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
     element->address = address;
     element->old_value = *address;
     *address = value;
@@ -824,67 +802,59 @@ namespace nk {
   }
 
   NK_API bool style_push_float(context* ctx, float* address, float value) {
-    struct config_stack_float* type_stack;
-    struct config_stack_float_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.floats;
+    config_stack_float* type_stack = &ctx->stacks.floats;
     NK_ASSERT(type_stack->head < (int) NK_LEN(type_stack->elements));
     if (type_stack->head >= (int) NK_LEN(type_stack->elements))
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
+    config_stack_float_element* element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
     element->address = address;
     element->old_value = *address;
     *address = value;
     return 1;
   }
 
-  NK_API bool style_push_vec2(context* ctx, vec2f* address, vec2f value) {
-    struct config_stack_vec2* type_stack;
-    struct config_stack_vec2_element* element;
+  NK_API bool style_push_vec2(context* ctx, vec2f* address, const vec2f value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.vectors;
+    config_stack_vec2* type_stack = &ctx->stacks.vectors;
     NK_ASSERT(type_stack->head < (int) NK_LEN(type_stack->elements));
     if (type_stack->head >= (int) NK_LEN(type_stack->elements))
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
+    config_stack_vec2_element* element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
     element->address = address;
     element->old_value = *address;
     *address = value;
     return 1;
   }
 
-  NK_API bool style_push_flags(context* ctx, flag* address, flag value) {
-    struct config_stack_flags* type_stack;
-    struct config_stack_flags_element* element;
+  NK_API bool style_push_flags(context* ctx, flag* address, const flag value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.flags;
+    config_stack_flags* type_stack = &ctx->stacks.flags;
     NK_ASSERT(type_stack->head < (int) NK_LEN(type_stack->elements));
     if (type_stack->head >= (int) NK_LEN(type_stack->elements))
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
+    config_stack_flags_element* element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
     element->address = address;
     element->old_value = *address;
     *address = value;
     return 1;
   }
 
-  NK_API bool style_push_color(context* ctx, color* address, color value) {
-    struct config_stack_color* type_stack;
-    struct config_stack_color_element* element;
+  NK_API bool style_push_color(context* ctx, color* address, const color value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.colors;
+    config_stack_color* type_stack = &ctx->stacks.colors;
     NK_ASSERT(type_stack->head < (int) NK_LEN(type_stack->elements));
     if (type_stack->head >= (int) NK_LEN(type_stack->elements))
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
+    config_stack_color_element* element = &type_stack->elements[static_cast<std::size_t>(type_stack->head++)];
     element->address = address;
     element->old_value = *address;
     *address = value;
@@ -894,22 +864,20 @@ namespace nk {
   NK_API void
   style_load_cursor(context* ctx, style_cursor cur,
                     const cursor* c) {
-    style* style;
     NK_ASSERT(ctx);
     if (!ctx)
       return;
-    style = &ctx->style;
+    style* style = &ctx->style;
     style->cursors[static_cast<std::size_t>(cur)] = c;
   }
 
   NK_API void
   style_load_all_cursors(context* ctx, const cursor* cursors) {
     int i = 0;
-    style* style;
     NK_ASSERT(ctx);
     if (!ctx)
       return;
-    style = &ctx->style;
+    style* style = &ctx->style;
     for (i = 0; i < std::to_underlying(style_cursor::CURSOR_COUNT); ++i)
       style->cursors[i] = &cursors[i];
     style->cursor_visible = true;
@@ -917,11 +885,10 @@ namespace nk {
 
   NK_API bool
   style_set_cursor(context* ctx, style_cursor c) {
-    style* style;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    style = &ctx->style;
+    style* style = &ctx->style;
     if (style->cursors[static_cast<std::size_t>(c)]) {
       style->cursor_active = style->cursors[static_cast<std::size_t>(c)];
       return 1;
@@ -940,76 +907,66 @@ namespace nk {
   }
 
   NK_API bool style_pop_float(context* ctx) {
-    config_stack_float* type_stack;
-    config_stack_float_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.floats;
+    config_stack_float* type_stack = &ctx->stacks.floats;
     NK_ASSERT(type_stack->head > 0);
     if (type_stack->head < 1)
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
+    const config_stack_float_element* element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
     *element->address = element->old_value;
     return 1;
   }
 
   NK_API bool style_pop_vec2(context* ctx) {
-    config_stack_vec2* type_stack;
-    config_stack_vec2_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.vectors;
+    config_stack_vec2* type_stack = &ctx->stacks.vectors;
     NK_ASSERT(type_stack->head > 0);
     if (type_stack->head < 1)
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
+    const config_stack_vec2_element* element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
     *element->address = element->old_value;
     return 1;
   }
 
   NK_API bool style_pop_style_item(context* ctx) {
-    config_stack_style_item* type_stack;
-    struct config_stack_style_item_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.style_items;
+    config_stack_style_item* type_stack = &ctx->stacks.style_items;
     NK_ASSERT(type_stack->head > 0);
     if (type_stack->head < 1)
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
+    const config_stack_style_item_element* element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
     *element->address = element->old_value;
     return 1;
   }
 
   NK_API bool style_pop_flags(context* ctx) {
-    config_stack_flags* type_stack;
-    config_stack_flags_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.flags;
+    config_stack_flags* type_stack = &ctx->stacks.flags;
     NK_ASSERT(type_stack->head > 0);
     if (type_stack->head < 1)
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
+    const config_stack_flags_element* element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
     *element->address = element->old_value;
     return 1;
   }
 
   NK_API bool style_pop_color(context* ctx) {
-    config_stack_color* type_stack;
-    config_stack_color_element* element;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    type_stack = &ctx->stacks.colors;
+    config_stack_color* type_stack = &ctx->stacks.colors;
     NK_ASSERT(type_stack->head > 0);
     if (type_stack->head < 1)
       return 0;
-    element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
+    const config_stack_color_element* element = &type_stack->elements[static_cast<std::size_t>(--type_stack->head)];
     *element->address = element->old_value;
     return 1;
   }

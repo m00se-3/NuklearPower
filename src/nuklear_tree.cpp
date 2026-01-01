@@ -8,24 +8,16 @@ namespace nk {
    *
    * ===============================================================*/
   INTERN int
-  tree_state_base(struct context* ctx, enum tree_type type,
-                  struct image* img, const char* title, enum collapse_states* state) {
-    struct window* win;
-    struct panel* layout;
-    const struct style* style;
-    struct command_buffer* out;
-    const struct input* in;
-    const struct style_button* button;
-    enum symbol_type symbol;
-    float row_height;
+  tree_state_base(context* ctx, const tree_type type,
+                  struct image* img, const char* title, collapse_states* state) {
+    const style_button* button;
+    symbol_type symbol;
 
-    vec2f item_spacing;
     rectf header = {0, 0, 0, 0};
     rectf sym = {0, 0, 0, 0};
-    struct text text;
+    text text;
 
     flag ws = 0;
-    enum widget_layout_states widget_state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -34,21 +26,21 @@ namespace nk {
       return 0;
 
     /* cache some data */
-    win = ctx->current;
-    layout = win->layout;
-    out = &win->buffer;
-    style = &ctx->style;
-    item_spacing = style->window.spacing;
+    window* win = ctx->current;
+    panel* layout = win->layout;
+    command_buffer* out = &win->buffer;
+    const style* style = &ctx->style;
+    const vec2f item_spacing = style->window.spacing;
 
     /* calculate header bounds and draw background */
-    row_height = style->font->height + 2 * style->tab.padding.y;
+    float row_height = style->font->height + 2 * style->tab.padding.y;
     layout_set_min_row_height(ctx, row_height);
     layout_row_dynamic(ctx, row_height, 1);
     layout_reset_min_row_height(ctx);
 
-    widget_state = widget(&header, ctx);
+    const widget_layout_states widget_state = widget(&header, ctx);
     if (type == tree_type::TREE_TAB) {
-      const struct style_item* background = &style->tab.background;
+      const style_item* background = &style->tab.background;
 
       switch (background->type) {
         case style_item_type::STYLE_ITEM_IMAGE:
@@ -67,7 +59,7 @@ namespace nk {
       text.background = style->window.background;
 
     /* update node state */
-    in = (!(layout->flags & window_flags::WINDOW_ROM)) ? &ctx->input : 0;
+    const input* in = (!(layout->flags & window_flags::WINDOW_ROM)) ? &ctx->input : 0;
     in = (in && widget_state == NK_WIDGET_VALID) ? &ctx->input : 0;
     if (button_behavior(&ws, header, in, btn_behavior::BUTTON_DEFAULT))
       *state = (*state == collapse_states::MAXIMIZED) ? collapse_states::MINIMIZED : collapse_states::MAXIMIZED;
@@ -126,9 +118,9 @@ namespace nk {
       return false;
   }
   INTERN int
-  tree_base(struct context* ctx, enum tree_type type,
-            struct image* img, const char* title, enum collapse_states initial_state,
-            const char* hash_str, int len, int line) {
+  tree_base(context* ctx, const tree_type type,
+            struct image* img, const char* title, const collapse_states initial_state,
+            const char* hash_str, const int len, const int line) {
     window* win = ctx->current;
     int title_len = 0;
     hash tree_hash = 0;
@@ -145,22 +137,22 @@ namespace nk {
       state = add_value(ctx, win, tree_hash, 0);
       *state = (initial_state == collapse_states::MINIMIZED) ? 0u : 1u;
     }
-    return tree_state_base(ctx, type, img, title, (enum collapse_states*) state);
+    return tree_state_base(ctx, type, img, title, (collapse_states*) state);
   }
   NK_API bool
-  tree_state_push(struct context* ctx, enum tree_type type,
-                  const char* title, enum collapse_states* state) {
+  tree_state_push(context* ctx, const tree_type type,
+                  const char* title, collapse_states* state) {
     return tree_state_base(ctx, type, 0, title, state);
   }
   NK_API bool
-  tree_state_image_push(struct context* ctx, enum tree_type type,
-                        struct image img, const char* title, enum collapse_states* state) {
+  tree_state_image_push(context* ctx, const tree_type type,
+                        struct image img, const char* title, collapse_states* state) {
     return tree_state_base(ctx, type, &img, title, state);
   }
   NK_API void
-  tree_state_pop(struct context* ctx) {
-    struct window* win = 0;
-    struct panel* layout = 0;
+  tree_state_pop(context* ctx) {
+    const window* win = 0;
+    panel* layout = 0;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -176,44 +168,32 @@ namespace nk {
     layout->row.tree_depth--;
   }
   NK_API bool
-  tree_push_hashed(struct context* ctx, enum tree_type type,
-                   const char* title, enum collapse_states initial_state,
-                   const char* hash, int len, int line) {
+  tree_push_hashed(context* ctx, const tree_type type,
+                   const char* title, const collapse_states initial_state,
+                   const char* hash, const int len, const int line) {
     return tree_base(ctx, type, 0, title, initial_state, hash, len, line);
   }
   NK_API bool
-  tree_image_push_hashed(struct context* ctx, enum tree_type type,
-                         struct image img, const char* title, enum collapse_states initial_state,
-                         const char* hash, int len, int seed) {
+  tree_image_push_hashed(context* ctx, const tree_type type,
+                         struct image img, const char* title, const collapse_states initial_state,
+                         const char* hash, const int len, const int seed) {
     return tree_base(ctx, type, &img, title, initial_state, hash, len, seed);
   }
   NK_API void
-  tree_pop(struct context* ctx) {
+  tree_pop(context* ctx) {
     tree_state_pop(ctx);
   }
   INTERN int
-  tree_element_image_push_hashed_base(struct context* ctx, enum tree_type type,
-                                      struct image* img, const char* title, int title_len,
-                                      enum collapse_states* state, bool* selected) {
-    struct window* win;
-    struct panel* layout;
-    const struct style* style;
-    struct command_buffer* out;
-    const struct input* in;
-    const struct style_button* button;
-    enum symbol_type symbol;
-    float row_height;
-    vec2f padding;
+  tree_element_image_push_hashed_base(context* ctx, const tree_type type,
+                                      struct image* img, const char* title, const int title_len,
+                                      collapse_states* state, bool* selected) {
+    const style_button* button;
+    symbol_type symbol;
 
-    int text_len;
-    float text_width;
-
-    vec2f item_spacing;
     rectf header = {0, 0, 0, 0};
     rectf sym = {0, 0, 0, 0};
 
     flag ws = 0;
-    enum widget_layout_states widget_state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -222,22 +202,22 @@ namespace nk {
       return 0;
 
     /* cache some data */
-    win = ctx->current;
-    layout = win->layout;
-    out = &win->buffer;
-    style = &ctx->style;
-    item_spacing = style->window.spacing;
-    padding = style->selectable.padding;
+    window* win = ctx->current;
+    panel* layout = win->layout;
+    command_buffer* out = &win->buffer;
+    const style* style = &ctx->style;
+    const vec2f item_spacing = style->window.spacing;
+    const vec2f padding = style->selectable.padding;
 
     /* calculate header bounds and draw background */
-    row_height = style->font->height + 2 * style->tab.padding.y;
+    float row_height = style->font->height + 2 * style->tab.padding.y;
     layout_set_min_row_height(ctx, row_height);
     layout_row_dynamic(ctx, row_height, 1);
     layout_reset_min_row_height(ctx);
 
-    widget_state = widget(&header, ctx);
+    const widget_layout_states widget_state = widget(&header, ctx);
     if (type == tree_type::TREE_TAB) {
-      const struct style_item* background = &style->tab.background;
+      const style_item* background = &style->tab.background;
 
       switch (background->type) {
         case style_item_type::STYLE_ITEM_IMAGE:
@@ -255,7 +235,7 @@ namespace nk {
       }
     }
 
-    in = (!(layout->flags & window_flags::WINDOW_ROM)) ? &ctx->input : 0;
+    const input* in = (!(layout->flags & window_flags::WINDOW_ROM)) ? &ctx->input : 0;
     in = (in && widget_state == NK_WIDGET_VALID) ? &ctx->input : 0;
 
     /* select correct button style */
@@ -285,8 +265,8 @@ namespace nk {
       flag dummy = 0;
       rectf label;
       /* calculate size of the text and tooltip */
-      text_len = strlen(title);
-      text_width = style->font->width(style->font->userdata, style->font->height, title, text_len);
+      const int text_len = strlen(title);
+      float text_width = style->font->width(style->font->userdata, style->font->height, title, text_len);
       text_width += (4 * padding.x);
 
       header.w = NK_MAX(header.w, sym.w + item_spacing.x);
@@ -313,10 +293,10 @@ namespace nk {
       return false;
   }
   INTERN int
-  tree_element_base(struct context* ctx, enum tree_type type,
-                    struct image* img, const char* title, enum collapse_states initial_state,
-                    bool* selected, const char* hash_str, int len, int line) {
-    struct window* win = ctx->current;
+  tree_element_base(context* ctx, const tree_type type,
+                    struct image* img, const char* title, const collapse_states initial_state,
+                    bool* selected, const char* hash_str, const int len, const int line) {
+    window* win = ctx->current;
     int title_len = 0;
     hash tree_hash = 0;
     std::uint32_t* state = 0;
@@ -333,22 +313,22 @@ namespace nk {
       *state = (initial_state == collapse_states::MINIMIZED) ? 0u : 1u;
     }
     return tree_element_image_push_hashed_base(ctx, type, img, title,
-                                               strlen(title), (enum collapse_states*) state, selected);
+                                               strlen(title), (collapse_states*) state, selected);
   }
   NK_API bool
-  tree_element_push_hashed(struct context* ctx, enum tree_type type,
-                           const char* title, enum collapse_states initial_state,
-                           bool* selected, const char* hash, int len, int seed) {
+  tree_element_push_hashed(context* ctx, const tree_type type,
+                           const char* title, const collapse_states initial_state,
+                           bool* selected, const char* hash, const int len, const int seed) {
     return tree_element_base(ctx, type, 0, title, initial_state, selected, hash, len, seed);
   }
   NK_API bool
-  tree_element_image_push_hashed(struct context* ctx, enum tree_type type,
-                                 struct image img, const char* title, enum collapse_states initial_state,
-                                 bool* selected, const char* hash, int len, int seed) {
+  tree_element_image_push_hashed(context* ctx, const tree_type type,
+                                 struct image img, const char* title, const collapse_states initial_state,
+                                 bool* selected, const char* hash, const int len, const int seed) {
     return tree_element_base(ctx, type, &img, title, initial_state, selected, hash, len, seed);
   }
   NK_API void
-  tree_element_pop(struct context* ctx) {
+  tree_element_pop(context* ctx) {
     tree_state_pop(ctx);
   }
 } // namespace nk

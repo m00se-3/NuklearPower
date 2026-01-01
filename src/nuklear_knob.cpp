@@ -36,14 +36,13 @@ namespace nk {
           ay = NK_ABS(y);
     /* 0 = +y +x    1 = -y +x
        2 = +y -x    3 = -y -x */
-    auto signs = (y < 0) | ((x < 0) << 1);
+    const auto signs = (y < 0) | ((x < 0) << 1);
 
-    float a;
     if (y == 0.0 && x == 0.0)
       return 0.0f;
-    a = (ay > ax)
-            ? NK_PI_HALF - NK_ATAN(ax / ay)
-            : NK_ATAN(ay / ax);
+    float a = (ay > ax)
+                  ? NK_PI_HALF - NK_ATAN(ax / ay)
+                  : NK_ATAN(ay / ax);
 
     switch (signs) {
       case 0:
@@ -60,11 +59,11 @@ namespace nk {
 #endif
 
   NK_LIB float
-  knob_behavior(flag* state, struct input* in,
-                struct rectf bounds, float knob_min, float knob_max, float knob_value,
+  knob_behavior(flag* state, input* in,
+                const rectf bounds, float knob_min, float knob_max, float knob_value,
                 float knob_step, float knob_steps,
-                enum heading zero_direction, float dead_zone_percent) {
-    struct vec2f origin;
+                heading zero_direction, float dead_zone_percent) {
+    vec2f origin;
     float angle = 0.0f;
     origin.x = bounds.x + (bounds.w / 2);
     origin.y = bounds.y + (bounds.h / 2);
@@ -125,11 +124,11 @@ namespace nk {
     return knob_value;
   }
   NK_LIB void
-  draw_knob(struct command_buffer* out, flag state,
-            const struct style_knob* style, const struct rectf* bounds, float min, float value, float max,
-            enum heading zero_direction, float dead_zone_percent) {
-    const struct style_item* background;
-    struct color knob_color, cursor;
+  draw_knob(command_buffer* out, const flag state,
+            const style_knob* style, const rectf* bounds, float min, float value, float max,
+            heading zero_direction, float dead_zone_percent) {
+    const style_item* background;
+    color knob_color, cursor;
 
     NK_UNUSED(min);
     NK_UNUSED(max);
@@ -166,7 +165,7 @@ namespace nk {
     /* draw knob */
     fill_circle(out, *bounds, rgb_factor(knob_color, style->color_factor));
     if (style->knob_border > 0) {
-      struct rectf border_bounds = *bounds;
+      rectf border_bounds = *bounds;
       border_bounds.x += style->knob_border / 2;
       border_bounds.y += style->knob_border / 2;
       border_bounds.w -= style->knob_border;
@@ -177,7 +176,7 @@ namespace nk {
       float half_circle_size = (bounds->w / 2);
       float angle = (value - min) / (max - min);
       float alive_zone = 1.0f - dead_zone_percent;
-      struct vec2f cursor_start, cursor_end;
+      vec2f cursor_start, cursor_end;
       const float direction_rads[4] = {
           NK_PI * 1.5f, /* 90  NK_UP */
           0.0f, /* 0   NK_RIGHT */
@@ -211,15 +210,10 @@ namespace nk {
   }
   NK_LIB float
   do_knob(flag* state,
-          struct command_buffer* out, struct rectf bounds,
+          command_buffer* out, rectf bounds,
           float min, float val, float max, float step,
-          enum heading zero_direction, float dead_zone_percent,
-          const struct style_knob* style, struct input* in) {
-    float knob_range;
-    float knob_min;
-    float knob_max;
-    float knob_value;
-    float knob_steps;
+          const heading zero_direction, float dead_zone_percent,
+          const style_knob* style, input* in) {
 
     NK_ASSERT(style);
     NK_ASSERT(out);
@@ -239,11 +233,11 @@ namespace nk {
     }
 
     /* make sure the provided values are correct */
-    knob_max = NK_MAX(min, max);
-    knob_min = NK_MIN(min, max);
-    knob_value = NK_CLAMP(knob_min, val, knob_max);
-    knob_range = knob_max - knob_min;
-    knob_steps = knob_range / step;
+    float knob_max = NK_MAX(min, max);
+    float knob_min = NK_MIN(min, max);
+    float knob_value = NK_CLAMP(knob_min, val, knob_max);
+    float knob_range = knob_max - knob_min;
+    float knob_steps = knob_range / step;
 
     knob_value = knob_behavior(state, in, bounds, knob_min, knob_max, knob_value, step, knob_steps, zero_direction, dead_zone_percent);
 
@@ -256,17 +250,11 @@ namespace nk {
     return knob_value;
   }
   NK_API bool
-  knob_float(struct context* ctx, float min_value, float* value, float max_value,
-             float value_step, enum heading zero_direction, float dead_zone_degrees) {
-    struct window* win;
-    struct panel* layout;
-    struct input* in;
-    const struct style* style;
+  knob_float(context* ctx, float min_value, float* value, float max_value,
+             float value_step, const heading zero_direction, float dead_zone_degrees) {
 
-    int ret = 0;
-    float old_value;
-    struct rectf bounds;
-    enum widget_layout_states state;
+    const int ret = 0;
+    rectf bounds;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -276,27 +264,26 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout || !value)
       return ret;
 
-    win = ctx->current;
-    style = &ctx->style;
-    layout = win->layout;
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const panel* layout = win->layout;
 
-    state = widget(&bounds, ctx);
+    const widget_layout_states state = widget(&bounds, ctx);
     if (!state)
       return ret;
-    in = (state == NK_WIDGET_DISABLED || layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    input* in = (state == NK_WIDGET_DISABLED || layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
 
-    old_value = *value;
+    float old_value = *value;
     *value = do_knob(&ctx->last_widget_state, &win->buffer, bounds, min_value,
                      old_value, max_value, value_step, zero_direction, dead_zone_degrees / 360.0f, &style->knob, in);
 
     return (old_value > *value || old_value < *value);
   }
   NK_API bool
-  knob_int(struct context* ctx, int min, int* val, int max, int step,
-           enum heading zero_direction, float dead_zone_degrees) {
-    int ret;
+  knob_int(context* ctx, const int min, int* val, const int max, const int step,
+           const heading zero_direction, float dead_zone_degrees) {
     float value = (float) *val;
-    ret = knob_float(ctx, (float) min, &value, (float) max, (float) step, zero_direction, dead_zone_degrees);
+    const int ret = knob_float(ctx, (float) min, &value, (float) max, (float) step, zero_direction, dead_zone_degrees);
     *val = (int) value;
     return ret;
   }

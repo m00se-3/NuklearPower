@@ -14,14 +14,14 @@ namespace nk {
     return handle;
   }
   NK_API resource_handle
-  handle_id(int id) {
+  handle_id(const int id) {
     resource_handle handle;
     zero_struct(handle);
     handle.id = id;
     return handle;
   }
   NK_API struct image
-  subimage_ptr(void* ptr, unsigned short w, unsigned short h, struct rectf r) {
+  subimage_ptr(void* ptr, const unsigned short w, const unsigned short h, const rectf r) {
     struct image s;
     zero(&s, sizeof(s));
     s.handle.ptr = ptr;
@@ -34,7 +34,7 @@ namespace nk {
     return s;
   }
   NK_API struct image
-  subimage_id(int id, unsigned short w, unsigned short h, struct rectf r) {
+  subimage_id(const int id, const unsigned short w, const unsigned short h, const rectf r) {
     struct image s;
     zero(&s, sizeof(s));
     s.handle.id = id;
@@ -47,7 +47,7 @@ namespace nk {
     return s;
   }
   NK_API struct image
-  subimage_handle(resource_handle handle, unsigned short w, unsigned short h, struct rectf r) {
+  subimage_handle(const resource_handle handle, const unsigned short w, const unsigned short h, const rectf r) {
     struct image s;
     zero(&s, sizeof(s));
     s.handle = handle;
@@ -60,7 +60,7 @@ namespace nk {
     return s;
   }
   NK_API struct image
-  image_handle(resource_handle handle) {
+  image_handle(const resource_handle handle) {
     struct image s;
     zero(&s, sizeof(s));
     s.handle = handle;
@@ -87,7 +87,7 @@ namespace nk {
     return s;
   }
   NK_API struct image
-  image_id(int id) {
+  image_id(const int id) {
     struct image s;
     zero(&s, sizeof(s));
     s.handle.id = id;
@@ -105,9 +105,8 @@ namespace nk {
     return !(img->w == 0 && img->h == 0);
   }
   NK_API void
-  image(struct context* ctx, struct image img) {
-    struct window* win;
-    struct rectf bounds;
+  image(context* ctx, struct image img) {
+    rectf bounds;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -115,15 +114,14 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
+    window* win = ctx->current;
     if (!widget(&bounds, ctx))
       return;
     draw_image(&win->buffer, bounds, &img, white);
   }
   NK_API void
-  image_color(struct context* ctx, struct image img, struct color col) {
-    struct window* win;
-    struct rectf bounds;
+  image_color(context* ctx, struct image img, const color col) {
+    rectf bounds;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -131,7 +129,7 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
+    window* win = ctx->current;
     if (!widget(&bounds, ctx))
       return;
     draw_image(&win->buffer, bounds, &img, col);

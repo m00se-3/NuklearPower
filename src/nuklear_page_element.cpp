@@ -7,9 +7,9 @@ namespace nk {
    *                          PAGE ELEMENT
    *
    * ===============================================================*/
-  NK_LIB struct page_element*
-  create_page_element(struct context* ctx) {
-    struct page_element* elem;
+  NK_LIB page_element*
+  create_page_element(context* ctx) {
+    page_element* elem;
     if (ctx->freelist) {
       /* unlink page element from free list */
       elem = ctx->freelist;
@@ -24,7 +24,7 @@ namespace nk {
       /* allocate new page element from back of fixed size memory buffer */
       NK_STORAGE const std::size_t size = sizeof(struct page_element);
       NK_STORAGE const std::size_t align = alignof(struct page_element);
-      elem = (struct page_element*) buffer_alloc(&ctx->memory, buffer_allocation_type::BUFFER_BACK, size, align);
+      elem = (page_element*) buffer_alloc(&ctx->memory, buffer_allocation_type::BUFFER_BACK, size, align);
       NK_ASSERT(elem);
       if (!elem)
         return 0;
@@ -35,8 +35,8 @@ namespace nk {
     return elem;
   }
   NK_LIB void
-  lipage_element_into_freelist(struct context* ctx,
-                               struct page_element* elem) {
+  lipage_element_into_freelist(context* ctx,
+                               page_element* elem) {
     /* link table into freelist */
     if (!ctx->freelist) {
       ctx->freelist = elem;
@@ -46,7 +46,7 @@ namespace nk {
     }
   }
   NK_LIB void
-  free_page_element(struct context* ctx, struct page_element* elem) {
+  free_page_element(context* ctx, page_element* elem) {
     /* we have a pool so just add to free list */
     if (ctx->use_pool) {
       lipage_element_into_freelist(ctx, elem);
@@ -54,10 +54,10 @@ namespace nk {
     }
     /* if possible remove last element from back of fixed memory buffer */
     {
-      void* elem_end = (void*) (elem + 1);
-      void* buffer_end = (std::uint8_t*) ctx->memory.memory.ptr + ctx->memory.size;
+      const void* elem_end = (void*) (elem + 1);
+      const void* buffer_end = (std::uint8_t*) ctx->memory.memory.ptr + ctx->memory.size;
       if (elem_end == buffer_end)
-        ctx->memory.size -= sizeof(struct page_element);
+        ctx->memory.size -= sizeof(page_element);
       else
         lipage_element_into_freelist(ctx, elem);
     }

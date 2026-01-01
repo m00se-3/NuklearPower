@@ -10,13 +10,13 @@ namespace nk {
    * ===============================================================*/
   INTERN int str_match_here(const char* regexp, const char* text);
   INTERN int str_match_star(int c, const char* regexp, const char* text);
-  NK_LIB bool is_lower(int c) { return (c >= 'a' && c <= 'z') || (c >= 0xE0 && c <= 0xFF); }
-  NK_LIB bool is_upper(int c) { return (c >= 'A' && c <= 'Z') || (c >= 0xC0 && c <= 0xDF); }
-  NK_LIB int to_upper(int c) { return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c; }
-  NK_LIB int to_lower(int c) { return (c >= 'A' && c <= 'Z') ? (c - ('a' + 'A')) : c; }
+  NK_LIB bool is_lower(const int c) { return (c >= 'a' && c <= 'z') || (c >= 0xE0 && c <= 0xFF); }
+  NK_LIB bool is_upper(const int c) { return (c >= 'A' && c <= 'Z') || (c >= 0xC0 && c <= 0xDF); }
+  NK_LIB int to_upper(const int c) { return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c; }
+  NK_LIB int to_lower(const int c) { return (c >= 'A' && c <= 'Z') ? (c - ('a' + 'A')) : c; }
 
   NK_LIB void
-  zero(void* ptr, std::size_t size) {
+  zero(void* ptr, const std::size_t size) {
     NK_ASSERT(ptr);
     std::memset(ptr, 0, size);
   }
@@ -115,19 +115,17 @@ namespace nk {
   }
   NK_API float
   strtof(const char* str, char** endptr) {
-    float float_value;
-    double double_value;
-    double_value = NK_STRTOD(str, endptr);
-    float_value = (float) double_value;
+    const double double_value = NK_STRTOD(str, endptr);
+    float float_value = (float) double_value;
     return float_value;
   }
   NK_API int
   stricmp(const char* s1, const char* s2) {
-    int c1, c2, d;
+    int c1;
     do {
       c1 = *s1++;
-      c2 = *s2++;
-      d = c1 - c2;
+      const int c2 = *s2++;
+      int d = c1 - c2;
       while (d) {
         if (c1 <= 'Z' && c1 >= 'A') {
           d += ('a' - 'A');
@@ -146,15 +144,15 @@ namespace nk {
   }
   NK_API int
   stricmpn(const char* s1, const char* s2, int n) {
-    int c1, c2, d;
+    int c1;
     NK_ASSERT(n >= 0);
     do {
       c1 = *s1++;
-      c2 = *s2++;
+      const int c2 = *s2++;
       if (!n--)
         return 0;
 
-      d = c1 - c2;
+      int d = c1 - c2;
       while (d) {
         if (c1 <= 'Z' && c1 >= 'A') {
           d += ('a' - 'A');
@@ -184,7 +182,7 @@ namespace nk {
     return 0;
   }
   INTERN int
-  str_match_star(int c, const char* regexp, const char* text) {
+  str_match_star(const int c, const char* regexp, const char* text) {
     do { /* a '* matches zero or more instances */
       if (str_match_here(regexp, text))
         return 1;
@@ -208,7 +206,7 @@ namespace nk {
     return 0;
   }
   NK_API int
-  strmatch_fuzzy_text(const char* str, int str_len,
+  strmatch_fuzzy_text(const char* str, const int str_len,
                       const char* pattern, int* out_score) {
     /* Returns true if each character in pattern is found sequentially within str
      * if found then out_score is also set. Score value has no intrinsic meaning.
@@ -249,11 +247,11 @@ namespace nk {
       const char pattern_letter = *pattern_iter;
       const char str_letter = str[str_iter];
 
-      int next_match = *pattern_iter != '\0' &&
+      const int next_match = *pattern_iter != '\0' &&
                        to_lower(pattern_letter) == to_lower(str_letter);
-      int rematch = best_letter && to_upper(*best_letter) == to_upper(str_letter);
+      const int rematch = best_letter && to_upper(*best_letter) == to_upper(str_letter);
 
-      int advanced = next_match && best_letter;
+      const int advanced = next_match && best_letter;
       int pattern_repeat = best_letter && *pattern_iter != '\0';
       pattern_repeat = pattern_repeat &&
                        to_lower(*best_letter) == to_lower(pattern_letter);
@@ -268,7 +266,7 @@ namespace nk {
         int new_score = 0;
         /* Apply penalty for each letter before the first pattern match */
         if (pattern_iter == pattern) {
-          int count = (int) (&str[str_iter] - str);
+          const int count = (int) (&str[str_iter] - str);
           int penalty = NK_LEADING_LETTER_PENALTY * count;
           if (penalty < NK_MAX_LEADING_LETTER_PENALTY)
             penalty = NK_MAX_LEADING_LETTER_PENALTY;
@@ -331,7 +329,7 @@ namespace nk {
     return strmatch_fuzzy_text(str, strlen(str), pattern, out_score);
   }
   NK_LIB int
-  string_float_limit(char* string, int prec) {
+  string_float_limit(char* string, const int prec) {
     int dot = 0;
     char* c = string;
     while (*c) {
@@ -352,12 +350,11 @@ namespace nk {
   }
   INTERN void
   strrev_ascii(char* s) {
-    int len = strlen(s);
-    int end = len / 2;
+    const int len = strlen(s);
+    const int end = len / 2;
     int i = 0;
-    char t;
     for (; i < end; ++i) {
-      t = s[i];
+      const char t = s[i];
       s[i] = s[len - 1 - i];
       s[len - 1 - i] = t;
     }
@@ -428,9 +425,9 @@ namespace nk {
 
     /* convert the number */
     while (n > NK_FLOAT_PRECISION || m >= 0) {
-      double weight = pow(10.0, m);
+      const double weight = pow(10.0, m);
       if (weight > 0) {
-        double t = (double) n / weight;
+        const double t = (double) n / weight;
         digit = ifloord(t);
         n -= ((double) digit * weight);
         *(c++) = (char) ('0' + (char) digit);
@@ -829,7 +826,7 @@ namespace nk {
   }
 #endif
   NK_API hash
-  murmur_hash(const void* key, int len, hash seed) {
+  murmur_hash(const void* key, const int len, const hash seed) {
     /* 32-Bit MurmurHash3: https://code.google.com/p/smhasher/wiki/MurmurHash3*/
 #define NK_ROTL(x, r) ((x) << (r) | ((x) >> (32 - r)))
 
@@ -837,18 +834,16 @@ namespace nk {
     std::uint32_t k1;
     const auto* data = (const std::uint32_t*) key;
     const std::uint32_t* keyptr = data;
-    std::uint32_t* k1ptr;
     const int nblocks = len / 4;
 
     const std::uint32_t c1 = 0xcc9e2d51;
     const std::uint32_t c2 = 0x1b873593;
-    int i;
 
     /* body */
     if (key == nullptr)
       return 0;
-    for (i = 0; i < nblocks; ++i, ++keyptr) {
-      k1ptr = &k1;
+    for (int i = 0; i < nblocks; ++i, ++keyptr) {
+      std::uint32_t* k1ptr = &k1;
       k1ptr[0] = keyptr[0];
       k1ptr[1] = keyptr[1];
       k1ptr[2] = keyptr[2];
@@ -930,8 +925,8 @@ namespace nk {
   }
 #endif
   NK_LIB int
-  text_clamp(const struct user_font* font, const char* text,
-             int text_len, float space, int* glyphs, float* text_width,
+  text_clamp(const user_font* font, const char* text,
+             const int text_len, float space, int* glyphs, float* text_width,
              rune* sep_list, int sep_count) {
     int i = 0;
     int glyph_len = 0;
@@ -940,7 +935,6 @@ namespace nk {
     float width = 0;
     int len = 0;
     int g = 0;
-    float s;
 
     int sep_len = 0;
     int sep_g = 0;
@@ -950,7 +944,7 @@ namespace nk {
     glyph_len = utf_decode(text, &unicode, text_len);
     while (glyph_len && (width < space) && (len < text_len)) {
       len += glyph_len;
-      s = font->width(font->userdata, font->height, text, len);
+      float s = font->width(font->userdata, font->height, text, len);
       for (i = 0; i < sep_count; ++i) {
         if (unicode != sep_list[i])
           continue;
@@ -978,14 +972,13 @@ namespace nk {
     }
   }
   NK_LIB vec2f
-  text_calculate_text_bounds(const struct user_font* font,
-                             const char* begin, int byte_len, float row_height, const char** remaining,
-                             vec2f* out_offset, int* glyphs, int op) {
+  text_calculate_text_bounds(const user_font* font,
+                             const char* begin, const int byte_len, float row_height, const char** remaining,
+                             vec2f* out_offset, int* glyphs, const int op) {
     float line_height = row_height;
     vec2f text_size = vec2_from_floats(0.0f, 0.0f);
     float line_width = 0.0f;
 
-    float glyph_width;
     int glyph_len = 0;
     rune unicode = 0;
     int text_len = 0;
@@ -995,7 +988,7 @@ namespace nk {
     glyph_len = utf_decode(begin, &unicode, byte_len);
     if (!glyph_len)
       return text_size;
-    glyph_width = font->width(font->userdata, font->height, begin, glyph_len);
+    float glyph_width = font->width(font->userdata, font->height, begin, glyph_len);
 
     *glyphs = 0;
     while ((text_len < byte_len) && glyph_len) {

@@ -8,46 +8,40 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB float
-  scrollbar_behavior(flag* state, struct input* in,
-                     int has_scrolling, const rectf* scroll,
+  scrollbar_behavior(flag* state, input* in,
+                     const int has_scrolling, const rectf* scroll,
                      const rectf* cursor, const rectf* empty0,
                      const rectf* empty1, float scroll_offset,
-                     float target, float scroll_step, enum orientation o) {
+                     float target, float scroll_step, const orientation o) {
     flag ws = 0;
-    int left_mouse_down;
-    unsigned int left_mouse_clicked;
-    int left_mouse_click_in_cursor;
-    float scroll_delta;
 
     nk::widget_state_reset(state);
     if (!in)
       return scroll_offset;
 
-    left_mouse_down = in->mouse.buttons[NK_BUTTON_LEFT].down;
-    left_mouse_clicked = in->mouse.buttons[NK_BUTTON_LEFT].clicked;
-    left_mouse_click_in_cursor = input_has_mouse_click_down_in_rect(in,
-                                                                    NK_BUTTON_LEFT, *cursor, true);
+    const int left_mouse_down = in->mouse.buttons[NK_BUTTON_LEFT].down;
+    const unsigned int left_mouse_clicked = in->mouse.buttons[NK_BUTTON_LEFT].clicked;
+    const int left_mouse_click_in_cursor = input_has_mouse_click_down_in_rect(in,
+                                                                        NK_BUTTON_LEFT, *cursor, true);
     if (input_is_mouse_hovering_rect(in, *scroll))
       *state = NK_WIDGET_STATE_HOVERED;
 
-    scroll_delta = (o == orientation::VERTICAL) ? in->mouse.scroll_delta.y : in->mouse.scroll_delta.x;
+    float scroll_delta = (o == orientation::VERTICAL) ? in->mouse.scroll_delta.y : in->mouse.scroll_delta.x;
     if (left_mouse_down && left_mouse_click_in_cursor && !left_mouse_clicked) {
       /* update cursor by mouse dragging */
       float pixel, delta;
       *state = NK_WIDGET_STATE_ACTIVE;
       if (o == orientation::VERTICAL) {
-        float cursor_y;
         pixel = in->mouse.delta.y;
         delta = (pixel / scroll->h) * target;
         scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->h);
-        cursor_y = scroll->y + ((scroll_offset / target) * scroll->h);
+        float cursor_y = scroll->y + ((scroll_offset / target) * scroll->h);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.y = cursor_y + cursor->h / 2.0f;
       } else {
-        float cursor_x;
         pixel = in->mouse.delta.x;
         delta = (pixel / scroll->w) * target;
         scroll_offset = NK_CLAMP(0, scroll_offset + delta, target - scroll->w);
-        cursor_x = scroll->x + ((scroll_offset / target) * scroll->w);
+        float cursor_x = scroll->x + ((scroll_offset / target) * scroll->w);
         in->mouse.buttons[NK_BUTTON_LEFT].clicked_pos.x = cursor_x + cursor->w / 2.0f;
       }
     } else if ((input_is_key_pressed(in, NK_KEY_SCROLL_UP) && o == orientation::VERTICAL && has_scrolling) ||
@@ -89,11 +83,11 @@ namespace nk {
     return scroll_offset;
   }
   NK_LIB void
-  draw_scrollbar(struct command_buffer* out, flag state,
-                 const struct style_scrollbar* style, const rectf* bounds,
+  draw_scrollbar(command_buffer* out, const flag state,
+                 const style_scrollbar* style, const rectf* bounds,
                  const rectf* scroll) {
-    const struct style_item* background;
-    const struct style_item* cursor;
+    const style_item* background;
+    const style_item* cursor;
 
     /* select correct colors/images to draw */
     if (state & NK_WIDGET_STATE_ACTIVED) {
@@ -137,18 +131,15 @@ namespace nk {
   }
   NK_LIB float
   do_scrollbarv(flag* state,
-                struct command_buffer* out, rectf scroll, int has_scrolling,
+                command_buffer* out, rectf scroll, const int has_scrolling,
                 float offset, float target, float step, float button_pixel_inc,
-                const struct style_scrollbar* style, struct input* in,
-                const struct user_font* font) {
+                const style_scrollbar* style, input* in,
+                const user_font* font) {
     rectf empty_north;
     rectf empty_south;
     rectf cursor;
 
     float scroll_step;
-    float scroll_offset;
-    float scroll_off;
-    float scroll_ratio;
 
     NK_ASSERT(out);
     NK_ASSERT(style);
@@ -164,14 +155,13 @@ namespace nk {
     /* optional scrollbar buttons */
     if (style->show_buttons) {
       flag ws;
-      float scroll_h;
       rectf button;
 
       button.x = scroll.x;
       button.w = scroll.w;
       button.h = scroll.w;
 
-      scroll_h = NK_MAX(scroll.h - 2 * button.h, 0);
+      float scroll_h = NK_MAX(scroll.h - 2 * button.h, 0);
       scroll_step = NK_MIN(step, button_pixel_inc);
 
       /* decrement button */
@@ -192,9 +182,9 @@ namespace nk {
 
     /* calculate scrollbar constants */
     scroll_step = NK_MIN(step, scroll.h);
-    scroll_offset = NK_CLAMP(0, offset, target - scroll.h);
-    scroll_ratio = scroll.h / target;
-    scroll_off = scroll_offset / target;
+    float scroll_offset = NK_CLAMP(0, offset, target - scroll.h);
+    float scroll_ratio = scroll.h / target;
+    float scroll_off = scroll_offset / target;
 
     /* calculate scrollbar cursor bounds */
     cursor.h = NK_MAX((scroll_ratio * scroll.h) - (2 * style->border + 2 * style->padding.y), 0);
@@ -229,18 +219,15 @@ namespace nk {
   }
   NK_LIB float
   do_scrollbarh(flag* state,
-                struct command_buffer* out, rectf scroll, int has_scrolling,
+                command_buffer* out, rectf scroll, const int has_scrolling,
                 float offset, float target, float step, float button_pixel_inc,
-                const struct style_scrollbar* style, struct input* in,
-                const struct user_font* font) {
+                const style_scrollbar* style, input* in,
+                const user_font* font) {
     rectf cursor;
     rectf empty_west;
     rectf empty_east;
 
     float scroll_step;
-    float scroll_offset;
-    float scroll_off;
-    float scroll_ratio;
 
     NK_ASSERT(out);
     NK_ASSERT(style);
@@ -256,13 +243,12 @@ namespace nk {
     /* optional scrollbar buttons */
     if (style->show_buttons) {
       flag ws;
-      float scroll_w;
       rectf button;
       button.y = scroll.y;
       button.w = scroll.h;
       button.h = scroll.h;
 
-      scroll_w = scroll.w - 2 * button.w;
+      float scroll_w = scroll.w - 2 * button.w;
       scroll_step = NK_MIN(step, button_pixel_inc);
 
       /* decrement button */
@@ -283,9 +269,9 @@ namespace nk {
 
     /* calculate scrollbar constants */
     scroll_step = NK_MIN(step, scroll.w);
-    scroll_offset = NK_CLAMP(0, offset, target - scroll.w);
-    scroll_ratio = scroll.w / target;
-    scroll_off = scroll_offset / target;
+    float scroll_offset = NK_CLAMP(0, offset, target - scroll.w);
+    float scroll_ratio = scroll.w / target;
+    float scroll_off = scroll_offset / target;
 
     /* calculate cursor bounds */
     cursor.w = (scroll_ratio * scroll.w) - (2 * style->border + 2 * style->padding.x);

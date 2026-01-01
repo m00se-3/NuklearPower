@@ -51,9 +51,9 @@ namespace nk {
 
     /* convert the number */
     while (n > NK_FLOAT_PRECISION || m >= 0) {
-      double weight = pow(10.0, m);
+      const double weight = pow(10.0, m);
       if (weight > 0) {
-        double t = (double) n / weight;
+        const double t = (double) n / weight;
         digit = ifloord(t);
         n -= ((double) digit * weight);
         *(c++) = (char) ('0' + (char) digit);
@@ -94,11 +94,11 @@ namespace nk {
 #endif
 
   NK_LIB void
-  drag_behavior(flag* state, const struct input* in,
-                rectf drag, struct property_variant* variant,
+  drag_behavior(flag* state, const input* in,
+                const rectf drag, property_variant* variant,
                 float inc_per_pixel) {
-    int left_mouse_down = in && in->mouse.buttons[NK_BUTTON_LEFT].down;
-    int left_mouse_click_in_cursor = in &&
+    const int left_mouse_down = in && in->mouse.buttons[NK_BUTTON_LEFT].down;
+    const int left_mouse_click_in_cursor = in &&
                                      input_has_mouse_click_down_in_rect(in, NK_BUTTON_LEFT, drag, true);
 
     nk::widget_state_reset(state);
@@ -106,9 +106,8 @@ namespace nk {
       *state = NK_WIDGET_STATE_HOVERED;
 
     if (left_mouse_down && left_mouse_click_in_cursor) {
-      float delta, pixels;
-      pixels = in->mouse.delta.x;
-      delta = pixels * inc_per_pixel;
+      float pixels = in->mouse.delta.x;
+      float delta = pixels * inc_per_pixel;
       switch (variant->kind) {
         default:
           break;
@@ -133,9 +132,9 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
   }
   NK_LIB void
-  property_behavior(flag* ws, const struct input* in,
-                    rectf property, rectf label, rectf edit,
-                    rectf empty, int* state, struct property_variant* variant,
+  property_behavior(flag* ws, const input* in,
+                    const rectf property, const rectf label, const rectf edit,
+                    const rectf empty, int* state, property_variant* variant,
                     float inc_per_pixel) {
     nk::widget_state_reset(ws);
     if (in && *state == NK_PROPERTY_DEFAULT) {
@@ -153,11 +152,11 @@ namespace nk {
     }
   }
   NK_LIB void
-  draw_property(struct command_buffer* out, const struct style_property* style,
-                const rectf* bounds, const rectf* label, flag state,
-                const char* name, int len, const struct user_font* font) {
-    struct text text;
-    const struct style_item* background;
+  draw_property(command_buffer* out, const style_property* style,
+                const rectf* bounds, const rectf* label, const flag state,
+                const char* name, const int len, const user_font* font) {
+    text text;
+    const style_item* background;
 
     /* select correct background and text color */
     if (state & NK_WIDGET_STATE_ACTIVED) {
@@ -198,21 +197,20 @@ namespace nk {
   }
   NK_LIB void
   do_property(flag* ws,
-              struct command_buffer* out, rectf property,
-              const char* name, struct property_variant* variant,
+              command_buffer* out, const rectf property,
+              const char* name, property_variant* variant,
               float inc_per_pixel, char* buffer, int* len,
               int* state, int* cursor, int* select_begin, int* select_end,
-              const struct style_property* style,
-              enum property_filter filter, struct input* in,
-              const struct user_font* font, struct text_edit* text_edit,
-              btn_behavior behavior) {
+              const style_property* style,
+              const property_filter filter, input* in,
+              const user_font* font, text_edit* text_edit,
+              const btn_behavior behavior) {
     const plugin_filter filters[] = {
         filter_decimal,
         filter_float};
-    bool active, old;
+    bool active;
     int num_len = 0, name_len = 0;
     char string[NK_MAX_NUMBER_BUFFER];
-    float size;
 
     char* dst = 0;
     int* length;
@@ -233,7 +231,7 @@ namespace nk {
     if (name && name[0] != '#') {
       name_len = strlen(name);
     }
-    size = font->width(font->userdata, font->height, name, name_len);
+    float size = font->width(font->userdata, font->height, name, name_len);
     label.x = left.x + left.w + style->padding.x;
     label.w = (float) size + 2 * style->padding.x;
     label.y = property.y + style->border + style->padding.y;
@@ -286,7 +284,7 @@ namespace nk {
     empty.h = property.h;
 
     /* update property */
-    old = (*state == NK_PROPERTY_EDIT);
+    const bool old = (*state == NK_PROPERTY_EDIT);
     property_behavior(ws, in, property, label, edit, empty, state, variant, inc_per_pixel);
 
     /* draw property */
@@ -385,9 +383,9 @@ namespace nk {
       }
     }
   }
-  NK_LIB struct property_variant
-  property_variant_int(int value, int min_value, int max_value, int step) {
-    struct property_variant result;
+  NK_LIB property_variant
+  property_variant_int(const int value, const int min_value, const int max_value, const int step) {
+    property_variant result;
     result.kind = NK_PROPERTY_INT;
     result.value.i = value;
     result.min_value.i = min_value;
@@ -395,9 +393,9 @@ namespace nk {
     result.step.i = step;
     return result;
   }
-  NK_LIB struct property_variant
+  NK_LIB property_variant
   property_variant_float(float value, float min_value, float max_value, float step) {
-    struct property_variant result;
+    property_variant result;
     result.kind = NK_PROPERTY_FLOAT;
     result.value.f = value;
     result.min_value.f = min_value;
@@ -405,10 +403,10 @@ namespace nk {
     result.step.f = step;
     return result;
   }
-  NK_LIB struct property_variant
-  property_variant_double(double value, double min_value, double max_value,
-                          double step) {
-    struct property_variant result;
+  NK_LIB property_variant
+  property_variant_double(const double value, const double min_value, const double max_value,
+                          const double step) {
+    property_variant result;
     result.kind = NK_PROPERTY_DOUBLE;
     result.value.d = value;
     result.min_value.d = min_value;
@@ -417,15 +415,10 @@ namespace nk {
     return result;
   }
   NK_LIB void
-  property(struct context* ctx, const char* name, struct property_variant* variant,
-           float inc_per_pixel, const enum property_filter filter) {
-    struct window* win;
-    struct panel* layout;
-    struct input* in;
-    const struct style* style;
+  property(context* ctx, const char* name, property_variant* variant,
+           float inc_per_pixel, const property_filter filter) {
 
     rectf bounds;
-    enum widget_layout_states s;
 
     int* state = 0;
     hash hash = 0;
@@ -434,7 +427,6 @@ namespace nk {
     int* cursor = 0;
     int* select_begin = 0;
     int* select_end = 0;
-    int old_state;
 
     char dummy_buffer[NK_MAX_NUMBER_BUFFER];
     int dummy_state = NK_PROPERTY_DEFAULT;
@@ -449,10 +441,10 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
-    layout = win->layout;
-    style = &ctx->style;
-    s = widget(&bounds, ctx);
+    window* win = ctx->current;
+    const panel* layout = win->layout;
+    const style* style = &ctx->style;
+    const widget_layout_states s = widget(&bounds, ctx);
     if (!s)
       return;
 
@@ -481,12 +473,12 @@ namespace nk {
     }
 
     /* execute property widget */
-    old_state = *state;
+    const int old_state = *state;
     ctx->text_edit.clip = ctx->clip;
-    in = ((s == NK_WIDGET_ROM && !win->property.active) ||
-          layout->flags & window_flags::WINDOW_ROM || s == NK_WIDGET_DISABLED)
-             ? 0
-             : &ctx->input;
+    input* in = ((s == NK_WIDGET_ROM && !win->property.active) ||
+                 layout->flags & window_flags::WINDOW_ROM || s == NK_WIDGET_DISABLED)
+                    ? 0
+                    : &ctx->input;
     do_property(&ctx->last_widget_state, &win->buffer, bounds, name,
                 variant, inc_per_pixel, buffer, len, state, cursor, select_begin,
                 select_end, &style->property, filter, in, style->font, &ctx->text_edit,
@@ -520,9 +512,9 @@ namespace nk {
     }
   }
   NK_API void
-  property_int(struct context* ctx, const char* name,
-               int min, int* val, int max, int step, float inc_per_pixel) {
-    struct property_variant variant;
+  property_int(context* ctx, const char* name,
+               const int min, int* val, const int max, const int step, float inc_per_pixel) {
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
     NK_ASSERT(val);
@@ -534,9 +526,9 @@ namespace nk {
     *val = variant.value.i;
   }
   NK_API void
-  property_float(struct context* ctx, const char* name,
+  property_float(context* ctx, const char* name,
                  float min, float* val, float max, float step, float inc_per_pixel) {
-    struct property_variant variant;
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
     NK_ASSERT(val);
@@ -548,9 +540,9 @@ namespace nk {
     *val = variant.value.f;
   }
   NK_API void
-  property_double(struct context* ctx, const char* name,
-                  double min, double* val, double max, double step, float inc_per_pixel) {
-    struct property_variant variant;
+  property_double(context* ctx, const char* name,
+                  const double min, double* val, const double max, const double step, float inc_per_pixel) {
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
     NK_ASSERT(val);
@@ -562,9 +554,9 @@ namespace nk {
     *val = variant.value.d;
   }
   NK_API int
-  propertyi(struct context* ctx, const char* name, int min, int val,
-            int max, int step, float inc_per_pixel) {
-    struct property_variant variant;
+  propertyi(context* ctx, const char* name, const int min, int val,
+            const int max, const int step, float inc_per_pixel) {
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
 
@@ -576,9 +568,9 @@ namespace nk {
     return val;
   }
   NK_API float
-  propertyf(struct context* ctx, const char* name, float min,
+  propertyf(context* ctx, const char* name, float min,
             float val, float max, float step, float inc_per_pixel) {
-    struct property_variant variant;
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
 
@@ -590,9 +582,9 @@ namespace nk {
     return val;
   }
   NK_API double
-  propertyd(struct context* ctx, const char* name, double min,
-            double val, double max, double step, float inc_per_pixel) {
-    struct property_variant variant;
+  propertyd(context* ctx, const char* name, const double min,
+            double val, const double max, const double step, float inc_per_pixel) {
+    property_variant variant;
     NK_ASSERT(ctx);
     NK_ASSERT(name);
 

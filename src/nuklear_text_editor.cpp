@@ -27,27 +27,27 @@ namespace nk {
   };
 
   /* forward declarations */
-  INTERN void textedit_makeundo_delete(struct text_edit*, int, int);
-  INTERN void textedit_makeundo_insert(struct text_edit*, int, int);
-  INTERN void textedit_makeundo_replace(struct text_edit*, int, int, int);
+  INTERN void textedit_makeundo_delete(text_edit*, int, int);
+  INTERN void textedit_makeundo_insert(text_edit*, int, int);
+  INTERN void textedit_makeundo_replace(text_edit*, int, int, int);
 #define NK_TEXT_HAS_SELECTION(s) ((s)->select_start != (s)->select_end)
 
   INTERN float
-  textedit_get_width(const struct text_edit* edit, int line_start, int char_id,
-                     const struct user_font* font) {
+  textedit_get_width(const text_edit* edit, const int line_start, const int char_id,
+                     const user_font* font) {
     int len = 0;
     rune unicode = 0;
     const char* str = str_at_const(&edit->string, line_start + char_id, &unicode, &len);
     return font->width(font->userdata, font->height, str, len);
   }
   INTERN void
-  textedit_layout_row(struct text_edit_row* r, struct text_edit* edit,
-                      int line_start_id, float row_height, const struct user_font* font) {
+  textedit_layout_row(text_edit_row* r, text_edit* edit,
+                      const int line_start_id, float row_height, const user_font* font) {
     int l;
     int glyphs = 0;
     rune unicode;
     const char* remaining;
-    int len = str_len_char(&edit->string);
+    const int len = str_len_char(&edit->string);
     const char* end = str_get_const(&edit->string) + len;
     const char* text = str_at_const(&edit->string, line_start_id, &unicode, &l);
     const vec2f size = text_calculate_text_bounds(font,
@@ -61,12 +61,12 @@ namespace nk {
     r->num_chars = glyphs;
   }
   INTERN int
-  textedit_locate_coord(struct text_edit* edit, float x, float y,
-                        const struct user_font* font, float row_height) {
-    struct text_edit_row r;
-    int n = edit->string.len;
-    float base_y = 0, prev_x;
-    int i = 0, k;
+  textedit_locate_coord(text_edit* edit, float x, float y,
+                        const user_font* font, float row_height) {
+    text_edit_row r;
+    const int n = edit->string.len;
+    float base_y = 0;
+    int i = 0;
 
     r.x0 = r.x1 = 0;
     r.ymin = r.ymax = 0;
@@ -99,8 +99,8 @@ namespace nk {
     /* check if it's before the end of the line */
     if (x < r.x1) {
       /* search characters in row for one that straddles 'x' */
-      k = i;
-      prev_x = r.x0;
+      const int k = i;
+      float prev_x = r.x0;
       for (i = 0; i < r.num_chars; ++i) {
         float w = textedit_get_width(edit, k, i, font);
         if (x < prev_x + w) {
@@ -122,8 +122,8 @@ namespace nk {
       return i + r.num_chars;
   }
   NK_LIB void
-  textedit_click(struct text_edit* state, float x, float y,
-                 const struct user_font* font, float row_height) {
+  textedit_click(text_edit* state, float x, float y,
+                 const user_font* font, float row_height) {
     /* API click: on mouse down, move the cursor to the clicked location,
      * and reset the selection */
     state->cursor = textedit_locate_coord(state, x, y, font, row_height);
@@ -132,23 +132,23 @@ namespace nk {
     state->has_preferred_x = 0;
   }
   NK_LIB void
-  textedit_drag(struct text_edit* state, float x, float y,
-                const struct user_font* font, float row_height) {
+  textedit_drag(text_edit* state, float x, float y,
+                const user_font* font, float row_height) {
     /* API drag: on mouse drag, move the cursor and selection endpoint
      * to the clicked location */
-    int p = textedit_locate_coord(state, x, y, font, row_height);
+    const int p = textedit_locate_coord(state, x, y, font, row_height);
     if (state->select_start == state->select_end)
       state->select_start = state->cursor;
     state->cursor = state->select_end = p;
   }
   INTERN void
-  textedit_find_charpos(struct text_find* find, struct text_edit* state,
-                        int n, int single_line, const struct user_font* font, float row_height) {
+  textedit_find_charpos(text_find* find, text_edit* state,
+                        const int n, const int single_line, const user_font* font, float row_height) {
     /* find the x/y location of a character, and remember info about the previous
      * row in case we get a move-up event (for page up, we'll have to rescan) */
-    struct text_edit_row r;
+    text_edit_row r;
     int prev_start = 0;
-    int z = state->string.len;
+    const int z = state->string.len;
     int i = 0, first;
 
     zero_struct(r);
@@ -199,9 +199,9 @@ namespace nk {
       find->x += textedit_get_width(state, first, i, font);
   }
   INTERN void
-  textedit_clamp(struct text_edit* state) {
+  textedit_clamp(text_edit* state) {
     /* make the selection/cursor state valid if client altered the string */
-    int n = state->string.len;
+    const int n = state->string.len;
     if (NK_TEXT_HAS_SELECTION(state)) {
       if (state->select_start > n)
         state->select_start = n;
@@ -215,14 +215,14 @@ namespace nk {
       state->cursor = n;
   }
   NK_API void
-  textedit_delete(struct text_edit* state, int where, int len) {
+  textedit_delete(text_edit* state, const int where, const int len) {
     /* delete characters while updating undo */
     textedit_makeundo_delete(state, where, len);
     str_delete_runes(&state->string, where, len);
     state->has_preferred_x = 0;
   }
   NK_API void
-  textedit_delete_selection(struct text_edit* state) {
+  textedit_delete_selection(text_edit* state) {
     /* delete the section */
     textedit_clamp(state);
     if (NK_TEXT_HAS_SELECTION(state)) {
@@ -239,16 +239,16 @@ namespace nk {
     }
   }
   INTERN void
-  textedit_sortselection(struct text_edit* state) {
+  textedit_sortselection(text_edit* state) {
     /* canonicalize the selection so start <= end */
     if (state->select_end < state->select_start) {
-      int temp = state->select_end;
+      const int temp = state->select_end;
       state->select_end = state->select_start;
       state->select_start = temp;
     }
   }
   INTERN void
-  textedit_move_to_first(struct text_edit* state) {
+  textedit_move_to_first(text_edit* state) {
     /* move cursor to first character of selection */
     if (NK_TEXT_HAS_SELECTION(state)) {
       textedit_sortselection(state);
@@ -258,7 +258,7 @@ namespace nk {
     }
   }
   INTERN void
-  textedit_move_to_last(struct text_edit* state) {
+  textedit_move_to_last(text_edit* state) {
     /* move cursor to last character of selection */
     if (NK_TEXT_HAS_SELECTION(state)) {
       textedit_sortselection(state);
@@ -269,7 +269,7 @@ namespace nk {
     }
   }
   INTERN int
-  is_word_boundary(struct text_edit* state, int idx) {
+  is_word_boundary(text_edit* state, const int idx) {
     int len;
     rune c;
     if (idx < 0)
@@ -284,7 +284,7 @@ namespace nk {
 #endif
   }
   INTERN int
-  textedit_move_to_word_previous(struct text_edit* state) {
+  textedit_move_to_word_previous(text_edit* state) {
     int c = state->cursor - 1;
     if (c > 0) {
       if (is_word_boundary(state, c)) {
@@ -301,7 +301,7 @@ namespace nk {
     return c;
   }
   INTERN int
-  textedit_move_to_word_next(struct text_edit* state) {
+  textedit_move_to_word_next(text_edit* state) {
     const int len = state->string.len;
     int c = state->cursor;
     if (c < len) {
@@ -318,7 +318,7 @@ namespace nk {
     return c;
   }
   INTERN void
-  textedit_prep_selection_at_cursor(struct text_edit* state) {
+  textedit_prep_selection_at_cursor(text_edit* state) {
     /* update selection and cursor to match each other */
     if (!NK_TEXT_HAS_SELECTION(state))
       state->select_start = state->select_end = state->cursor;
@@ -326,7 +326,7 @@ namespace nk {
       state->cursor = state->select_end;
   }
   NK_API bool
-  textedit_cut(struct text_edit* state) {
+  textedit_cut(text_edit* state) {
     /* API cut: delete selection */
     if (state->mode == static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_VIEW))
       return 0;
@@ -338,9 +338,8 @@ namespace nk {
     return 0;
   }
   NK_API bool
-  textedit_paste(struct text_edit* state, char const* ctext, int len) {
+  textedit_paste(text_edit* state, char const* ctext, const int len) {
     /* API paste: replace existing selection with passed-in text */
-    int glyphs;
     const char* text = (const char*) ctext;
     if (state->mode == static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_VIEW))
       return 0;
@@ -350,7 +349,7 @@ namespace nk {
     textedit_delete_selection(state);
 
     /* try to insert the characters */
-    glyphs = utf_len(ctext, len);
+    const int glyphs = utf_len(ctext, len);
     if (str_insert_text_char(&state->string, state->cursor, text, len)) {
       textedit_makeundo_insert(state, state->cursor, glyphs);
       state->cursor += len;
@@ -363,9 +362,8 @@ namespace nk {
     return 0;
   }
   NK_API void
-  textedit_text(struct text_edit* state, const char* text, int total_len) {
+  textedit_text(text_edit* state, const char* text, const int total_len) {
     rune unicode;
-    int glyph_len;
     int text_len = 0;
 
     NK_ASSERT(state);
@@ -373,7 +371,7 @@ namespace nk {
     if (!text || !total_len || state->mode == static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_VIEW))
       return;
 
-    glyph_len = utf_decode(text, &unicode, total_len);
+    int glyph_len = utf_decode(text, &unicode, total_len);
     while ((text_len < total_len) && glyph_len) {
       /* don't insert a backward delete, just process the event */
       if (unicode == 127)
@@ -411,8 +409,8 @@ namespace nk {
     }
   }
   NK_LIB void
-  textedit_key(struct text_edit* state, enum keys key, int shift_mod,
-               const struct user_font* font, float row_height) {
+  textedit_key(text_edit* state, keys key, const int shift_mod,
+               const user_font* font, float row_height) {
   retry:
     switch (key) {
       case NK_KEY_NONE:
@@ -530,9 +528,9 @@ namespace nk {
         break;
 
       case NK_KEY_DOWN: {
-        struct text_find find;
-        struct text_edit_row row;
-        int i, sel = shift_mod;
+        text_find find;
+        text_edit_row row;
+        const int sel = shift_mod;
 
         if (state->single_line) {
           /* on windows, up&down in single-line behave like left&right */
@@ -552,15 +550,14 @@ namespace nk {
 
         /* now find character position down a row */
         if (find.length) {
-          float x;
           float goal_x = state->has_preferred_x ? state->preferred_x : find.x;
-          int start = find.first_char + find.length;
+          const int start = find.first_char + find.length;
 
           state->cursor = start;
           textedit_layout_row(&row, state, state->cursor, row_height, font);
-          x = row.x0;
+          float x = row.x0;
 
-          for (i = 0; i < row.num_chars && x < row.x1; ++i) {
+          for (int i = 0; i < row.num_chars && x < row.x1; ++i) {
             float dx = textedit_get_width(state, start, i, font);
             x += dx;
             if (x > goal_x)
@@ -577,9 +574,9 @@ namespace nk {
       } break;
 
       case NK_KEY_UP: {
-        struct text_find find;
-        struct text_edit_row row;
-        int i, sel = shift_mod;
+        text_find find;
+        text_edit_row row;
+        const int sel = shift_mod;
 
         if (state->single_line) {
           /* on windows, up&down become left&right */
@@ -600,14 +597,13 @@ namespace nk {
         /* can only go up if there's a previous row */
         if (find.prev_first != find.first_char) {
           /* now find character position up a row */
-          float x;
           float goal_x = state->has_preferred_x ? state->preferred_x : find.x;
 
           state->cursor = find.prev_first;
           textedit_layout_row(&row, state, state->cursor, row_height, font);
-          x = row.x0;
+          float x = row.x0;
 
-          for (i = 0; i < row.num_chars && x < row.x1; ++i) {
+          for (int i = 0; i < row.num_chars && x < row.x1; ++i) {
             float dx = textedit_get_width(state, find.prev_first, i, font);
             x += dx;
             if (x > goal_x)
@@ -629,7 +625,7 @@ namespace nk {
         if (NK_TEXT_HAS_SELECTION(state))
           textedit_delete_selection(state);
         else {
-          int n = state->string.len;
+          const int n = state->string.len;
           if (state->cursor < n)
             textedit_delete(state, state->cursor, 1);
         }
@@ -676,7 +672,7 @@ namespace nk {
 
       case NK_KEY_TEXT_LINE_START: {
         if (shift_mod) {
-          struct text_find find;
+          text_find find;
           textedit_clamp(state);
           textedit_prep_selection_at_cursor(state);
           if (state->string.len && state->cursor == state->string.len)
@@ -686,7 +682,7 @@ namespace nk {
           state->cursor = state->select_end = find.first_char;
           state->has_preferred_x = 0;
         } else {
-          struct text_find find;
+          text_find find;
           if (state->string.len && state->cursor == state->string.len)
             --state->cursor;
           textedit_clamp(state);
@@ -700,7 +696,7 @@ namespace nk {
 
       case NK_KEY_TEXT_LINE_END: {
         if (shift_mod) {
-          struct text_find find;
+          text_find find;
           textedit_clamp(state);
           textedit_prep_selection_at_cursor(state);
           textedit_find_charpos(&find, state, state->cursor, state->single_line,
@@ -711,7 +707,7 @@ namespace nk {
             --state->cursor;
           state->select_end = state->cursor;
         } else {
-          struct text_find find;
+          text_find find;
           textedit_clamp(state);
           textedit_move_to_first(state);
           textedit_find_charpos(&find, state, state->cursor, state->single_line,
@@ -726,17 +722,17 @@ namespace nk {
     }
   }
   INTERN void
-  textedit_flush_redo(struct text_undo_state* state) {
+  textedit_flush_redo(text_undo_state* state) {
     state->redo_point = NK_TEXTEDIT_UNDOSTATECOUNT;
     state->redo_char_point = NK_TEXTEDIT_UNDOCHARCOUNT;
   }
   INTERN void
-  textedit_discard_undo(struct text_undo_state* state) {
+  textedit_discard_undo(text_undo_state* state) {
     /* discard the oldest entry in the undo list */
     if (state->undo_point > 0) {
       /* if the 0th undo state has characters, clean those up */
       if (state->undo_rec[0].char_storage >= 0) {
-        int n = state->undo_rec[0].insert_length;
+        const int n = state->undo_rec[0].insert_length;
         unsigned int i{};
         /* delete n characters from all other records */
         state->undo_char_point = (short) (state->undo_char_point - n);
@@ -753,17 +749,17 @@ namespace nk {
     }
   }
   INTERN void
-  textedit_discard_redo(struct text_undo_state* state) {
+  textedit_discard_redo(text_undo_state* state) {
     /*  discard the oldest entry in the redo list--it's bad if this
         ever happens, but because undo & redo have to store the actual
         characters in different cases, the redo character buffer can
         fill up even though the undo buffer didn't */
     std::size_t num;
-    unsigned int k = NK_TEXTEDIT_UNDOSTATECOUNT - 1;
+    const unsigned int k = NK_TEXTEDIT_UNDOSTATECOUNT - 1;
     if (state->redo_point <= k) {
       /* if the k'th undo state has characters, clean those up */
       if (state->undo_rec[k].char_storage >= 0) {
-        int n = state->undo_rec[k].insert_length;
+        const int n = state->undo_rec[k].insert_length;
         int i{};
         /* delete n characters from all other records */
         state->redo_char_point = (short) (state->redo_char_point + n);
@@ -783,8 +779,8 @@ namespace nk {
                     state->undo_rec.data() + state->redo_point, num * sizeof(state->undo_rec[0]));
     }
   }
-  INTERN struct text_undo_record*
-  textedit_create_undo_record(struct text_undo_state* state, int numchars) {
+  INTERN text_undo_record*
+  textedit_create_undo_record(text_undo_state* state, const int numchars) {
     /* any time we create a new undo record, we discard redo*/
     textedit_flush_redo(state);
 
@@ -809,9 +805,9 @@ namespace nk {
     return &state->undo_rec[static_cast<long unsigned int>(state->undo_point)];
   }
   INTERN rune*
-  textedit_createundo(struct text_undo_state* state, int pos,
-                      int insert_len, int delete_len) {
-    struct text_undo_record* r = textedit_create_undo_record(state, insert_len);
+  textedit_createundo(text_undo_state* state, const int pos,
+                      const int insert_len, const int delete_len) {
+    text_undo_record* r = textedit_create_undo_record(state, insert_len);
     if (r == 0)
       return 0;
 
@@ -829,15 +825,14 @@ namespace nk {
     }
   }
   NK_API void
-  textedit_undo(struct text_edit* state) {
-    struct text_undo_state* s = &state->undo;
-    struct text_undo_record u, *r;
+  textedit_undo(text_edit* state) {
+    text_undo_state* s = &state->undo;
     if (s->undo_point == 0)
       return;
 
     /* we need to do two things: apply the undo record, and create a redo record */
-    u = s->undo_rec[static_cast<unsigned int>(s->undo_point - 1)];
-    r = &s->undo_rec[static_cast<unsigned int>(s->redo_point - 1)];
+    const text_undo_record u = s->undo_rec[static_cast<unsigned int>(s->undo_point - 1)];
+    text_undo_record* r = &s->undo_rec[static_cast<unsigned int>(s->redo_point - 1)];
     r->char_storage = -1;
 
     r->insert_length = u.delete_length;
@@ -858,7 +853,6 @@ namespace nk {
          * to store the redo characters */
         r->insert_length = 0;
       } else {
-        int i;
         /* there's definitely room to store the characters eventually */
         while (s->undo_char_point + u.delete_length > s->redo_char_point) {
           /* there's currently not enough room, so discard a redo record */
@@ -873,7 +867,7 @@ namespace nk {
         s->redo_char_point = (short) (s->redo_char_point - u.delete_length);
 
         /* now save the characters */
-        for (i = 0; i < u.delete_length; ++i)
+        for (int i = 0; i < u.delete_length; ++i)
           s->undo_char[static_cast<unsigned int>(r->char_storage + i)] =
               str_rune_at(&state->string, u.where + i);
       }
@@ -894,15 +888,14 @@ namespace nk {
     s->redo_point--;
   }
   NK_API void
-  textedit_redo(struct text_edit* state) {
-    struct text_undo_state* s = &state->undo;
-    struct text_undo_record *u, r;
+  textedit_redo(text_edit* state) {
+    text_undo_state* s = &state->undo;
     if (s->redo_point == NK_TEXTEDIT_UNDOSTATECOUNT)
       return;
 
     /* we need to do two things: apply the redo record, and create an undo record */
-    u = &s->undo_rec[static_cast<long unsigned int>(s->undo_point)];
-    r = s->undo_rec[static_cast<long unsigned int>(s->redo_point)];
+    text_undo_record* u = &s->undo_rec[static_cast<long unsigned int>(s->undo_point)];
+    const text_undo_record r = s->undo_rec[static_cast<long unsigned int>(s->redo_point)];
 
     /* we KNOW there must be room for the undo record, because the redo record
     was derived from an undo record */
@@ -918,12 +911,11 @@ namespace nk {
         u->insert_length = 0;
         u->delete_length = 0;
       } else {
-        int i;
         u->char_storage = s->undo_char_point;
         s->undo_char_point = (short) (s->undo_char_point + u->insert_length);
 
         /* now save the characters */
-        for (i = 0; i < u->insert_length; ++i) {
+        for (int i = 0; i < u->insert_length; ++i) {
           s->undo_char[static_cast<unsigned int>(u->char_storage + i)] =
               str_rune_at(&state->string, u->where + i);
         }
@@ -942,31 +934,29 @@ namespace nk {
     s->redo_point++;
   }
   INTERN void
-  textedit_makeundo_insert(struct text_edit* state, int where, int length) {
+  textedit_makeundo_insert(text_edit* state, const int where, const int length) {
     textedit_createundo(&state->undo, where, 0, length);
   }
   INTERN void
-  textedit_makeundo_delete(struct text_edit* state, int where, int length) {
-    int i;
+  textedit_makeundo_delete(text_edit* state, const int where, const int length) {
     rune* p = textedit_createundo(&state->undo, where, length, 0);
     if (p) {
-      for (i = 0; i < length; ++i)
+      for (int i = 0; i < length; ++i)
         p[i] = str_rune_at(&state->string, where + i);
     }
   }
   INTERN void
-  textedit_makeundo_replace(struct text_edit* state, int where,
-                            int old_length, int new_length) {
-    int i;
+  textedit_makeundo_replace(text_edit* state, const int where,
+                            const int old_length, const int new_length) {
     rune* p = textedit_createundo(&state->undo, where, old_length, new_length);
     if (p) {
-      for (i = 0; i < old_length; ++i)
+      for (int i = 0; i < old_length; ++i)
         p[i] = str_rune_at(&state->string, where + i);
     }
   }
   NK_LIB void
-  textedit_clear_state(struct text_edit* state, enum text_edit_type type,
-                       plugin_filter filter) {
+  textedit_clear_state(text_edit* state, const text_edit_type type,
+                       const plugin_filter filter) {
     /* reset the state to default */
     state->undo.undo_point = 0;
     state->undo.undo_char_point = 0;
@@ -984,22 +974,22 @@ namespace nk {
     state->scrollbar = vec2_from_floats(0.0f, 0.0f);
   }
   NK_API void
-  textedit_init_fixed(struct text_edit* state, void* memory, std::size_t size) {
+  textedit_init_fixed(text_edit* state, void* memory, const std::size_t size) {
     NK_ASSERT(state);
     NK_ASSERT(memory);
     if (!state || !memory || !size)
       return;
-    std::memset(state, 0, sizeof(struct text_edit));
+    std::memset(state, 0, sizeof(text_edit));
     textedit_clear_state(state, text_edit_type::TEXT_EDIT_SINGLE_LINE, 0);
     str_init_fixed(&state->string, memory, size);
   }
   NK_API void
-  textedit_init(struct text_edit* state, const struct allocator* alloc, std::size_t size) {
+  textedit_init(text_edit* state, const allocator* alloc, const std::size_t size) {
     NK_ASSERT(state);
     NK_ASSERT(alloc);
     if (!state || !alloc)
       return;
-    std::memset(state, 0, sizeof(struct text_edit));
+    std::memset(state, 0, sizeof(text_edit));
     textedit_clear_state(state, text_edit_type::TEXT_EDIT_SINGLE_LINE, 0);
     str_init(&state->string, alloc, size);
   }
@@ -1015,13 +1005,13 @@ namespace nk {
   }
 #endif
   NK_API void
-  textedit_select_all(struct text_edit* state) {
+  textedit_select_all(text_edit* state) {
     NK_ASSERT(state);
     state->select_start = 0;
     state->select_end = state->string.len;
   }
   NK_API void
-  textedit_free(struct text_edit* state) {
+  textedit_free(text_edit* state) {
     NK_ASSERT(state);
     if (!state)
       return;

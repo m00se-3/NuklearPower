@@ -10,16 +10,12 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  chart_begin_colored(struct context* ctx, enum chart_type type,
-                      struct color color, struct color highlight,
-                      int count, float min_value, float max_value) {
-    struct window* win;
-    struct chart* chart;
-    const struct style* config;
-    const struct style_chart* style;
+  chart_begin_colored(context* ctx, const chart_type type,
+                      const color color, const struct color highlight,
+                      const int count, float min_value, float max_value) {
+    chart* chart;
 
-    const struct style_item* background;
-    struct rectf bounds = {0, 0, 0, 0};
+    rectf bounds = {0, 0, 0, 0};
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -33,10 +29,10 @@ namespace nk {
       return 0;
     }
 
-    win = ctx->current;
-    config = &ctx->style;
+    window* win = ctx->current;
+    const style* config = &ctx->style;
     chart = &win->layout->chart;
-    style = &config->chart;
+    const style_chart* style = &config->chart;
 
     /* setup basic generic chart  */
     zero(chart, sizeof(*chart));
@@ -49,7 +45,7 @@ namespace nk {
 
     /* add first slot into chart */
     {
-      struct chart_slot* slot = &chart->slots[chart->slot++];
+      chart_slot* slot = &chart->slots[chart->slot++];
       slot->type = type;
       slot->count = count;
       slot->color = rgb_factor(color, style->color_factor);
@@ -61,7 +57,7 @@ namespace nk {
     }
 
     /* draw chart background */
-    background = &style->background;
+    const style_item* background = &style->background;
 
     switch (background->type) {
       case style_item_type::STYLE_ITEM_IMAGE:
@@ -79,16 +75,15 @@ namespace nk {
     return 1;
   }
   NK_API bool
-  chart_begin(struct context* ctx, const enum chart_type type,
-              int count, float min_value, float max_value) {
+  chart_begin(context* ctx, const chart_type type,
+              const int count, float min_value, float max_value) {
     return chart_begin_colored(ctx, type, ctx->style.chart.color,
                                ctx->style.chart.selected_color, count, min_value, max_value);
   }
   NK_API void
-  chart_add_slot_colored(struct context* ctx, const enum chart_type type,
-                         struct color color, struct color highlight,
-                         int count, float min_value, float max_value) {
-    const struct style_chart* style;
+  chart_add_slot_colored(context* ctx, const chart_type type,
+                         const color color, const struct color highlight,
+                         const int count, float min_value, float max_value) {
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -99,12 +94,12 @@ namespace nk {
     if (ctx->current->layout->chart.slot >= NK_CHART_MAX_SLOT)
       return;
 
-    style = &ctx->style.chart;
+    const style_chart* style = &ctx->style.chart;
 
     /* add another slot into the graph */
     {
-      struct chart* chart = &ctx->current->layout->chart;
-      struct chart_slot* slot = &chart->slots[chart->slot++];
+      chart* chart = &ctx->current->layout->chart;
+      chart_slot* slot = &chart->slots[chart->slot++];
       slot->type = type;
       slot->count = count;
       slot->color = rgb_factor(color, style->color_factor);
@@ -116,30 +111,27 @@ namespace nk {
     }
   }
   NK_API void
-  chart_add_slot(struct context* ctx, const enum chart_type type,
-                 int count, float min_value, float max_value) {
+  chart_add_slot(context* ctx, const chart_type type,
+                 const int count, float min_value, float max_value) {
     chart_add_slot_colored(ctx, type, ctx->style.chart.color,
                            ctx->style.chart.selected_color, count, min_value, max_value);
   }
   INTERN flag
-  chart_push_line(struct context* ctx, struct window* win,
-                  struct chart* g, float value, int slot) {
-    struct panel* layout = win->layout;
-    const struct input* i = ctx->current->widgets_disabled ? 0 : &ctx->input;
-    struct command_buffer* out = &win->buffer;
+  chart_push_line(context* ctx, window* win,
+                  chart* g, float value, const int slot) {
+    panel* layout = win->layout;
+    const input* i = ctx->current->widgets_disabled ? 0 : &ctx->input;
+    command_buffer* out = &win->buffer;
 
     flag ret = 0;
-    struct vec2f cur;
-    struct rectf bounds;
-    struct color color;
-    float step;
-    float range;
-    float ratio;
+    vec2f cur;
+    rectf bounds;
+    color color;
 
     NK_ASSERT(slot >= 0 && slot < NK_CHART_MAX_SLOT);
-    step = g->w / (float) g->slots[slot].count;
-    range = g->slots[slot].max - g->slots[slot].min;
-    ratio = (value - g->slots[slot].min) / range;
+    float step = g->w / (float) g->slots[slot].count;
+    float range = g->slots[slot].max - g->slots[slot].min;
+    float ratio = (value - g->slots[slot].min) / range;
 
     if (g->slots[slot].index == 0) {
       /* first data point does not have a connection */
@@ -199,16 +191,15 @@ namespace nk {
     return ret;
   }
   INTERN flag
-  chart_push_column(const struct context* ctx, struct window* win,
-                    struct chart* chart, float value, int slot) {
-    struct command_buffer* out = &win->buffer;
-    const struct input* in = ctx->current->widgets_disabled ? 0 : &ctx->input;
-    struct panel* layout = win->layout;
+  chart_push_column(const context* ctx, window* win,
+                    chart* chart, float value, const int slot) {
+    command_buffer* out = &win->buffer;
+    const input* in = ctx->current->widgets_disabled ? 0 : &ctx->input;
+    panel* layout = win->layout;
 
     float ratio;
     flag ret = 0;
-    struct color color;
-    struct rectf item = {0, 0, 0, 0};
+    rectf item = {0, 0, 0, 0};
 
     NK_ASSERT(slot >= 0 && slot < NK_CHART_MAX_SLOT);
     if (chart->slots[slot].index >= chart->slots[slot].count)
@@ -219,7 +210,7 @@ namespace nk {
     }
 
     /* calculate bounds of current bar chart entry */
-    color = chart->slots[slot].color;
+    color color = chart->slots[slot].color;
     ;
     item.h = chart->h * NK_ABS((value / chart->slots[slot].range));
     if (value >= 0) {
@@ -247,9 +238,8 @@ namespace nk {
     return ret;
   }
   NK_API flag
-  chart_push_slot(struct context* ctx, float value, int slot) {
+  chart_push_slot(context* ctx, float value, const int slot) {
     flag flags;
-    struct window* win;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -260,7 +250,7 @@ namespace nk {
     if (slot >= ctx->current->layout->chart.slot)
       return false;
 
-    win = ctx->current;
+    window* win = ctx->current;
     if (win->layout->chart.slot < slot)
       return false;
     switch (win->layout->chart.slots[slot].type) {
@@ -277,38 +267,34 @@ namespace nk {
     return flags;
   }
   NK_API flag
-  chart_push(struct context* ctx, float value) {
+  chart_push(context* ctx, float value) {
     return chart_push_slot(ctx, value, 0);
   }
   NK_API void
-  chart_end(struct context* ctx) {
-    struct window* win;
-    struct chart* chart;
+  chart_end(context* ctx) {
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
       return;
 
-    win = ctx->current;
-    chart = &win->layout->chart;
+    const window* win = ctx->current;
+    chart* chart = &win->layout->chart;
     std::memcpy(chart, 0, sizeof(*chart));
     return;
   }
   NK_API void
-  plot(struct context* ctx, enum chart_type type, const float* values,
-       int count, int offset) {
+  plot(context* ctx, const chart_type type, const float* values,
+       const int count, const int offset) {
     int i = 0;
-    float min_value;
-    float max_value;
 
     NK_ASSERT(ctx);
     NK_ASSERT(values);
     if (!ctx || !values || !count)
       return;
 
-    min_value = values[offset];
-    max_value = values[offset];
+    float min_value = values[offset];
+    float max_value = values[offset];
     for (i = 0; i < count; ++i) {
       min_value = NK_MIN(values[i + offset], min_value);
       max_value = NK_MAX(values[i + offset], max_value);
@@ -321,18 +307,17 @@ namespace nk {
     }
   }
   NK_API void
-  plot_function(struct context* ctx, enum chart_type type, void* userdata,
-                float (*value_getter)(void* user, int index), int count, int offset) {
+  plot_function(context* ctx, const chart_type type, void* userdata,
+                float (*value_getter)(void* user, int index), const int count, const int offset) {
     int i = 0;
     float min_value;
-    float max_value;
 
     NK_ASSERT(ctx);
     NK_ASSERT(value_getter);
     if (!ctx || !value_getter || !count)
       return;
 
-    max_value = min_value = value_getter(userdata, offset);
+    float max_value = min_value = value_getter(userdata, offset);
     for (i = 0; i < count; ++i) {
       float value = value_getter(userdata, i + offset);
       min_value = NK_MIN(value, min_value);

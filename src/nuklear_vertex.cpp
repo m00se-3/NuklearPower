@@ -13,14 +13,13 @@ namespace nk {
 #define NK_INV_SQRT inv_sqrt
   NK_LIB float
   inv_sqrt(float n) {
-    float x2;
     const float threehalfs = 1.5f;
     union {
       unsigned int i;
       float f;
     } conv = {0};
     conv.f = n;
-    x2 = n * 0.5f;
+    float x2 = n * 0.5f;
     conv.i = 0x5f375A84 - (conv.i >> 1);
     conv.f = conv.f * (threehalfs - (x2 * conv.f * conv.f));
     return conv.f;

@@ -31,8 +31,8 @@ namespace nk {
 #endif
 
   NK_API void
-  buffer_init(struct memory_buffer* b, const struct allocator* a,
-              std::size_t initial_size) {
+  buffer_init(memory_buffer* b, const allocator* a,
+              const std::size_t initial_size) {
     NK_ASSERT(b);
     NK_ASSERT(a);
     NK_ASSERT(initial_size);
@@ -48,29 +48,29 @@ namespace nk {
     b->pool = *a;
   }
   NK_API void
-  buffer_init_fixed(struct memory_buffer* b, void* m, std::size_t size) {
+  buffer_init_fixed(memory_buffer* b, void* memory, const std::size_t size) {
     NK_ASSERT(b);
-    NK_ASSERT(m);
+    NK_ASSERT(memory);
     NK_ASSERT(size);
-    if (!b || !m || !size)
+    if (!b || !memory || !size)
       return;
 
     zero(b, sizeof(*b));
     b->type = allocation_type::BUFFER_FIXED;
-    b->memory.ptr = m;
+    b->memory.ptr = memory;
     b->memory.size = size;
     b->size = size;
   }
   NK_LIB void*
   buffer_align(void* unaligned,
-               std::size_t align, std::size_t* alignment,
-               enum buffer_allocation_type type) {
-    void* memory = 0;
+               const std::size_t align, std::size_t* alignment,
+               const buffer_allocation_type type) {
+    void* memory = nullptr;
     switch (type) {
       default:
       case buffer_allocation_type::BUFFER_MAX:
       case buffer_allocation_type::BUFFER_FRONT:
-        if (align) {
+        if (align != 0u) {
           memory = NK_ALIGN_PTR(unaligned, align);
           *alignment = (std::size_t) ((std::uint8_t*) memory - (std::uint8_t*) unaligned);
         } else {
@@ -79,7 +79,7 @@ namespace nk {
         }
         break;
       case buffer_allocation_type::BUFFER_BACK:
-        if (align) {
+        if (align != 0u) {
           memory = NK_ALIGN_PTR_BACK(unaligned, align);
           *alignment = (std::size_t) ((std::uint8_t*) unaligned - (std::uint8_t*) memory);
         } else {
@@ -91,16 +91,15 @@ namespace nk {
     return memory;
   }
   NK_LIB void*
-  buffer_realloc(struct memory_buffer* b, std::size_t capacity, std::size_t* size) {
-    void* temp;
-    std::size_t buffer_size;
+  buffer_realloc(memory_buffer* b, const std::size_t capacity, std::size_t* size) {
+    void* temp = nullptr;
 
     NK_ASSERT(b);
     NK_ASSERT(size);
     if (!b || !size || !b->pool.alloc || !b->pool.free)
       return 0;
 
-    buffer_size = b->memory.size;
+    const std::size_t buffer_size = b->memory.size;
     temp = b->pool.alloc(b->pool.userdata, b->memory.ptr, capacity);
     NK_ASSERT(temp);
     if (!temp)
@@ -118,23 +117,20 @@ namespace nk {
       return temp;
     } else {
       /* copy back buffer to the end of the new buffer */
-      void *dst, *src;
-      std::size_t back_size;
-      back_size = buffer_size - b->size;
-      dst = ptr_add(void, temp, capacity - back_size);
-      src = ptr_add(void, temp, b->size);
+      const std::size_t back_size = buffer_size - b->size;
+      void* dst = ptr_add(void, temp, capacity - back_size);
+      const void* src = ptr_add(void, temp, b->size);
       std::memcpy(dst, src, back_size);
       b->size = capacity - back_size;
     }
     return temp;
   }
   NK_LIB void*
-  buffer_alloc(struct memory_buffer* b, enum buffer_allocation_type type,
-               std::size_t size, std::size_t align) {
+  buffer_alloc(memory_buffer* b, const buffer_allocation_type type,
+               const std::size_t size, const std::size_t align) {
     int full;
     std::size_t alignment;
     void* unaligned;
-    void* memory;
 
     NK_ASSERT(b);
     NK_ASSERT(size);
@@ -147,7 +143,7 @@ namespace nk {
       unaligned = ptr_add(void, b->memory.ptr, b->allocated);
     else
       unaligned = ptr_add(void, b->memory.ptr, b->size - size);
-    memory = buffer_align(unaligned, align, &alignment, type);
+    void* memory = buffer_align(unaligned, align, &alignment, type);
 
     /* check if buffer has enough memory*/
     if (type == buffer_allocation_type::BUFFER_FRONT)
@@ -156,7 +152,6 @@ namespace nk {
       full = ((b->size - NK_MIN(b->size, (size + alignment))) <= b->allocated);
 
     if (full) {
-      std::size_t capacity;
       if (b->type != allocation_type::BUFFER_DYNAMIC)
         return 0;
       NK_ASSERT(b->pool.alloc && b->pool.free);
@@ -164,7 +159,8 @@ namespace nk {
         return 0;
 
       /* buffer is full so allocate bigger buffer if dynamic */
-      capacity = (std::size_t) ((float) b->memory.size * b->grow_factor);
+      // TODO: This is a code smell.
+      auto capacity = static_cast<std::size_t>(static_cast<float>(b->memory.size) * b->grow_factor);
       capacity = NK_MAX(capacity, round_up_pow2((unsigned int) (b->allocated + size)));
       b->memory.ptr = buffer_realloc(b, capacity, &b->memory.size);
       if (!b->memory.ptr)
@@ -186,10 +182,10 @@ namespace nk {
     return memory;
   }
   NK_API void
-  buffer_push(struct memory_buffer* b, enum buffer_allocation_type type,
-              const void* memory, std::size_t size, std::size_t align) {
+  buffer_push(memory_buffer* b, const buffer_allocation_type type,
+              const void* memory, const std::size_t size, const std::size_t align) {
     void* mem = buffer_alloc(b, type, size, align);
-    if (!mem)
+    if (mem == nullptr)
       return;
     std::memcpy(mem, memory, size);
   }
@@ -205,7 +201,7 @@ namespace nk {
       buffer->marker[static_cast<unsigned>(type)].offset = buffer->allocated;
   }
   NK_API void
-  buffer_reset(struct memory_buffer* buffer, enum buffer_allocation_type type) {
+  buffer_reset(memory_buffer* buffer, buffer_allocation_type type) {
     NK_ASSERT(buffer);
     if (!buffer)
       return;
@@ -228,7 +224,7 @@ namespace nk {
     }
   }
   NK_API void
-  buffer_clear(struct memory_buffer* b) {
+  buffer_clear(memory_buffer* b) {
     NK_ASSERT(b);
     if (!b)
       return;
@@ -238,7 +234,7 @@ namespace nk {
     b->needed = 0;
   }
   NK_API void
-  buffer_free(struct memory_buffer* b) {
+  buffer_free(memory_buffer* b) {
     NK_ASSERT(b);
     if (!b || !b->memory.ptr)
       return;
@@ -250,7 +246,7 @@ namespace nk {
     b->pool.free(b->pool.userdata, b->memory.ptr);
   }
   NK_API void
-  buffer_info(struct memory_status* s, const struct memory_buffer* b) {
+  buffer_info(memory_status* s, const memory_buffer* b) {
     NK_ASSERT(b);
     NK_ASSERT(s);
     if (!s || !b)
@@ -262,21 +258,21 @@ namespace nk {
     s->calls = b->calls;
   }
   NK_API void*
-  buffer_memory(struct memory_buffer* buffer) {
+  buffer_memory(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)
       return 0;
     return buffer->memory.ptr;
   }
   NK_API const void*
-  buffer_memory_const(const struct memory_buffer* buffer) {
+  buffer_memory_const(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)
       return 0;
     return buffer->memory.ptr;
   }
   NK_API std::size_t
-  buffer_total(const struct memory_buffer* buffer) {
+  buffer_total(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)
       return 0;

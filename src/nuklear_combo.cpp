@@ -8,12 +8,11 @@ namespace nk {
    *
    * ===============================================================*/
   INTERN bool
-  combo_begin(struct context* ctx, struct window* win,
-              struct vec2f size, bool is_clicked, struct rectf header) {
-    struct window* popup;
+  combo_begin(context* ctx, window* win,
+              const vec2f size, const bool is_clicked, const rectf header) {
     int is_open = 0;
     int is_active = 0;
-    struct rectf body;
+    rectf body;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -21,13 +20,13 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    popup = win->popup.win;
+    const window* popup = win->popup.win;
     body.x = header.x;
     body.w = size.x;
     body.y = header.y + header.h - ctx->style.window.combo_border;
     body.h = size.y;
 
-    hash hsh = win->popup.combo_count++;
+    const hash hsh = win->popup.combo_count++;
     is_open = (popup) ? true : false;
     is_active = (popup && (win->popup.name == hsh) && win->popup.type == panel_type::PANEL_COMBO);
     if ((is_clicked && is_open && !is_active) || (is_open && !is_active) ||
@@ -42,17 +41,13 @@ namespace nk {
     return 1;
   }
   NK_API bool
-  combo_begin_text(struct context* ctx, const char* selected, int len,
-                   struct vec2f size) {
-    const struct input* in;
-    struct window* win;
-    struct style* style;
+  combo_begin_text(context* ctx, const char* selected, const int len,
+                   const vec2f size) {
 
-    enum widget_layout_states s;
     int is_clicked = false;
-    struct rectf header;
-    const struct style_item* background;
-    struct text text;
+    rectf header;
+    const style_item* background;
+    text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(selected);
@@ -61,13 +56,13 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout || !selected)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    s = widget(&header, ctx);
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const widget_layout_states s = widget(&header, ctx);
     if (s == NK_WIDGET_INVALID)
       return 0;
 
-    in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
+    const input* in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
     if (button_behavior(&ctx->last_widget_state, header, in, btn_behavior::BUTTON_DEFAULT))
       is_clicked = true;
 
@@ -102,12 +97,11 @@ namespace nk {
     }
     {
       /* print currently selected text item */
-      struct rectf label;
-      struct rectf button;
-      struct rectf content;
-      int draw_btn_symbol;
+      rectf label;
+      rectf button;
+      rectf content;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -116,7 +110,7 @@ namespace nk {
         sym = style->combo.sym_normal;
 
       /* represents whether or not the combo's button symbol should be drawn */
-      draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
+      const int draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
 
       /* calculate button */
       button.w = header.h - 2 * style->combo.button_padding.y;
@@ -149,19 +143,15 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_label(struct context* ctx, const char* selected, struct vec2f size) {
+  combo_begin_label(context* ctx, const char* selected, const vec2f size) {
     return combo_begin_text(ctx, selected, strlen(selected), size);
   }
   NK_API bool
-  combo_begin_color(struct context* ctx, struct color color, struct vec2f size) {
-    struct window* win;
-    struct style* style;
-    const struct input* in;
+  combo_begin_color(context* ctx, const color color, const vec2f size) {
 
-    struct rectf header;
+    rectf header;
     int is_clicked = false;
-    enum widget_layout_states s;
-    const struct style_item* background;
+    const style_item* background;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -169,13 +159,13 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    s = widget(&header, ctx);
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const widget_layout_states s = widget(&header, ctx);
     if (s == NK_WIDGET_INVALID)
       return 0;
 
-    in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
+    const input* in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
     if (button_behavior(&ctx->last_widget_state, header, in, btn_behavior::BUTTON_DEFAULT))
       is_clicked = true;
 
@@ -200,12 +190,11 @@ namespace nk {
         break;
     }
     {
-      struct rectf content;
-      struct rectf button;
-      struct rectf bounds;
-      int draw_btn_symbol;
+      rectf content;
+      rectf button;
+      rectf bounds;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -214,7 +203,7 @@ namespace nk {
         sym = style->combo.sym_normal;
 
       /* represents whether or not the combo's button symbol should be drawn */
-      draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
+      const int draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
 
       /* calculate button */
       button.w = header.h - 2 * style->combo.button_padding.y;
@@ -245,17 +234,13 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_symbol(struct context* ctx, enum symbol_type symbol, struct vec2f size) {
-    struct window* win;
-    struct style* style;
-    const struct input* in;
+  combo_begin_symbol(context* ctx, const symbol_type symbol, const vec2f size) {
 
-    struct rectf header;
+    rectf header;
     int is_clicked = false;
-    enum widget_layout_states s;
-    const struct style_item* background;
-    struct color sym_background;
-    struct color symbol_color;
+    const style_item* background;
+    color sym_background;
+    color symbol_color;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -263,13 +248,13 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    s = widget(&header, ctx);
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const widget_layout_states s = widget(&header, ctx);
     if (s == NK_WIDGET_INVALID)
       return 0;
 
-    in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
+    const input* in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
     if (button_behavior(&ctx->last_widget_state, header, in, btn_behavior::BUTTON_DEFAULT))
       is_clicked = true;
 
@@ -303,11 +288,11 @@ namespace nk {
         break;
     }
     {
-      struct rectf bounds = {0, 0, 0, 0};
-      struct rectf content;
-      struct rectf button;
+      rectf bounds = {0, 0, 0, 0};
+      rectf content;
+      rectf button;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -341,18 +326,18 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_symbol_text(struct context* ctx, const char* selected, int len,
-                          enum symbol_type symbol, struct vec2f size) {
-    struct window* win;
-    struct style* style;
-    struct input* in;
+  combo_begin_symbol_text(context* ctx, const char* selected, int len,
+                          symbol_type symbol, vec2f size) {
+    window* win;
+    style* style;
+    input* in;
 
-    struct rectf header;
+    rectf header;
     int is_clicked = false;
-    enum widget_layout_states s;
-    const struct style_item* background;
-    struct color symbol_color;
-    struct text text;
+    widget_layout_states s;
+    const style_item* background;
+    color symbol_color;
+    text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -404,12 +389,12 @@ namespace nk {
         break;
     }
     {
-      struct rectf content;
-      struct rectf button;
-      struct rectf label;
-      struct rectf image;
+      rectf content;
+      rectf button;
+      rectf label;
+      rectf image;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -449,15 +434,11 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_image(struct context* ctx, struct image img, struct vec2f size) {
-    struct window* win;
-    struct style* style;
-    const struct input* in;
+  combo_begin_image(context* ctx, struct image img, const vec2f size) {
 
-    struct rectf header;
+    rectf header;
     int is_clicked = false;
-    enum widget_layout_states s;
-    const struct style_item* background;
+    const style_item* background;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -465,13 +446,13 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    s = widget(&header, ctx);
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const widget_layout_states s = widget(&header, ctx);
     if (s == NK_WIDGET_INVALID)
       return 0;
 
-    in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
+    const input* in = (win->layout->flags & static_cast<decltype(win->layout->flags)>(window_flags::WINDOW_ROM) || s == NK_WIDGET_DISABLED || s == NK_WIDGET_ROM) ? 0 : &ctx->input;
     if (button_behavior(&ctx->last_widget_state, header, in, btn_behavior::BUTTON_DEFAULT))
       is_clicked = true;
 
@@ -496,12 +477,11 @@ namespace nk {
         break;
     }
     {
-      struct rectf bounds = {0, 0, 0, 0};
-      struct rectf content;
-      struct rectf button;
-      int draw_btn_symbol;
+      rectf bounds = {0, 0, 0, 0};
+      rectf content;
+      rectf button;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -510,7 +490,7 @@ namespace nk {
         sym = style->combo.sym_normal;
 
       /* represents whether or not the combo's button symbol should be drawn */
-      draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
+      const int draw_btn_symbol = sym != symbol_type::SYMBOL_NONE;
 
       /* calculate button */
       button.w = header.h - 2 * style->combo.button_padding.y;
@@ -541,17 +521,17 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_image_text(struct context* ctx, const char* selected, int len,
-                         struct image img, struct vec2f size) {
-    struct window* win;
-    struct style* style;
-    struct input* in;
+  combo_begin_image_text(context* ctx, const char* selected, int len,
+                         struct image img, vec2f size) {
+    window* win;
+    style* style;
+    input* in;
 
-    struct rectf header;
+    rectf header;
     int is_clicked = false;
-    enum widget_layout_states s;
-    const struct style_item* background;
-    struct text text;
+    widget_layout_states s;
+    const style_item* background;
+    text text;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -599,13 +579,13 @@ namespace nk {
         break;
     }
     {
-      struct rectf content;
-      struct rectf button;
-      struct rectf label;
-      struct rectf image;
+      rectf content;
+      rectf button;
+      rectf label;
+      rectf image;
       int draw_btn_symbol;
 
-      enum symbol_type sym;
+      symbol_type sym;
       if (ctx->last_widget_state & NK_WIDGET_STATE_HOVER)
         sym = style->combo.sym_hover;
       else if (is_clicked)
@@ -651,56 +631,53 @@ namespace nk {
     return combo_begin(ctx, win, size, is_clicked, header);
   }
   NK_API bool
-  combo_begin_symbol_label(struct context* ctx,
-                           const char* selected, enum symbol_type type, struct vec2f size) {
+  combo_begin_symbol_label(context* ctx,
+                           const char* selected, const symbol_type type, const vec2f size) {
     return combo_begin_symbol_text(ctx, selected, strlen(selected), type, size);
   }
   NK_API bool
-  combo_begin_image_label(struct context* ctx,
-                          const char* selected, struct image img, struct vec2f size) {
+  combo_begin_image_label(context* ctx,
+                          const char* selected, struct image img, const vec2f size) {
     return combo_begin_image_text(ctx, selected, strlen(selected), img, size);
   }
   NK_API bool
-  combo_item_text(struct context* ctx, const char* text, int len, flag align) {
+  combo_item_text(context* ctx, const char* text, const int len, const flag align) {
     return contextual_item_text(ctx, text, len, align);
   }
   NK_API bool
-  combo_item_label(struct context* ctx, const char* label, flag align) {
+  combo_item_label(context* ctx, const char* label, const flag align) {
     return contextual_item_label(ctx, label, align);
   }
   NK_API bool
-  combo_item_image_text(struct context* ctx, struct image img, const char* text,
-                        int len, flag alignment) {
+  combo_item_image_text(context* ctx, struct image img, const char* text,
+                        const int len, const flag alignment) {
     return contextual_item_image_text(ctx, img, text, len, alignment);
   }
   NK_API bool
-  combo_item_image_label(struct context* ctx, struct image img,
-                         const char* text, flag alignment) {
+  combo_item_image_label(context* ctx, struct image img,
+                         const char* text, const flag alignment) {
     return contextual_item_image_label(ctx, img, text, alignment);
   }
   NK_API bool
-  combo_item_symbol_text(struct context* ctx, enum symbol_type sym,
-                         const char* text, int len, flag alignment) {
+  combo_item_symbol_text(context* ctx, const symbol_type sym,
+                         const char* text, const int len, const flag alignment) {
     return contextual_item_symbol_text(ctx, sym, text, len, alignment);
   }
   NK_API bool
-  combo_item_symbol_label(struct context* ctx, enum symbol_type sym,
-                          const char* label, flag alignment) {
+  combo_item_symbol_label(context* ctx, const symbol_type sym,
+                          const char* label, const flag alignment) {
     return contextual_item_symbol_label(ctx, sym, label, alignment);
   }
-  NK_API void combo_end(struct context* ctx) {
+  NK_API void combo_end(context* ctx) {
     contextual_end(ctx);
   }
-  NK_API void combo_close(struct context* ctx) {
+  NK_API void combo_close(context* ctx) {
     contextual_close(ctx);
   }
   NK_API int
-  combo(struct context* ctx, const char* const* items, int count,
-        int selected, int item_height, struct vec2f size) {
+  combo(context* ctx, const char* const* items, const int count,
+        int selected, const int item_height, vec2f size) {
     int i = 0;
-    int max_height;
-    struct vec2f item_spacing;
-    struct vec2f window_padding;
 
     NK_ASSERT(ctx);
     NK_ASSERT(items);
@@ -708,9 +685,9 @@ namespace nk {
     if (!ctx || !items || !count)
       return selected;
 
-    item_spacing = ctx->style.window.spacing;
-    window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
-    max_height = count * item_height + count * (int) item_spacing.y;
+    const vec2f item_spacing = ctx->style.window.spacing;
+    const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
+    int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
     size.y = NK_MIN(size.y, (float) max_height);
     if (combo_begin_label(ctx, items[selected], size)) {
@@ -724,13 +701,9 @@ namespace nk {
     return selected;
   }
   NK_API int
-  combo_separator(struct context* ctx, const char* items_separated_by_separator,
-                  int separator, int selected, int count, int item_height, struct vec2f size) {
+  combo_separator(context* ctx, const char* items_separated_by_separator,
+                  const int separator, int selected, const int count, const int item_height, vec2f size) {
     int i;
-    int max_height;
-    struct vec2f item_spacing;
-    struct vec2f window_padding;
-    const char* current_item;
     const char* iter;
     int length = 0;
 
@@ -740,14 +713,14 @@ namespace nk {
       return selected;
 
     /* calculate popup window */
-    item_spacing = ctx->style.window.spacing;
-    window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
-    max_height = count * item_height + count * (int) item_spacing.y;
+    const vec2f item_spacing = ctx->style.window.spacing;
+    const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
+    int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
     size.y = NK_MIN(size.y, (float) max_height);
 
     /* find selected item */
-    current_item = items_separated_by_separator;
+    const char* current_item = items_separated_by_separator;
     for (i = 0; i < count; ++i) {
       iter = current_item;
       while (*iter && *iter != separator)
@@ -775,17 +748,13 @@ namespace nk {
     return selected;
   }
   NK_API int
-  combo_string(struct context* ctx, const char* items_separated_by_zeros,
-               int selected, int count, int item_height, struct vec2f size) {
+  combo_string(context* ctx, const char* items_separated_by_zeros,
+               const int selected, const int count, const int item_height, const vec2f size) {
     return combo_separator(ctx, items_separated_by_zeros, '\0', selected, count, item_height, size);
   }
   NK_API int
-  combo_callback(struct context* ctx, void (*item_getter)(void*, int, const char**),
-                 void* userdata, int selected, int count, int item_height, struct vec2f size) {
-    int i;
-    int max_height;
-    struct vec2f item_spacing;
-    struct vec2f window_padding;
+  combo_callback(context* ctx, void (*item_getter)(void*, int, const char**),
+                 void* userdata, int selected, const int count, const int item_height, vec2f size) {
     const char* item;
 
     NK_ASSERT(ctx);
@@ -794,16 +763,16 @@ namespace nk {
       return selected;
 
     /* calculate popup window */
-    item_spacing = ctx->style.window.spacing;
-    window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
-    max_height = count * item_height + count * (int) item_spacing.y;
+    const vec2f item_spacing = ctx->style.window.spacing;
+    const vec2f window_padding = panel_get_padding(&ctx->style, ctx->current->layout->type);
+    int max_height = count * item_height + count * (int) item_spacing.y;
     max_height += (int) item_spacing.y * 2 + (int) window_padding.y * 2;
     size.y = NK_MIN(size.y, (float) max_height);
 
     item_getter(userdata, selected, &item);
     if (combo_begin_label(ctx, item, size)) {
       layout_row_dynamic(ctx, (float) item_height, 1);
-      for (i = 0; i < count; ++i) {
+      for (int i = 0; i < count; ++i) {
         item_getter(userdata, i, &item);
         if (combo_item_label(ctx, item, NK_TEXT_LEFT))
           selected = i;
@@ -813,25 +782,25 @@ namespace nk {
     return selected;
   }
   NK_API void
-  combobox(struct context* ctx, const char* const* items, int count,
-           int* selected, int item_height, struct vec2f size) {
+  combobox(context* ctx, const char* const* items, const int count,
+           int* selected, const int item_height, const vec2f size) {
     *selected = combo(ctx, items, count, *selected, item_height, size);
   }
   NK_API void
-  combobox_string(struct context* ctx, const char* items_separated_by_zeros,
-                  int* selected, int count, int item_height, struct vec2f size) {
+  combobox_string(context* ctx, const char* items_separated_by_zeros,
+                  int* selected, const int count, const int item_height, const vec2f size) {
     *selected = combo_string(ctx, items_separated_by_zeros, *selected, count, item_height, size);
   }
   NK_API void
-  combobox_separator(struct context* ctx, const char* items_separated_by_separator,
-                     int separator, int* selected, int count, int item_height, struct vec2f size) {
+  combobox_separator(context* ctx, const char* items_separated_by_separator,
+                     const int separator, int* selected, const int count, const int item_height, const vec2f size) {
     *selected = combo_separator(ctx, items_separated_by_separator, separator,
                                 *selected, count, item_height, size);
   }
   NK_API void
-  combobox_callback(struct context* ctx,
+  combobox_callback(context* ctx,
                     void (*item_getter)(void* data, int id, const char** out_text),
-                    void* userdata, int* selected, int count, int item_height, struct vec2f size) {
+                    void* userdata, int* selected, const int count, const int item_height, const vec2f size) {
     *selected = combo_callback(ctx, item_getter, userdata, *selected, count, item_height, size);
   }
 } // namespace nk

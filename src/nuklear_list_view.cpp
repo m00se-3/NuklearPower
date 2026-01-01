@@ -8,18 +8,9 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  list_view_begin(struct context* ctx, struct list_view* view,
-                  const char* title, flag flags, int row_height, int row_count) {
-    int title_len;
-    hash title_hash;
-    unsigned int* x_offset;
+  list_view_begin(context* ctx, list_view* view,
+                  const char* title, const flag flags, int row_height, const int row_count) {
     unsigned int* y_offset;
-
-    int result;
-    struct window* win;
-    struct panel* layout;
-    const struct style* style;
-    struct vec2f item_spacing;
 
     NK_ASSERT(ctx);
     NK_ASSERT(view);
@@ -27,15 +18,15 @@ namespace nk {
     if (!ctx || !view || !title)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    item_spacing = style->window.spacing;
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const vec2f item_spacing = style->window.spacing;
     row_height += NK_MAX(0, (int) item_spacing.y);
 
     /* find persistent list view scrollbar offset */
-    title_len = (int) strlen(title);
-    title_hash = murmur_hash(title, (int) title_len, static_cast<hash>(panel_type::PANEL_GROUP));
-    x_offset = find_value(win, title_hash);
+    const int title_len = (int) strlen(title);
+    const hash title_hash = murmur_hash(title, (int) title_len, static_cast<hash>(panel_type::PANEL_GROUP));
+    unsigned int* x_offset = find_value(win, title_hash);
     if (!x_offset) {
       x_offset = add_value(ctx, win, title_hash, 0);
       y_offset = add_value(ctx, win, title_hash + 1, 0);
@@ -51,9 +42,9 @@ namespace nk {
     view->scroll_pointer = y_offset;
 
     *y_offset = 0;
-    result = group_scrolled_offset_begin(ctx, x_offset, y_offset, title, flags);
+    const int result = group_scrolled_offset_begin(ctx, x_offset, y_offset, title, flags);
     win = ctx->current;
-    layout = win->layout;
+    const panel* layout = win->layout;
 
     view->total_height = row_height * NK_MAX(row_count, 1);
     view->begin = (int) NK_MAX(((float) view->scroll_value / (float) row_height), 0.0f);
@@ -64,10 +55,7 @@ namespace nk {
     return result;
   }
   NK_API void
-  list_view_end(struct list_view* view) {
-    struct context* ctx;
-    struct window* win;
-    struct panel* layout;
+  list_view_end(list_view* view) {
 
     NK_ASSERT(view);
     NK_ASSERT(view->ctx);
@@ -75,9 +63,9 @@ namespace nk {
     if (!view || !view->ctx)
       return;
 
-    ctx = view->ctx;
-    win = ctx->current;
-    layout = win->layout;
+    const context* ctx = view->ctx;
+    const window* win = ctx->current;
+    panel* layout = win->layout;
     layout->at_y = layout->bounds.y + (float) view->total_height;
     *view->scroll_pointer = *view->scroll_pointer + view->scroll_value;
     group_end(view->ctx);

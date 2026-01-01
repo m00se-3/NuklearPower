@@ -8,13 +8,13 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  filter_default(const struct text_edit* box, rune unicode) {
+  filter_default(const text_edit* box, const rune unicode) {
     NK_UNUSED(unicode);
     NK_UNUSED(box);
     return true;
   }
   NK_API bool
-  filter_ascii(const struct text_edit* box, rune unicode) {
+  filter_ascii(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode > 128)
       return false;
@@ -22,7 +22,7 @@ namespace nk {
       return true;
   }
   NK_API bool
-  filter_float(const struct text_edit* box, rune unicode) {
+  filter_float(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') && unicode != '.' && unicode != '-')
       return false;
@@ -30,7 +30,7 @@ namespace nk {
       return true;
   }
   NK_API bool
-  filter_decimal(const struct text_edit* box, rune unicode) {
+  filter_decimal(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') && unicode != '-')
       return false;
@@ -38,7 +38,7 @@ namespace nk {
       return true;
   }
   NK_API bool
-  filter_hex(const struct text_edit* box, rune unicode) {
+  filter_hex(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') &&
         (unicode < 'a' || unicode > 'f') &&
@@ -48,7 +48,7 @@ namespace nk {
       return true;
   }
   NK_API bool
-  filter_oct(const struct text_edit* box, rune unicode) {
+  filter_oct(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode < '0' || unicode > '7')
       return false;
@@ -56,7 +56,7 @@ namespace nk {
       return true;
   }
   NK_API bool
-  filter_binary(const struct text_edit* box, rune unicode) {
+  filter_binary(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode != '0' && unicode != '1')
       return false;
@@ -70,11 +70,11 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB void
-  edit_draw_text(struct command_buffer* out,
-                 const struct style_edit* style, float pos_x, float pos_y,
-                 float x_offset, const char* text, int byte_len, float row_height,
-                 const struct user_font* font, struct color background,
-                 struct color foreground, bool is_selected) {
+  edit_draw_text(command_buffer* out,
+                 const style_edit* style, float pos_x, float pos_y,
+                 float x_offset, const char* text, const int byte_len, float row_height,
+                 const user_font* font, color background,
+                 color foreground, const bool is_selected) {
     NK_ASSERT(out);
     NK_ASSERT(font);
     NK_ASSERT(style);
@@ -86,7 +86,6 @@ namespace nk {
       rune unicode = 0;
       int text_len = 0;
       float line_width = 0;
-      float glyph_width;
       const char* line = text;
       float line_offset = 0;
       int line_count = 0;
@@ -105,7 +104,7 @@ namespace nk {
       while ((text_len < byte_len) && glyph_len) {
         if (unicode == '\n') {
           /* new line separator so draw previous line */
-          struct rectf label;
+          rectf label;
           label.y = pos_y + line_offset;
           label.h = row_height;
           label.w = line_width;
@@ -131,7 +130,7 @@ namespace nk {
           glyph_len = utf_decode(text + text_len, &unicode, byte_len - text_len);
           continue;
         }
-        glyph_width = font->width(font->userdata, font->height, text + text_len, glyph_len);
+        float glyph_width = font->width(font->userdata, font->height, text + text_len, glyph_len);
         line_width += (float) glyph_width;
         text_len += glyph_len;
         glyph_len = utf_decode(text + text_len, &unicode, byte_len - text_len);
@@ -139,7 +138,7 @@ namespace nk {
       }
       if (line_width > 0) {
         /* draw last line */
-        struct rectf label;
+        rectf label;
         label.y = pos_y + line_offset;
         label.h = row_height;
         label.w = line_width;
@@ -155,19 +154,19 @@ namespace nk {
     }
   }
   NK_LIB flag
-  do_edit(flag* state, struct command_buffer* out,
-          struct rectf bounds, flag flags, plugin_filter filter,
-          struct text_edit* edit, const struct style_edit* style,
-          struct input* in, const struct user_font* font) {
-    struct rectf area;
+  do_edit(flag* state, command_buffer* out,
+          rectf bounds, flag flags, plugin_filter filter,
+          text_edit* edit, const style_edit* style,
+          input* in, const user_font* font) {
+    rectf area;
     flag ret = 0;
     float row_height;
     char prev_state = 0;
     char is_hovered = 0;
     char select_all = 0;
     char cursor_follow = 0;
-    struct rectf old_clip;
-    struct rectf clip;
+    rectf old_clip;
+    rectf clip;
 
     NK_ASSERT(state);
     NK_ASSERT(out);
@@ -197,9 +196,9 @@ namespace nk {
 
     /* (de)activate text editor */
     if (!prev_state && edit->active) {
-      const enum text_edit_type type = (flags & static_cast<decltype(flags)>(edit_flags::EDIT_MULTILINE)) ? text_edit_type::TEXT_EDIT_MULTI_LINE : text_edit_type::TEXT_EDIT_SINGLE_LINE;
+      const text_edit_type type = (flags & static_cast<decltype(flags)>(edit_flags::EDIT_MULTILINE)) ? text_edit_type::TEXT_EDIT_MULTI_LINE : text_edit_type::TEXT_EDIT_SINGLE_LINE;
       /* keep scroll position when re-activating edit widget */
-      struct vec2f oldscrollbar = edit->scrollbar;
+      vec2f oldscrollbar = edit->scrollbar;
       textedit_clear_state(edit, type, filter);
       edit->scrollbar = oldscrollbar;
       if (flags & static_cast<decltype(flags)>(edit_flags::EDIT_AUTO_SELECT))
@@ -249,8 +248,8 @@ namespace nk {
         for (i = 0; i < NK_KEY_MAX; ++i) {
           if (i == NK_KEY_ENTER || i == NK_KEY_TAB)
             continue; /* special case */
-          if (input_is_key_pressed(in, (enum keys) i)) {
-            textedit_key(edit, (enum keys) i, shift_mod, font, row_height);
+          if (input_is_key_pressed(in, (keys) i)) {
+            textedit_key(edit, (keys) i, shift_mod, font, row_height);
             cursor_follow = true;
           }
         }
@@ -335,7 +334,7 @@ namespace nk {
       int len = str_len_char(&edit->string);
 
       { /* select background colors/images  */
-        const struct style_item* background;
+        const style_item* background;
         if (*state & NK_WIDGET_STATE_ACTIVED)
           background = &style->active;
         else if (*state & NK_WIDGET_STATE_HOVER)
@@ -362,7 +361,7 @@ namespace nk {
       area.w = NK_MAX(0, area.w - style->cursor_size);
       if (edit->active) {
         int total_lines = 1;
-        struct vec2f text_size = vec2_from_floats(0, 0);
+        vec2f text_size = vec2_from_floats(0, 0);
 
         /* text pointer positions */
         const char* cursor_ptr = 0;
@@ -370,9 +369,9 @@ namespace nk {
         const char* select_end_ptr = 0;
 
         /* 2D pixel positions */
-        struct vec2f cursor_pos = vec2_from_floats(0, 0);
-        struct vec2f selection_offset_start = vec2_from_floats(0, 0);
-        struct vec2f selection_offset_end = vec2_from_floats(0, 0);
+        vec2f cursor_pos = vec2_from_floats(0, 0);
+        vec2f selection_offset_start = vec2_from_floats(0, 0);
+        vec2f selection_offset_end = vec2_from_floats(0, 0);
 
         int selection_begin = NK_MIN(edit->select_start, edit->select_end);
         int selection_end = NK_MAX(edit->select_start, edit->select_end);
@@ -397,8 +396,8 @@ namespace nk {
             /* set cursor 2D position and line */
             if (!cursor_ptr && glyphs == edit->cursor) {
               int glyph_offset;
-              struct vec2f out_offset;
-              struct vec2f row_size;
+              vec2f out_offset;
+              vec2f row_size;
               const char* remaining;
 
               /* calculate 2d position */
@@ -414,8 +413,8 @@ namespace nk {
             if (!select_begin_ptr && edit->select_start != edit->select_end &&
                 glyphs == selection_begin) {
               int glyph_offset;
-              struct vec2f out_offset;
-              struct vec2f row_size;
+              vec2f out_offset;
+              vec2f row_size;
               const char* remaining;
 
               /* calculate 2d position */
@@ -431,8 +430,8 @@ namespace nk {
             if (!select_end_ptr && edit->select_start != edit->select_end &&
                 glyphs == selection_end) {
               int glyph_offset;
-              struct vec2f out_offset;
-              struct vec2f row_size;
+              vec2f out_offset;
+              vec2f row_size;
               const char* remaining;
 
               /* calculate 2d position */
@@ -501,7 +500,7 @@ namespace nk {
           /* scrollbar widget */
           if (flags & edit_flags::EDIT_MULTILINE) {
             flag ws;
-            struct rectf scroll;
+            rectf scroll;
             float scroll_target;
             float scroll_offset;
             float scroll_step;
@@ -527,13 +526,13 @@ namespace nk {
 
         /* draw text */
         {
-          struct color background_color;
-          struct color text_color;
-          struct color sel_background_color;
-          struct color sel_text_color;
-          struct color cursor_color;
-          struct color cursor_text_color;
-          const struct style_item* background;
+          color background_color;
+          color text_color;
+          color sel_background_color;
+          color sel_text_color;
+          color cursor_color;
+          color cursor_text_color;
+          const style_item* background;
           push_scissor(out, clip);
 
           /* select correct colors to draw */
@@ -619,7 +618,7 @@ namespace nk {
             if (edit->cursor >= str_len(&edit->string) ||
                 (cursor_ptr && *cursor_ptr == '\n')) {
               /* draw cursor at end of line */
-              struct rectf cursor;
+              rectf cursor;
               cursor.w = style->cursor_size;
               cursor.h = font->height;
               cursor.x = area.x + cursor_pos.x - edit->scrollbar.x;
@@ -629,7 +628,7 @@ namespace nk {
             } else {
               /* draw cursor inside text */
               int glyph_len;
-              struct rectf label;
+              rectf label;
               struct text txt;
 
               rune unicode;
@@ -655,9 +654,9 @@ namespace nk {
         int l = str_len_char(&edit->string);
         const char* begin = str_get_const(&edit->string);
 
-        const struct style_item* background;
-        struct color background_color;
-        struct color text_color;
+        const style_item* background;
+        color background_color;
+        color text_color;
         push_scissor(out, clip);
         if (*state & NK_WIDGET_STATE_ACTIVED) {
           background = &style->active;
@@ -686,41 +685,34 @@ namespace nk {
     return ret;
   }
   NK_API void
-  edit_focus(struct context* ctx, flag flags) {
-    hash hash;
-    struct window* win;
+  edit_focus(context* ctx, const flag flags) {
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
       return;
 
-    win = ctx->current;
-    hash = win->edit.seq;
+    window* win = ctx->current;
+    const hash hash = win->edit.seq;
     win->edit.active = true;
     win->edit.name = hash;
     if (flags & edit_flags::EDIT_ALWAYS_INSERT_MODE)
       win->edit.mode = static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_INSERT);
   }
   NK_API void
-  edit_unfocus(struct context* ctx) {
-    struct window* win;
+  edit_unfocus(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
       return;
 
-    win = ctx->current;
+    window* win = ctx->current;
     win->edit.active = false;
     win->edit.name = 0;
   }
   NK_API flag
-  edit_string(struct context* ctx, flag flags,
+  edit_string(context* ctx, const flag flags,
               char* memory, int* len, int max, plugin_filter filter) {
-    hash hash;
-    flag state;
-    struct text_edit* edit;
-    struct window* win;
 
     NK_ASSERT(ctx);
     NK_ASSERT(memory);
@@ -729,9 +721,9 @@ namespace nk {
       return 0;
 
     filter = (!filter) ? filter_default : filter;
-    win = ctx->current;
-    hash = win->edit.seq;
-    edit = &ctx->text_edit;
+    window* win = ctx->current;
+    const hash hash = win->edit.seq;
+    text_edit* edit = &ctx->text_edit;
     textedit_clear_state(&ctx->text_edit, (flags & edit_flags::EDIT_MULTILINE) ? text_edit_type::TEXT_EDIT_MULTI_LINE : text_edit_type::TEXT_EDIT_SINGLE_LINE, filter);
 
     if (win->edit.active && hash == win->edit.name) {
@@ -758,7 +750,7 @@ namespace nk {
     str_init_fixed(&edit->string, memory, (std::size_t) max);
     edit->string.buffer.allocated = (std::size_t) *len;
     edit->string.len = utf_len(memory, *len);
-    state = edit_buffer(ctx, flags, edit, filter);
+    const flag state = edit_buffer(ctx, flags, edit, filter);
     *len = (int) edit->string.buffer.allocated;
 
     if (edit->active) {
@@ -772,18 +764,12 @@ namespace nk {
     return state;
   }
   NK_API flag
-  edit_buffer(struct context* ctx, flag flags,
-              struct text_edit* edit, plugin_filter filter) {
-    struct window* win;
-    struct style* style;
-    struct input* in;
+  edit_buffer(context* ctx, flag flags,
+              text_edit* edit, plugin_filter filter) {
 
-    enum widget_layout_states state;
-    struct rectf bounds;
+    rectf bounds;
 
     flag ret_flags = 0;
-    unsigned char prev_state;
-    hash hash;
 
     /* make sure correct values */
     NK_ASSERT(ctx);
@@ -793,17 +779,17 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    style = &ctx->style;
-    state = widget(&bounds, ctx);
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const widget_layout_states state = widget(&bounds, ctx);
     if (!state)
       return state;
     else if (state == NK_WIDGET_DISABLED)
       flags |= edit_flags::EDIT_READ_ONLY;
-    in = (win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    input* in = (win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
 
     /* check if edit is currently hot item */
-    hash = win->edit.seq++;
+    const hash hash = win->edit.seq++;
     if (win->edit.active && hash == win->edit.name) {
       if (flags & edit_flags::EDIT_NO_CURSOR)
         edit->cursor = edit->string.len;
@@ -819,7 +805,7 @@ namespace nk {
     edit->mode = win->edit.mode;
 
     filter = (!filter) ? filter_default : filter;
-    prev_state = (unsigned char) edit->active;
+    const unsigned char prev_state = (unsigned char) edit->active;
     in = (flags & edit_flags::EDIT_READ_ONLY) ? 0 : in;
     ret_flags = do_edit(&ctx->last_widget_state, &win->buffer, bounds, flags,
                         filter, edit, &style->edit, in, style->font);
@@ -837,11 +823,10 @@ namespace nk {
     return ret_flags;
   }
   NK_API flag
-  edit_string_zero_terminated(struct context* ctx, flag flags,
-                              char* buffer, int max, plugin_filter filter) {
-    flag result;
+  edit_string_zero_terminated(context* ctx, const flag flags,
+                              char* buffer, const int max, const plugin_filter filter) {
     int len = strlen(buffer);
-    result = edit_string(ctx, flags, buffer, &len, max, filter);
+    const flag result = edit_string(ctx, flags, buffer, &len, max, filter);
     buffer[NK_MIN(NK_MAX(max - 1, 0), len)] = '\0';
     return result;
   }

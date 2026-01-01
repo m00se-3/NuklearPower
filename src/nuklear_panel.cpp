@@ -8,30 +8,29 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB void*
-  create_panel(struct context* ctx) {
-    struct page_element* elem;
-    elem = create_page_element(ctx);
+  create_panel(context* ctx) {
+    page_element* elem = create_page_element(ctx);
     if (!elem)
       return 0;
     zero_struct(*elem);
     return &elem->data.pan;
   }
   NK_LIB void
-  free_panel(struct context* ctx, struct panel* pan) {
-    union page_data* pd = NK_CONTAINER_OF(pan, union page_data, pan);
-    struct page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
+  free_panel(context* ctx, panel* pan) {
+    page_data* pd = NK_CONTAINER_OF(pan, union page_data, pan);
+    page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
     free_page_element(ctx, pe);
   }
   NK_LIB bool
-  panel_has_header(flag flags, const char* title) {
+  panel_has_header(const flag flags, const char* title) {
     bool active = 0;
     active = (flags & (panel_flags::WINDOW_CLOSABLE | panel_flags::WINDOW_MINIMIZABLE));
     active = active || (flags & panel_flags::WINDOW_TITLE);
     active = active && !(flags & window_flags::WINDOW_HIDDEN) && title;
     return active;
   }
-  NK_LIB struct vec2f
-  panel_get_padding(const struct style* style, panel_type::value_type type) {
+  NK_LIB vec2f
+  panel_get_padding(const style* style, const panel_type::value_type type) {
     switch (type) {
       default:
       case panel_type::PANEL_WINDOW:
@@ -51,8 +50,8 @@ namespace nk {
     }
   }
   NK_LIB float
-  panel_get_border(const struct style* style, flag flags,
-                   panel_type::value_type type) {
+  panel_get_border(const style* style, const flag flags,
+                   const panel_type::value_type type) {
     if (flags & panel_flags::WINDOW_BORDER) {
       switch (type) {
         default:
@@ -74,8 +73,8 @@ namespace nk {
     } else
       return 0;
   }
-  NK_LIB struct color
-  panel_get_border_color(const struct style* style, panel_type::value_type type) {
+  NK_LIB color
+  panel_get_border_color(const style* style, const panel_type::value_type type) {
     switch (type) {
       default:
       case panel_type::PANEL_WINDOW:
@@ -95,24 +94,24 @@ namespace nk {
     }
   }
   NK_LIB bool
-  panel_is_sub(panel_type::value_type type) {
+  panel_is_sub(const panel_type::value_type type) {
     return ((int) type & (int) panel_set::PANEL_SET_SUB) ? 1 : 0;
   }
   NK_LIB bool
-  panel_is_nonblock(panel_type::value_type type) {
+  panel_is_nonblock(const panel_type::value_type type) {
     return ((int) type & (int) panel_set::PANEL_SET_NONBLOCK) ? 1 : 0;
   }
   NK_LIB bool
-  panel_begin(struct context* ctx, const char* title, panel_type::value_type panel_type) {
-    struct input* in;
-    struct window* win;
-    struct panel* layout;
-    struct command_buffer* out;
-    const struct style* style;
-    const struct user_font* font;
+  panel_begin(context* ctx, const char* title, panel_type::value_type panel_type) {
+    input* in;
+    window* win;
+    panel* layout;
+    command_buffer* out;
+    const style* style;
+    const user_font* font;
 
-    struct vec2f scrollbar_size;
-    struct vec2f panel_padding;
+    vec2f scrollbar_size;
+    vec2f panel_padding;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -121,7 +120,7 @@ namespace nk {
       return 0;
     zero(ctx->current->layout, sizeof(*ctx->current->layout));
     if ((ctx->current->flags & window_flags::WINDOW_HIDDEN) || (ctx->current->flags & window_flags::WINDOW_CLOSED)) {
-      zero(ctx->current->layout, sizeof(struct panel));
+      zero(ctx->current->layout, sizeof(panel));
       ctx->current->layout->type = panel_type;
       return 0;
     }
@@ -205,9 +204,9 @@ namespace nk {
 
     /* panel header */
     if (panel_has_header(win->flags, title)) {
-      struct text text;
+      text text;
       rectf header;
-      const struct style_item* background = 0;
+      const style_item* background = 0;
 
       /* calculate header bounds */
       header.x = win->bounds.x;
@@ -347,15 +346,15 @@ namespace nk {
     return !(layout->flags & window_flags::WINDOW_HIDDEN) && !(layout->flags & window_flags::WINDOW_MINIMIZED);
   }
   NK_LIB void
-  panel_end(struct context* ctx) {
-    struct input* in;
-    struct window* window;
-    struct panel* layout;
-    const struct style* style;
-    struct command_buffer* out;
+  panel_end(context* ctx) {
+    input* in;
+    window* window;
+    panel* layout;
+    const style* style;
+    command_buffer* out;
 
-    struct vec2f scrollbar_size;
-    struct vec2f panel_padding;
+    vec2f scrollbar_size;
+    vec2f panel_padding;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -433,7 +432,7 @@ namespace nk {
       if (panel_is_sub(layout->type)) {
         /* sub-window mouse wheel scrolling */
         struct window* root_window = window;
-        struct panel* root_panel = window->layout;
+        panel* root_panel = window->layout;
         while (root_panel->parent)
           root_panel = root_panel->parent;
         while (root_window->parent)
@@ -517,7 +516,7 @@ namespace nk {
 
     /* window border */
     if (layout->flags & panel_flags::WINDOW_BORDER) {
-      struct color border_color = panel_get_border_color(style, layout->type);
+      color border_color = panel_get_border_color(style, layout->type);
       const float padding_y = (layout->flags & window_flags::WINDOW_MINIMIZED)
                                   ? (style->window.border + window->bounds.y + layout->header_height)
                                   : ((layout->flags & window_flags::WINDOW_DYNAMIC)
@@ -544,7 +543,7 @@ namespace nk {
 
       /* draw scaler */
       {
-        const struct style_item* item = &style->window.scaler;
+        const style_item* item = &style->window.scaler;
         if (item->type == style_item_type::STYLE_ITEM_IMAGE)
           draw_image(out, scaler, &item->data.image, white);
         else {
@@ -561,7 +560,7 @@ namespace nk {
 
       /* do window scaling */
       if (!(window->flags & window_flags::WINDOW_ROM)) {
-        struct vec2f window_size = style->window.min_size;
+        vec2f window_size = style->window.min_size;
         int left_mouse_down = in->mouse.buttons[NK_BUTTON_LEFT].down;
         int left_mouse_click_in_scaler = input_has_mouse_click_down_in_rect(in,
                                                                             NK_BUTTON_LEFT, scaler, true);

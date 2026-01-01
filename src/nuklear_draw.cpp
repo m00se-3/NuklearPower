@@ -10,8 +10,8 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB void
-  command_buffer_init(struct command_buffer* cb,
-                      struct memory_buffer* b, enum command_clipping clip) {
+  command_buffer_init(command_buffer* cb,
+                      memory_buffer* b, const command_clipping clip) {
     NK_ASSERT(cb);
     NK_ASSERT(b);
     if (!cb || !b)
@@ -23,7 +23,7 @@ namespace nk {
     cb->last = b->allocated;
   }
   NK_LIB void
-  command_buffer_reset(struct command_buffer* b) {
+  command_buffer_reset(command_buffer* b) {
     NK_ASSERT(b);
     if (!b)
       return;
@@ -36,27 +36,23 @@ namespace nk {
 #endif
   }
   NK_LIB void*
-  command_buffer_push(struct command_buffer* b,
-                      enum command_type t, std::size_t size) {
+  command_buffer_push(command_buffer* b,
+                      const command_type t, const std::size_t size) {
     NK_STORAGE const std::size_t align = alignof(command);
-    struct command* cmd;
-    std::size_t alignment;
-    void* unaligned;
-    void* memory;
 
     NK_ASSERT(b);
     NK_ASSERT(b->base);
     if (!b)
       return 0;
-    cmd = (struct command*) buffer_alloc(b->base, buffer_allocation_type::BUFFER_FRONT, size, align);
+    command* cmd = (command*) buffer_alloc(b->base, buffer_allocation_type::BUFFER_FRONT, size, align);
     if (!cmd)
       return 0;
 
     /* make sure the offset to the next command is aligned */
     b->last = (std::size_t) ((std::uint8_t*) cmd - (std::uint8_t*) b->base->memory.ptr);
-    unaligned = (std::uint8_t*) cmd + size;
-    memory = NK_ALIGN_PTR(unaligned, align);
-    alignment = (std::size_t) ((std::uint8_t*) memory - (std::uint8_t*) unaligned);
+    void* unaligned = (std::uint8_t*) cmd + size;
+    void* memory = NK_ALIGN_PTR(unaligned, align);
+    const std::size_t alignment = (std::size_t) ((std::uint8_t*) memory - (std::uint8_t*) unaligned);
 #ifdef NK_ZERO_COMMAND_MEMORY
     NK_MEMSET(cmd, 0, size + alignment);
 #endif
@@ -70,8 +66,7 @@ namespace nk {
     return cmd;
   }
   NK_API void
-  push_scissor(struct command_buffer* b, struct rectf r) {
-    struct command_scissor* cmd;
+  push_scissor(command_buffer* b, const rectf r) {
     NK_ASSERT(b);
     if (!b)
       return;
@@ -80,7 +75,7 @@ namespace nk {
     b->clip.y = r.y;
     b->clip.w = r.w;
     b->clip.h = r.h;
-    cmd = (struct command_scissor*)
+    command_scissor* cmd = (command_scissor*)
         command_buffer_push(b, command_type::COMMAND_SCISSOR, sizeof(*cmd));
 
     if (!cmd)
@@ -91,13 +86,12 @@ namespace nk {
     cmd->h = (unsigned short) NK_MAX(0, r.h);
   }
   NK_API void
-  stroke_line(struct command_buffer* b, float x0, float y0,
-              float x1, float y1, float line_thickness, struct color c) {
-    struct command_line* cmd;
+  stroke_line(command_buffer* b, float x0, float y0,
+              float x1, float y1, float line_thickness, const color c) {
     NK_ASSERT(b);
     if (!b || line_thickness <= 0)
       return;
-    cmd = (struct command_line*)
+    command_line* cmd = (command_line*)
         command_buffer_push(b, command_type::COMMAND_LINE, sizeof(*cmd));
     if (!cmd)
       return;
@@ -109,15 +103,14 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  stroke_curve(struct command_buffer* b, float ax, float ay,
+  stroke_curve(command_buffer* b, float ax, float ay,
                float ctrl0x, float ctrl0y, float ctrl1x, float ctrl1y,
-               float bx, float by, float line_thickness, struct color col) {
-    struct command_curve* cmd;
+               float bx, float by, float line_thickness, const color col) {
     NK_ASSERT(b);
     if (!b || col.a == 0 || line_thickness <= 0)
       return;
 
-    cmd = (struct command_curve*)
+    command_curve* cmd = (command_curve*)
         command_buffer_push(b, command_type::COMMAND_CURVE, sizeof(*cmd));
     if (!cmd)
       return;
@@ -133,19 +126,18 @@ namespace nk {
     cmd->color = col;
   }
   NK_API void
-  stroke_rect(struct command_buffer* b, struct rectf rect,
-              float rounding, float line_thickness, struct color c) {
-    struct command_rect* cmd;
+  stroke_rect(command_buffer* b, const rectf rect,
+              float rounding, float line_thickness, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0 || rect.w == 0 || rect.h == 0 || line_thickness <= 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
-    cmd = (struct command_rect*)
+    command_rect* cmd = (command_rect*)
         command_buffer_push(b, command_type::COMMAND_RECT, sizeof(*cmd));
     if (!cmd)
       return;
@@ -158,20 +150,19 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  fill_rect(struct command_buffer* b, struct rectf rect,
-            float rounding, struct color c) {
-    struct command_rect_filled* cmd;
+  fill_rect(command_buffer* b, const rectf rect,
+            float rounding, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0 || rect.w == 0 || rect.h == 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_rect_filled*)
+    command_rect_filled* cmd = (command_rect_filled*)
         command_buffer_push(b, command_type::COMMAND_RECT_FILLED, sizeof(*cmd));
     if (!cmd)
       return;
@@ -183,21 +174,20 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  fill_rect_multi_color(struct command_buffer* b, struct rectf rect,
-                        struct color left, struct color top, struct color right,
-                        struct color bottom) {
-    struct command_rect_multi_color* cmd;
+  fill_rect_multi_color(command_buffer* b, const rectf rect,
+                        const color left, const color top, const color right,
+                        const color bottom) {
     NK_ASSERT(b);
     if (!b || rect.w == 0 || rect.h == 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_rect_multi_color*)
+    command_rect_multi_color* cmd = (command_rect_multi_color*)
         command_buffer_push(b, command_type::COMMAND_RECT_MULTI_COLOR, sizeof(*cmd));
     if (!cmd)
       return;
@@ -211,18 +201,17 @@ namespace nk {
     cmd->bottom = bottom;
   }
   NK_API void
-  stroke_circle(struct command_buffer* b, struct rectf r,
-                float line_thickness, struct color c) {
-    struct command_circle* cmd;
+  stroke_circle(command_buffer* b, const rectf r,
+                float line_thickness, const color c) {
     if (!b || r.w == 0 || r.h == 0 || line_thickness <= 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!intERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_circle*)
+    command_circle* cmd = (command_circle*)
         command_buffer_push(b, command_type::COMMAND_CIRCLE, sizeof(*cmd));
     if (!cmd)
       return;
@@ -234,18 +223,17 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  fill_circle(struct command_buffer* b, struct rectf r, struct color c) {
-    struct command_circle_filled* cmd;
+  fill_circle(command_buffer* b, const rectf r, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0 || r.w == 0 || r.h == 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!intERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_circle_filled*)
+    command_circle_filled* cmd = (command_circle_filled*)
         command_buffer_push(b, command_type::COMMAND_CIRCLE_FILLED, sizeof(*cmd));
     if (!cmd)
       return;
@@ -256,12 +244,11 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  stroke_arc(struct command_buffer* b, float cx, float cy, float radius,
-             float a_min, float a_max, float line_thickness, struct color c) {
-    struct command_arc* cmd;
+  stroke_arc(command_buffer* b, float cx, float cy, float radius,
+             float a_min, float a_max, float line_thickness, const color c) {
     if (!b || c.a == 0 || line_thickness <= 0)
       return;
-    cmd = (struct command_arc*)
+    command_arc* cmd = (command_arc*)
         command_buffer_push(b, command_type::COMMAND_ARC, sizeof(*cmd));
     if (!cmd)
       return;
@@ -274,13 +261,12 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  fill_arc(struct command_buffer* b, float cx, float cy, float radius,
-           float a_min, float a_max, struct color c) {
-    struct command_arc_filled* cmd;
+  fill_arc(command_buffer* b, float cx, float cy, float radius,
+           float a_min, float a_max, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0)
       return;
-    cmd = (struct command_arc_filled*)
+    command_arc_filled* cmd = (command_arc_filled*)
         command_buffer_push(b, command_type::COMMAND_ARC_FILLED, sizeof(*cmd));
     if (!cmd)
       return;
@@ -292,21 +278,20 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  stroke_triangle(struct command_buffer* b, float x0, float y0, float x1,
-                  float y1, float x2, float y2, float line_thickness, struct color c) {
-    struct command_triangle* cmd;
+  stroke_triangle(command_buffer* b, float x0, float y0, float x1,
+                  float y1, float x2, float y2, float line_thickness, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0 || line_thickness <= 0)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!NK_INBOX(x0, y0, clip->x, clip->y, clip->w, clip->h) &&
           !NK_INBOX(x1, y1, clip->x, clip->y, clip->w, clip->h) &&
           !NK_INBOX(x2, y2, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_triangle*)
+    command_triangle* cmd = (command_triangle*)
         command_buffer_push(b, command_type::COMMAND_TRIANGLE, sizeof(*cmd));
     if (!cmd)
       return;
@@ -320,23 +305,22 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  fill_triangle(struct command_buffer* b, float x0, float y0, float x1,
-                float y1, float x2, float y2, struct color c) {
-    struct command_triangle_filled* cmd;
+  fill_triangle(command_buffer* b, float x0, float y0, float x1,
+                float y1, float x2, float y2, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0)
       return;
     if (!b)
       return;
     if (b->use_clipping) {
-      const struct rectf* clip = &b->clip;
+      const rectf* clip = &b->clip;
       if (!NK_INBOX(x0, y0, clip->x, clip->y, clip->w, clip->h) &&
           !NK_INBOX(x1, y1, clip->x, clip->y, clip->w, clip->h) &&
           !NK_INBOX(x2, y2, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
-    cmd = (struct command_triangle_filled*)
+    command_triangle_filled* cmd = (command_triangle_filled*)
         command_buffer_push(b, command_type::COMMAND_TRIANGLE_FILLED, sizeof(*cmd));
     if (!cmd)
       return;
@@ -349,85 +333,81 @@ namespace nk {
     cmd->color = c;
   }
   NK_API void
-  stroke_polygon(struct command_buffer* b, const float* points, int point_count,
-                 float line_thickness, struct color col) {
-    int i;
+  stroke_polygon(command_buffer* b, const float* points, const int point_count,
+                 float line_thickness, const color col) {
     std::size_t size = 0;
-    struct command_polygon* cmd;
+    command_polygon* cmd;
 
     NK_ASSERT(b);
     if (!b || col.a == 0 || line_thickness <= 0)
       return;
     size = sizeof(*cmd) + sizeof(short) * 2 * (std::size_t) point_count;
-    cmd = (struct command_polygon*) command_buffer_push(b, command_type::COMMAND_POLYGON, size);
+    cmd = (command_polygon*) command_buffer_push(b, command_type::COMMAND_POLYGON, size);
     if (!cmd)
       return;
     cmd->color = col;
     cmd->line_thickness = (unsigned short) line_thickness;
     cmd->point_count = (unsigned short) point_count;
-    for (i = 0; i < point_count; ++i) {
+    for (int i = 0; i < point_count; ++i) {
       cmd->points[i].x = (short) points[i * 2];
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
   NK_API void
-  fill_polygon(struct command_buffer* b, const float* points, int point_count,
-               struct color col) {
-    int i;
+  fill_polygon(command_buffer* b, const float* points, const int point_count,
+               const color col) {
     std::size_t size = 0;
-    struct command_polygon_filled* cmd;
+    command_polygon_filled* cmd;
 
     NK_ASSERT(b);
     if (!b || col.a == 0)
       return;
     size = sizeof(*cmd) + sizeof(short) * 2 * (std::size_t) point_count;
-    cmd = (struct command_polygon_filled*)
+    cmd = (command_polygon_filled*)
         command_buffer_push(b, command_type::COMMAND_POLYGON_FILLED, size);
     if (!cmd)
       return;
     cmd->color = col;
     cmd->point_count = (unsigned short) point_count;
-    for (i = 0; i < point_count; ++i) {
+    for (int i = 0; i < point_count; ++i) {
       cmd->points[i].x = (short) points[i * 2 + 0];
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
   NK_API void
-  stroke_polyline(struct command_buffer* b, const float* points, int point_count,
-                  float line_thickness, struct color col) {
-    int i;
+  stroke_polyline(command_buffer* b, const float* points, const int point_count,
+                  float line_thickness, const color col) {
     std::size_t size = 0;
-    struct command_polyline* cmd;
+    command_polyline* cmd;
 
     NK_ASSERT(b);
     if (!b || col.a == 0 || line_thickness <= 0)
       return;
     size = sizeof(*cmd) + sizeof(short) * 2 * (std::size_t) point_count;
-    cmd = (struct command_polyline*) command_buffer_push(b, command_type::COMMAND_POLYLINE, size);
+    cmd = (command_polyline*) command_buffer_push(b, command_type::COMMAND_POLYLINE, size);
     if (!cmd)
       return;
     cmd->color = col;
     cmd->point_count = (unsigned short) point_count;
     cmd->line_thickness = (unsigned short) line_thickness;
-    for (i = 0; i < point_count; ++i) {
+    for (int i = 0; i < point_count; ++i) {
       cmd->points[i].x = (short) points[i * 2];
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
   NK_API void
-  draw_image(struct command_buffer* b, struct rectf r,
-             const struct image* img, struct color col) {
-    struct command_image* cmd;
+  draw_image(command_buffer* b, const rectf r,
+             const struct image* img, const color col) {
     NK_ASSERT(b);
     if (!b)
       return;
     if (b->use_clipping) {
-      const struct rectf* c = &b->clip;
+      const rectf* c = &b->clip;
       if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
 
-    cmd = (struct command_image*)
+    command_image* cmd = (command_image*)
         command_buffer_push(b, command_type::COMMAND_IMAGE, sizeof(*cmd));
     if (!cmd)
       return;
@@ -439,15 +419,14 @@ namespace nk {
     cmd->col = col;
   }
   NK_API void
-  draw_nine_slice(struct command_buffer* b, struct rectf r,
-                  const struct nine_slice* slc, struct color col) {
+  draw_nine_slice(command_buffer* b, const rectf r,
+                  const nine_slice* slc, const color col) {
     struct image img;
     const struct image* slcimg = (const struct image*) slc;
-    unsigned short rgnX, rgnY, rgnW, rgnH;
-    rgnX = slcimg->region[0];
-    rgnY = slcimg->region[1];
-    rgnW = slcimg->region[2];
-    rgnH = slcimg->region[3];
+    const unsigned short rgnX = slcimg->region[0];
+    const unsigned short rgnY = slcimg->region[1];
+    const unsigned short rgnW = slcimg->region[2];
+    const unsigned short rgnH = slcimg->region[3];
 
     /* top-left */
     img.handle = slcimg->handle;
@@ -519,19 +498,18 @@ namespace nk {
 #undef IMG_RGN
   }
   NK_API void
-  push_custom(struct command_buffer* b, struct rectf r,
-              command_custom_callback cb, resource_handle usr) {
-    struct command_custom* cmd;
+  push_custom(command_buffer* b, const rectf r,
+              const command_custom_callback cb, const resource_handle usr) {
     NK_ASSERT(b);
     if (!b)
       return;
     if (b->use_clipping) {
-      const struct rectf* c = &b->clip;
+      const rectf* c = &b->clip;
       if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
 
-    cmd = (struct command_custom*)
+    command_custom* cmd = (command_custom*)
         command_buffer_push(b, command_type::COMMAND_CUSTOM, sizeof(*cmd));
     if (!cmd)
       return;
@@ -543,18 +521,17 @@ namespace nk {
     cmd->callback = cb;
   }
   NK_API void
-  draw_text(struct command_buffer* b, struct rectf r,
-            const char* string, int length, const struct user_font* font,
-            struct color bg, struct color fg) {
+  draw_text(command_buffer* b, const rectf r,
+            const char* string, int length, const user_font* font,
+            const color bg, const color fg) {
     float text_width = 0;
-    struct command_text* cmd;
 
     NK_ASSERT(b);
     NK_ASSERT(font);
     if (!b || !string || !length || (bg.a == 0 && fg.a == 0))
       return;
     if (b->use_clipping) {
-      const struct rectf* c = &b->clip;
+      const rectf* c = &b->clip;
       if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
@@ -569,7 +546,7 @@ namespace nk {
 
     if (!length)
       return;
-    cmd = (struct command_text*)
+    command_text* cmd = (command_text*)
         command_buffer_push(b, command_type::COMMAND_TEXT, sizeof(*cmd) + (std::size_t) (length + 1));
     if (!cmd)
       return;

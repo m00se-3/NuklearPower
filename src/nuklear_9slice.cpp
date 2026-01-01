@@ -7,9 +7,9 @@ namespace nk {
    *                          9-SLICE
    *
    * ===============================================================*/
-  NK_API struct nine_slice
-  sub9slice_ptr(void* ptr, unsigned short w, unsigned short h, struct rectf sub_region, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  sub9slice_ptr(void* ptr, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     i->handle.ptr = ptr;
@@ -25,9 +25,9 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API struct nine_slice
-  sub9slice_id(const int id, unsigned short w, unsigned short h, struct rectf sub_region, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  sub9slice_id(const int id, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     i->handle.id = id;
@@ -43,9 +43,9 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API struct nine_slice
-  sub9slice_handle(resource_handle handle, unsigned short w, unsigned short h, struct rectf sub_region, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  sub9slice_handle(const resource_handle handle, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     i->handle = handle;
@@ -61,9 +61,9 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API struct nine_slice
-  nine_slice_handle(const resource_handle handle, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  nine_slice_handle(const resource_handle handle, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     i->handle = handle;
@@ -79,9 +79,9 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API struct nine_slice
-  nine_slice_ptr(void* ptr, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  nine_slice_ptr(void* ptr, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     NK_ASSERT(ptr);
@@ -98,9 +98,9 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API struct nine_slice
-  nine_slice_id(const int id, unsigned short l, unsigned short t, unsigned short r, unsigned short b) {
-    struct nine_slice s;
+  NK_API nine_slice
+  nine_slice_id(const int id, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
+    nine_slice s;
     struct image* i = &s.img;
     zero(&s, sizeof(s));
     i->handle.id = id;
@@ -117,7 +117,7 @@ namespace nk {
     return s;
   }
   NK_API int
-  nine_slice_is_sub9slice(const struct nine_slice* img) {
+  nine_slice_is_sub9slice(const nine_slice* img) {
     NK_ASSERT(img);
     return !(img->img.w == 0 && img->img.h == 0);
   }

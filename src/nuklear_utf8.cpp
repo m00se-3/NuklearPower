@@ -25,7 +25,7 @@ namespace nk {
     return i;
   }
   INTERN rune
-  utf_decode_byte(char c, int* i) {
+  utf_decode_byte(const char c, int* i) {
     NK_ASSERT(i);
     if (!i)
       return 0;
@@ -36,9 +36,8 @@ namespace nk {
     return 0;
   }
   NK_API int
-  utf_decode(const char* c, rune* u, int clen) {
+  utf_decode(const char* c, rune* u, const int clen) {
     int i, j, len, type = 0;
-    rune udecoded;
 
     NK_ASSERT(c);
     NK_ASSERT(u);
@@ -49,7 +48,7 @@ namespace nk {
       return 0;
     *u = NK_UTF_INVALID;
 
-    udecoded = utf_decode_byte(c[0], &len);
+    rune udecoded = utf_decode_byte(c[0], &len);
     if (!NK_BETWEEN(len, 1, NK_UTF_SIZE))
       return 1;
 
@@ -65,17 +64,16 @@ namespace nk {
     return len;
   }
   INTERN char
-  utf_encode_byte(rune u, int i) {
+  utf_encode_byte(const rune u, const int i) {
     return (char) ((utfbyte[i]) | ((std::uint8_t) u & ~utfmask[i]));
   }
   NK_API int
-  utf_encode(rune u, char* c, int clen) {
-    int len, i;
-    len = utf_validate(&u, 0);
+  utf_encode(rune u, char* c, const int clen) {
+    const int len = utf_validate(&u, 0);
     if (clen < len || !len || len > NK_UTF_SIZE)
       return 0;
 
-    for (i = len - 1; i != 0; --i) {
+    for (int i = len - 1; i != 0; --i) {
       c[i] = utf_encode_byte(u, 0);
       u >>= 6;
     }
@@ -83,11 +81,8 @@ namespace nk {
     return len;
   }
   NK_API int
-  utf_len(const char* str, int len) {
-    const char* text;
+  utf_len(const char* str, const int len) {
     int glyphs = 0;
-    int text_len;
-    int glyph_len;
     int src_len = 0;
     rune unicode;
 
@@ -95,9 +90,9 @@ namespace nk {
     if (!str || !len)
       return 0;
 
-    text = str;
-    text_len = len;
-    glyph_len = utf_decode(text, &unicode, text_len);
+    const char* text = str;
+    const int text_len = len;
+    int glyph_len = utf_decode(text, &unicode, text_len);
     while (glyph_len && src_len < len) {
       glyphs++;
       src_len = src_len + glyph_len;
@@ -106,13 +101,11 @@ namespace nk {
     return glyphs;
   }
   NK_API const char*
-  utf_at(const char* buffer, int length, int index,
+  utf_at(const char* buffer, const int length, const int index,
          rune* unicode, int* len) {
     int i = 0;
     int src_len = 0;
     int glyph_len = 0;
-    const char* text;
-    int text_len;
 
     NK_ASSERT(buffer);
     NK_ASSERT(unicode);
@@ -126,8 +119,8 @@ namespace nk {
       return 0;
     }
 
-    text = buffer;
-    text_len = length;
+    const char* text = buffer;
+    const int text_len = length;
     glyph_len = utf_decode(text, unicode, text_len);
     while (glyph_len) {
       if (i == index) {

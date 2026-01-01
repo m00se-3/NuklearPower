@@ -9,17 +9,15 @@ namespace nk {
    * ===============================================================*/
   NK_LIB float
   slider_behavior(flag* state, rectf* logical_cursor,
-                  rectf* visual_cursor, struct input* in,
-                  rectf bounds, float slider_min, float slider_max, float slider_value,
+                  rectf* visual_cursor, input* in,
+                  const rectf bounds, float slider_min, float slider_max, float slider_value,
                   float slider_step, float slider_steps) {
-    int left_mouse_down;
-    int left_mouse_click_in_cursor;
 
     /* check if visual cursor is being dragged */
     nk::widget_state_reset(state);
-    left_mouse_down = in && in->mouse.buttons[NK_BUTTON_LEFT].down;
-    left_mouse_click_in_cursor = in && input_has_mouse_click_down_in_rect(in,
-                                                                          NK_BUTTON_LEFT, *visual_cursor, true);
+    const int left_mouse_down = in && in->mouse.buttons[NK_BUTTON_LEFT].down;
+    const int left_mouse_click_in_cursor = in && input_has_mouse_click_down_in_rect(in,
+                                                                              NK_BUTTON_LEFT, *visual_cursor, true);
 
     if (left_mouse_down && left_mouse_click_in_cursor) {
       float ratio = 0;
@@ -49,16 +47,16 @@ namespace nk {
     return slider_value;
   }
   NK_LIB void
-  draw_slider(struct command_buffer* out, flag state,
-              const struct style_slider* style, const rectf* bounds,
+  draw_slider(command_buffer* out, const flag state,
+              const style_slider* style, const rectf* bounds,
               const rectf* visual_cursor, float min, float value, float max) {
     rectf fill;
     rectf bar;
-    const struct style_item* background;
+    const style_item* background;
 
     /* select correct slider images/colors */
-    struct color bar_color;
-    const struct style_item* cursor;
+    color bar_color;
+    const style_item* cursor;
 
     NK_UNUSED(min);
     NK_UNUSED(max);
@@ -116,16 +114,10 @@ namespace nk {
   }
   NK_LIB float
   do_slider(flag* state,
-            struct command_buffer* out, rectf bounds,
+            command_buffer* out, rectf bounds,
             float min, float val, float max, float step,
-            const struct style_slider* style, struct input* in,
-            const struct user_font* font) {
-    float slider_range;
-    float slider_min;
-    float slider_max;
-    float slider_value;
-    float slider_steps;
-    float cursor_offset;
+            const style_slider* style, input* in,
+            const user_font* font) {
 
     rectf visual_cursor;
     rectf logical_cursor;
@@ -172,12 +164,12 @@ namespace nk {
     bounds.w -= style->cursor_size.x;
 
     /* make sure the provided values are correct */
-    slider_max = NK_MAX(min, max);
-    slider_min = NK_MIN(min, max);
-    slider_value = NK_CLAMP(slider_min, val, slider_max);
-    slider_range = slider_max - slider_min;
-    slider_steps = slider_range / step;
-    cursor_offset = (slider_value - slider_min) / step;
+    float slider_max = NK_MAX(min, max);
+    float slider_min = NK_MIN(min, max);
+    float slider_value = NK_CLAMP(slider_min, val, slider_max);
+    float slider_range = slider_max - slider_min;
+    float slider_steps = slider_range / step;
+    float cursor_offset = (slider_value - slider_min) / step;
 
     /* calculate cursor
     Basically you have two cursors. One for visual representation and interaction
@@ -205,17 +197,11 @@ namespace nk {
     return slider_value;
   }
   NK_API bool
-  slider_float(struct context* ctx, float min_value, float* value, float max_value,
+  slider_float(context* ctx, float min_value, float* value, float max_value,
                float value_step) {
-    struct window* win;
-    struct panel* layout;
-    struct input* in;
-    const struct style* style;
 
-    int ret = 0;
-    float old_value;
+    const int ret = 0;
     rectf bounds;
-    enum widget_layout_states state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -224,36 +210,35 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout || !value)
       return ret;
 
-    win = ctx->current;
-    style = &ctx->style;
-    layout = win->layout;
+    window* win = ctx->current;
+    const style* style = &ctx->style;
+    const panel* layout = win->layout;
 
-    state = widget(&bounds, ctx);
+    const widget_layout_states state = widget(&bounds, ctx);
     if (!state)
       return ret;
-    in = (/*state == NK_WIDGET_ROM || */ state == NK_WIDGET_DISABLED || layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    input* in = (/*state == NK_WIDGET_ROM || */ state == NK_WIDGET_DISABLED || layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
 
-    old_value = *value;
+    float old_value = *value;
     *value = do_slider(&ctx->last_widget_state, &win->buffer, bounds, min_value,
                        old_value, max_value, value_step, &style->slider, in, style->font);
     return (old_value > *value || old_value < *value);
   }
   NK_API float
-  slide_float(struct context* ctx, float min, float val, float max, float step) {
+  slide_float(context* ctx, float min, float val, float max, float step) {
     slider_float(ctx, min, &val, max, step);
     return val;
   }
   NK_API int
-  slide_int(struct context* ctx, int min, int val, int max, int step) {
+  slide_int(context* ctx, const int min, const int val, const int max, const int step) {
     float value = (float) val;
     slider_float(ctx, (float) min, &value, (float) max, (float) step);
     return (int) value;
   }
   NK_API bool
-  slider_int(struct context* ctx, int min, int* val, int max, int step) {
-    int ret;
+  slider_int(context* ctx, const int min, int* val, const int max, const int step) {
     float value = (float) *val;
-    ret = slider_float(ctx, (float) min, &value, (float) max, (float) step);
+    const int ret = slider_float(ctx, (float) min, &value, (float) max, (float) step);
     *val = (int) value;
     return ret;
   }

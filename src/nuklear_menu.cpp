@@ -8,15 +8,14 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API void
-  menubar_begin(struct context* ctx) {
-    struct panel* layout;
+  menubar_begin(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    layout = ctx->current->layout;
+    panel* layout = ctx->current->layout;
     NK_ASSERT(layout->at_y == layout->bounds.y);
     /* if this assert triggers you allocated space between begin and menubar_begin.
     If you want a menubar the first nuklear function after `begin` has to be a
@@ -44,10 +43,7 @@ namespace nk {
     *layout->offset_y = 0;
   }
   NK_API void
-  menubar_end(struct context* ctx) {
-    struct window* win;
-    struct panel* layout;
-    struct command_buffer* out;
+  menubar_end(context* ctx) {
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -55,9 +51,9 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return;
 
-    win = ctx->current;
-    out = &win->buffer;
-    layout = win->layout;
+    window* win = ctx->current;
+    command_buffer* out = &win->buffer;
+    panel* layout = win->layout;
     if (layout->flags & window_flags::WINDOW_HIDDEN || layout->flags & window_flags::WINDOW_MINIMIZED)
       return;
 
@@ -76,13 +72,12 @@ namespace nk {
     push_scissor(out, layout->clip);
   }
   INTERN int
-  menu_begin(struct context* ctx, struct window* win,
-             const char* id, int is_clicked, struct rectf header, struct vec2f size) {
+  menu_begin(context* ctx, window* win,
+             const char* id, const int is_clicked, const rectf header, const vec2f size) {
     int is_open = 0;
     int is_active = 0;
-    struct rectf body;
-    window* popup;
-    hash hsh = murmur_hash(id, (int) strlen(id), static_cast<hash>(panel_type::PANEL_MENU));
+    rectf body;
+    const hash hsh = murmur_hash(id, (int) strlen(id), static_cast<hash>(panel_type::PANEL_MENU));
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -95,7 +90,7 @@ namespace nk {
     body.y = header.y + header.h;
     body.h = size.y;
 
-    popup = win->popup.win;
+    const window* popup = win->popup.win;
     is_open = popup ? true : false;
     is_active = (popup && (win->popup.name == hsh) && win->popup.type == panel_type::PANEL_MENU);
     if ((is_clicked && is_open && !is_active) || (is_open && !is_active) ||
@@ -109,13 +104,10 @@ namespace nk {
     return 1;
   }
   NK_API bool
-  menu_begin_text(struct context* ctx, const char* title, int len,
-                  flag align, struct vec2f size) {
-    struct window* win;
-    const struct input* in;
-    struct rectf header;
+  menu_begin_text(context* ctx, const char* title, const int len,
+                  const flag align, const vec2f size) {
+    rectf header;
     int is_clicked = false;
-    flag state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -123,28 +115,25 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    state = widget(&header, ctx);
+    window* win = ctx->current;
+    const flag state = widget(&header, ctx);
     if (!state)
       return 0;
-    in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    const input* in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
     if (do_button_text(&ctx->last_widget_state, &win->buffer, header,
                        title, len, align, btn_behavior::BUTTON_DEFAULT, &ctx->style.menu_button, in, ctx->style.font))
       is_clicked = true;
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
-  NK_API bool menu_begin_label(struct context* ctx,
-                               const char* text, flag align, struct vec2f size) {
+  NK_API bool menu_begin_label(context* ctx,
+                               const char* text, const flag align, const vec2f size) {
     return menu_begin_text(ctx, text, strlen(text), align, size);
   }
   NK_API bool
-  menu_begin_image(struct context* ctx, const char* id, struct image img,
-                   struct vec2f size) {
-    struct window* win;
-    struct rectf header;
-    const struct input* in;
+  menu_begin_image(context* ctx, const char* id, struct image img,
+                   const vec2f size) {
+    rectf header;
     int is_clicked = false;
-    flag state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -152,24 +141,21 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    state = widget(&header, ctx);
+    window* win = ctx->current;
+    const flag state = widget(&header, ctx);
     if (!state)
       return 0;
-    in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    const input* in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
     if (do_button_image(&ctx->last_widget_state, &win->buffer, header,
                         img, btn_behavior::BUTTON_DEFAULT, &ctx->style.menu_button, in))
       is_clicked = true;
     return menu_begin(ctx, win, id, is_clicked, header, size);
   }
   NK_API bool
-  menu_begin_symbol(struct context* ctx, const char* id,
-                    enum symbol_type sym, struct vec2f size) {
-    window* win;
-    const struct input* in;
+  menu_begin_symbol(context* ctx, const char* id,
+                    const symbol_type sym, const vec2f size) {
     rectf header;
     int is_clicked = false;
-    flag state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -177,24 +163,21 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    state = widget(&header, ctx);
+    window* win = ctx->current;
+    const flag state = widget(&header, ctx);
     if (!state)
       return 0;
-    in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    const input* in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
     if (do_button_symbol(&ctx->last_widget_state, &win->buffer, header,
                          sym, btn_behavior::BUTTON_DEFAULT, &ctx->style.menu_button, in, ctx->style.font))
       is_clicked = true;
     return menu_begin(ctx, win, id, is_clicked, header, size);
   }
   NK_API bool
-  menu_begin_image_text(struct context* ctx, const char* title, int len,
-                        flag align, struct image img, struct vec2f size) {
-    struct window* win;
-    struct rectf header;
-    const struct input* in;
+  menu_begin_image_text(context* ctx, const char* title, const int len,
+                        const flag align, struct image img, const vec2f size) {
+    rectf header;
     int is_clicked = false;
-    flag state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -202,11 +185,11 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    state = widget(&header, ctx);
+    window* win = ctx->current;
+    const flag state = widget(&header, ctx);
     if (!state)
       return 0;
-    in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    const input* in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
     if (do_button_text_image(&ctx->last_widget_state, &win->buffer,
                              header, img, title, len, align, btn_behavior::BUTTON_DEFAULT, &ctx->style.menu_button,
                              ctx->style.font, in))
@@ -214,18 +197,15 @@ namespace nk {
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
   NK_API bool
-  menu_begin_image_label(struct context* ctx,
-                         const char* title, flag align, struct image img, struct vec2f size) {
+  menu_begin_image_label(context* ctx,
+                         const char* title, const flag align, struct image img, const vec2f size) {
     return menu_begin_image_text(ctx, title, strlen(title), align, img, size);
   }
   NK_API bool
-  menu_begin_symbol_text(struct context* ctx, const char* title, int len,
-                         flag align, enum symbol_type sym, struct vec2f size) {
-    struct window* win;
-    struct rectf header;
-    const struct input* in;
+  menu_begin_symbol_text(context* ctx, const char* title, const int len,
+                         const flag align, const symbol_type sym, const vec2f size) {
+    rectf header;
     int is_clicked = false;
-    flag state;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -233,12 +213,12 @@ namespace nk {
     if (!ctx || !ctx->current || !ctx->current->layout)
       return 0;
 
-    win = ctx->current;
-    state = widget(&header, ctx);
+    window* win = ctx->current;
+    const flag state = widget(&header, ctx);
     if (!state)
       return 0;
 
-    in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
+    const input* in = (state == NK_WIDGET_ROM || state == NK_WIDGET_DISABLED || win->layout->flags & window_flags::WINDOW_ROM) ? 0 : &ctx->input;
     if (do_button_text_symbol(&ctx->last_widget_state, &win->buffer,
                               header, sym, title, len, align, btn_behavior::BUTTON_DEFAULT, &ctx->style.menu_button,
                               ctx->style.font, in))
@@ -246,41 +226,41 @@ namespace nk {
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
   NK_API bool
-  menu_begin_symbol_label(struct context* ctx,
-                          const char* title, flag align, enum symbol_type sym, struct vec2f size) {
+  menu_begin_symbol_label(context* ctx,
+                          const char* title, const flag align, const symbol_type sym, const vec2f size) {
     return menu_begin_symbol_text(ctx, title, strlen(title), align, sym, size);
   }
   NK_API bool
-  menu_item_text(struct context* ctx, const char* title, int len, flag align) {
+  menu_item_text(context* ctx, const char* title, const int len, const flag align) {
     return contextual_item_text(ctx, title, len, align);
   }
   NK_API bool
-  menu_item_label(struct context* ctx, const char* label, flag align) {
+  menu_item_label(context* ctx, const char* label, const flag align) {
     return contextual_item_label(ctx, label, align);
   }
   NK_API bool
-  menu_item_image_label(struct context* ctx, struct image img,
-                        const char* label, flag align) {
+  menu_item_image_label(context* ctx, struct image img,
+                        const char* label, const flag align) {
     return contextual_item_image_label(ctx, img, label, align);
   }
   NK_API bool
-  menu_item_image_text(struct context* ctx, struct image img,
-                       const char* text, int len, flag align) {
+  menu_item_image_text(context* ctx, struct image img,
+                       const char* text, const int len, const flag align) {
     return contextual_item_image_text(ctx, img, text, len, align);
   }
-  NK_API bool menu_item_symbol_text(struct context* ctx, enum symbol_type sym,
-                                    const char* text, int len, flag align) {
+  NK_API bool menu_item_symbol_text(context* ctx, const symbol_type sym,
+                                    const char* text, const int len, const flag align) {
     return contextual_item_symbol_text(ctx, sym, text, len, align);
   }
-  NK_API bool menu_item_symbol_label(struct context* ctx, enum symbol_type sym,
-                                     const char* label, flag align) {
+  NK_API bool menu_item_symbol_label(context* ctx, const symbol_type sym,
+                                     const char* label, const flag align) {
     return contextual_item_symbol_label(ctx, sym, label, align);
   }
-  NK_API void menu_close(struct context* ctx) {
+  NK_API void menu_close(context* ctx) {
     contextual_close(ctx);
   }
   NK_API void
-  menu_end(struct context* ctx) {
+  menu_end(context* ctx) {
     contextual_end(ctx);
   }
 } // namespace nk

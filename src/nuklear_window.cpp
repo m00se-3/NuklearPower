@@ -9,18 +9,17 @@ namespace nk {
    *
    * ===============================================================*/
   NK_LIB void*
-  create_window(struct context* ctx) {
-    struct page_element* elem;
-    elem = create_page_element(ctx);
+  create_window(context* ctx) {
+    page_element* elem = create_page_element(ctx);
     if (elem == nullptr)
       return 0;
     elem->data.win.seq = ctx->seq;
     return &elem->data.win;
   }
   NK_LIB void
-  free_window(struct context* ctx, struct window* win) {
+  free_window(context* ctx, window* win) {
     /* unlink windows from list */
-    struct table* it = win->tables;
+    table* it = win->tables;
     if (win->popup.win != nullptr) {
       free_window(ctx, win->popup.win);
       win->popup.win = 0;
@@ -30,7 +29,7 @@ namespace nk {
 
     while (it != nullptr) {
       /*free window state tables */
-      struct table* n = it->next;
+      table* n = it->next;
       remove_table(win, it);
       free_table(ctx, it);
       if (it == win->tables)
@@ -40,19 +39,18 @@ namespace nk {
 
     /* link windows into freelist */
     {
-      union page_data* pd = NK_CONTAINER_OF(win, union page_data, win);
-      struct page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
+      page_data* pd = NK_CONTAINER_OF(win, union page_data, win);
+      page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
       free_page_element(ctx, pe);
     }
   }
-  NK_LIB struct window*
-  find_window(const struct context* ctx, hash hash, const char* name) {
-    struct window* iter;
-    iter = ctx->begin;
+  NK_LIB window*
+  find_window(const context* ctx, const hash hash, const char* name) {
+    window* iter = ctx->begin;
     while (iter != nullptr) {
       NK_ASSERT(iter != iter->next);
       if (iter->name == hash) {
-        int max_len = strlen(iter->name_string);
+        const int max_len = strlen(iter->name_string);
         if (stricmpn(iter->name_string, name, max_len) == 0)
           return iter;
       }
@@ -61,15 +59,14 @@ namespace nk {
     return 0;
   }
   NK_LIB void
-  insert_window(struct context* ctx, struct window* win,
-                enum window_insert_location loc) {
-    const struct window* iter;
+  insert_window(context* ctx, window* win,
+                const window_insert_location loc) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
     if ((win == nullptr) || (ctx == nullptr))
       return;
 
-    iter = ctx->begin;
+    const window* iter = ctx->begin;
     while (iter != nullptr) {
       NK_ASSERT(iter != iter->next);
       NK_ASSERT(iter != win);
@@ -87,8 +84,7 @@ namespace nk {
       return;
     }
     if (loc == NK_INSERT_BACK) {
-      struct window* end;
-      end = ctx->end;
+      window* end = ctx->end;
       end->flags |= window_flags::WINDOW_ROM;
       end->next = win;
       win->prev = ctx->end;
@@ -107,7 +103,7 @@ namespace nk {
     ctx->count++;
   }
   NK_LIB void
-  remove_window(struct context* ctx, struct window* win) {
+  remove_window(context* ctx, window* win) {
     if (win == ctx->begin || win == ctx->end) {
       if (win == ctx->begin) {
         ctx->begin = win->next;
@@ -135,17 +131,13 @@ namespace nk {
     ctx->count--;
   }
   NK_API bool
-  begin(struct context* ctx, const char* title,
-        rectf bounds, flag flags) {
+  begin(context* ctx, const char* title,
+        const rectf bounds, const flag flags) {
     return begin_titled(ctx, title, title, bounds, flags);
   }
   NK_API bool
-  begin_titled(struct context* ctx, const char* name, const char* title,
-               rectf bounds, flag flags) {
-    struct window* win;
-    struct style* style;
-    hash name_hash;
-    int name_len;
+  begin_titled(context* ctx, const char* name, const char* title,
+               const rectf bounds, const flag flags) {
     int ret = 0;
 
     NK_ASSERT(ctx);
@@ -157,14 +149,14 @@ namespace nk {
       return 0;
 
     /* find or create window */
-    style = &ctx->style;
-    name_len = (int) strlen(name);
-    name_hash = murmur_hash(name, (int) name_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, name_hash, name);
+    const style* style = &ctx->style;
+    const int name_len = (int) strlen(name);
+    const hash name_hash = murmur_hash(name, (int) name_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    window* win = find_window(ctx, name_hash, name);
     if (!win) {
       /* create new window */
       std::size_t name_length = (std::size_t) name_len;
-      win = (struct window*) create_window(ctx);
+      win = (window*) create_window(ctx);
       NK_ASSERT(win);
       if (!win)
         return 0;
@@ -214,20 +206,19 @@ namespace nk {
 
     /* window overlapping */
     if (!(win->flags & window_flags::WINDOW_HIDDEN) && !(win->flags & panel_flags::WINDOW_NO_INPUT)) {
-      int inpanel, ishovered;
-      struct window* iter = win;
+      window* iter = win;
       float h = ctx->style.font->height + 2.0f * style->window.header.padding.y +
                 (2.0f * style->window.header.label_padding.y);
-      rectf win_bounds = (!(win->flags & window_flags::WINDOW_MINIMIZED)) ? win->bounds : rect(win->bounds.x, win->bounds.y, win->bounds.w, h);
+      const rectf win_bounds = (!(win->flags & window_flags::WINDOW_MINIMIZED)) ? win->bounds : rect(win->bounds.x, win->bounds.y, win->bounds.w, h);
 
       /* activate window if hovered and no other window is overlapping this window */
-      inpanel = input_has_mouse_click_down_in_rect(&ctx->input, NK_BUTTON_LEFT, win_bounds, true);
+      int inpanel = input_has_mouse_click_down_in_rect(&ctx->input, NK_BUTTON_LEFT, win_bounds, true);
       inpanel = inpanel && ctx->input.mouse.buttons[NK_BUTTON_LEFT].clicked;
-      ishovered = input_is_mouse_hovering_rect(&ctx->input, win_bounds);
+      const int ishovered = input_is_mouse_hovering_rect(&ctx->input, win_bounds);
       if ((win != ctx->active) && ishovered && !ctx->input.mouse.buttons[NK_BUTTON_LEFT].down) {
         iter = win->next;
         while (iter) {
-          rectf iter_bounds = (!(iter->flags & window_flags::WINDOW_MINIMIZED)) ? iter->bounds : rect(iter->bounds.x, iter->bounds.y, iter->bounds.w, h);
+          const rectf iter_bounds = (!(iter->flags & window_flags::WINDOW_MINIMIZED)) ? iter->bounds : rect(iter->bounds.x, iter->bounds.y, iter->bounds.w, h);
           if (intERSECT(win_bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
                         iter_bounds.x, iter_bounds.y, iter_bounds.w, iter_bounds.h) &&
               (!(iter->flags & window_flags::WINDOW_HIDDEN)))
@@ -247,7 +238,7 @@ namespace nk {
         iter = win->next;
         while (iter) {
           /* try to find a panel with higher priority in the same position */
-          rectf iter_bounds = (!(iter->flags & window_flags::WINDOW_MINIMIZED)) ? iter->bounds : rect(iter->bounds.x, iter->bounds.y, iter->bounds.w, h);
+          const rectf iter_bounds = (!(iter->flags & window_flags::WINDOW_MINIMIZED)) ? iter->bounds : rect(iter->bounds.x, iter->bounds.y, iter->bounds.w, h);
           if (NK_INBOX(ctx->input.mouse.pos.x, ctx->input.mouse.pos.y,
                        iter_bounds.x, iter_bounds.y, iter_bounds.w, iter_bounds.h) &&
               !(iter->flags & window_flags::WINDOW_HIDDEN))
@@ -294,13 +285,12 @@ namespace nk {
   }
   NK_API void
   end(context* ctx) {
-    panel* layout;
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current && "if this triggers you forgot to call `begin`");
     if (!ctx || !ctx->current)
       return;
 
-    layout = ctx->current->layout;
+    const panel* layout = ctx->current->layout;
     if (!layout || (layout->type == panel_type::PANEL_WINDOW && (ctx->current->flags & window_flags::WINDOW_HIDDEN))) {
       ctx->current = 0;
       return;
@@ -310,7 +300,7 @@ namespace nk {
     ctx->current = 0;
   }
   NK_API rectf
-  window_get_bounds(const struct context* ctx) {
+  window_get_bounds(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -318,7 +308,7 @@ namespace nk {
     return ctx->current->bounds;
   }
   NK_API vec2f
-  window_get_position(const struct context* ctx) {
+  window_get_position(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -326,7 +316,7 @@ namespace nk {
     return vec2_from_floats(ctx->current->bounds.x, ctx->current->bounds.y);
   }
   NK_API vec2f
-  window_get_size(const struct context* ctx) {
+  window_get_size(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -334,7 +324,7 @@ namespace nk {
     return vec2_from_floats(ctx->current->bounds.w, ctx->current->bounds.h);
   }
   NK_API float
-  window_get_width(const struct context* ctx) {
+  window_get_width(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -342,7 +332,7 @@ namespace nk {
     return ctx->current->bounds.w;
   }
   NK_API float
-  window_get_height(const struct context* ctx) {
+  window_get_height(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -350,7 +340,7 @@ namespace nk {
     return ctx->current->bounds.h;
   }
   NK_API rectf
-  window_get_content_region(const struct context* ctx) {
+  window_get_content_region(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -358,7 +348,7 @@ namespace nk {
     return ctx->current->layout->clip;
   }
   NK_API vec2f
-  window_get_content_region_min(const struct context* ctx) {
+  window_get_content_region_min(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
@@ -367,7 +357,7 @@ namespace nk {
     return vec2_from_floats(ctx->current->layout->clip.x, ctx->current->layout->clip.y);
   }
   NK_API vec2f
-  window_get_content_region_max(const struct context* ctx) {
+  window_get_content_region_max(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
@@ -377,7 +367,7 @@ namespace nk {
                             ctx->current->layout->clip.y + ctx->current->layout->clip.h);
   }
   NK_API vec2f
-  window_get_content_region_size(const struct context* ctx) {
+  window_get_content_region_size(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
@@ -385,8 +375,8 @@ namespace nk {
       return vec2_from_floats(0, 0);
     return vec2_from_floats(ctx->current->layout->clip.w, ctx->current->layout->clip.h);
   }
-  NK_API struct command_buffer*
-  window_get_canvas(const struct context* ctx) {
+  NK_API command_buffer*
+  window_get_canvas(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
@@ -394,8 +384,8 @@ namespace nk {
       return 0;
     return &ctx->current->buffer;
   }
-  NK_API struct panel*
-  window_get_panel(const struct context* ctx) {
+  NK_API panel*
+  window_get_panel(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -403,20 +393,19 @@ namespace nk {
     return ctx->current->layout;
   }
   NK_API void
-  window_get_scroll(const struct context* ctx, std::uint32_t* offset_x, std::uint32_t* offset_y) {
-    struct window* win;
+  window_get_scroll(const context* ctx, std::uint32_t* offset_x, std::uint32_t* offset_y) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
       return;
-    win = ctx->current;
+    const window* win = ctx->current;
     if (offset_x)
       *offset_x = win->scrollbar.x;
     if (offset_y)
       *offset_y = win->scrollbar.y;
   }
   NK_API bool
-  window_has_focus(const struct context* ctx) {
+  window_has_focus(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     NK_ASSERT(ctx->current->layout);
@@ -425,7 +414,7 @@ namespace nk {
     return ctx->current == ctx->active;
   }
   NK_API bool
-  window_is_hovered(const struct context* ctx) {
+  window_is_hovered(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current || (ctx->current->flags & window_flags::WINDOW_HIDDEN))
@@ -439,12 +428,11 @@ namespace nk {
     }
   }
   NK_API bool
-  window_is_any_hovered(const struct context* ctx) {
-    struct window* iter;
+  window_is_any_hovered(const context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
-    iter = ctx->begin;
+    const window* iter = ctx->begin;
     while (iter) {
       /* check if window is being hovered */
       if (!(iter->flags & window_flags::WINDOW_HIDDEN)) {
@@ -466,90 +454,75 @@ namespace nk {
     return 0;
   }
   NK_API bool
-  item_is_any_active(const struct context* ctx) {
-    int any_hovered = window_is_any_hovered(ctx);
-    int any_active = (ctx->last_widget_state & NK_WIDGET_STATE_MODIFIED);
+  item_is_any_active(const context* ctx) {
+    const int any_hovered = window_is_any_hovered(ctx);
+    const int any_active = (ctx->last_widget_state & NK_WIDGET_STATE_MODIFIED);
     return any_hovered || any_active;
   }
   NK_API bool
-  window_is_collapsed(const struct context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_is_collapsed(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
 
-    title_len = (int) strlen(name);
-    title_hash = murmur_hash(name, (int) title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = (int) strlen(name);
+    const hash title_hash = murmur_hash(name, (int) title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    const window* win = find_window(ctx, title_hash, name);
     if (!win)
       return 0;
     return win->flags & window_flags::WINDOW_MINIMIZED;
   }
   NK_API bool
-  window_is_closed(const struct context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_is_closed(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 1;
 
-    title_len = (int) strlen(name);
-    title_hash = murmur_hash(name, (int) title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = (int) strlen(name);
+    const hash title_hash = murmur_hash(name, (int) title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    const window* win = find_window(ctx, title_hash, name);
     if (!win)
       return 1;
     return (win->flags & window_flags::WINDOW_CLOSED);
   }
   NK_API bool
-  window_is_hidden(const struct context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_is_hidden(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 1;
 
-    title_len = strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    const window* win = find_window(ctx, title_hash, name);
     if (!win)
       return 1;
     return (win->flags & window_flags::WINDOW_HIDDEN);
   }
   NK_API bool
   window_is_active(const context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
 
-    title_len = (int) strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = (int) strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    const window* win = find_window(ctx, title_hash, name);
     if (!win)
       return 0;
     return win == ctx->active;
   }
-  NK_API struct window*
-  window_find(const struct context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    title_len = (int) strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+  NK_API window*
+  window_find(const context* ctx, const char* name) {
+    const int title_len = (int) strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
     return find_window(ctx, title_hash, name);
   }
   NK_API void
-  window_close(struct context* ctx, const char* name) {
-    struct window* win;
+  window_close(context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
-    win = window_find(ctx, name);
+    window* win = window_find(ctx, name);
     if (!win)
       return;
     NK_ASSERT(ctx->current != win && "You cannot close a currently active window");
@@ -559,59 +532,54 @@ namespace nk {
     win->flags |= window_flags::WINDOW_CLOSED;
   }
   NK_API void
-  window_set_bounds(struct context* ctx,
-                    const char* name, rectf bounds) {
-    struct window* win;
+  window_set_bounds(context* ctx,
+                    const char* name, const rectf bounds) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
-    win = window_find(ctx, name);
+    window* win = window_find(ctx, name);
     if (!win)
       return;
     win->bounds = bounds;
   }
   NK_API void
-  window_set_position(struct context* ctx,
-                      const char* name, vec2f pos) {
-    struct window* win = window_find(ctx, name);
+  window_set_position(context* ctx,
+                      const char* name, const vec2f pos) {
+    window* win = window_find(ctx, name);
     if (!win)
       return;
     win->bounds.x = pos.x;
     win->bounds.y = pos.y;
   }
   NK_API void
-  window_set_size(struct context* ctx,
-                  const char* name, vec2f size) {
-    struct window* win = window_find(ctx, name);
+  window_set_size(context* ctx,
+                  const char* name, const vec2f size) {
+    window* win = window_find(ctx, name);
     if (!win)
       return;
     win->bounds.w = size.x;
     win->bounds.h = size.y;
   }
   NK_API void
-  window_set_scroll(struct context* ctx, std::uint32_t offset_x, std::uint32_t offset_y) {
-    struct window* win;
+  window_set_scroll(context* ctx, const std::uint32_t offset_x, const std::uint32_t offset_y) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
       return;
-    win = ctx->current;
+    window* win = ctx->current;
     win->scrollbar.x = offset_x;
     win->scrollbar.y = offset_y;
   }
   NK_API void
-  window_collapse(struct context* ctx, const char* name,
-                  enum collapse_states c) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_collapse(context* ctx, const char* name,
+                  const collapse_states c) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
 
-    title_len = strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    window* win = find_window(ctx, title_hash, name);
     if (!win)
       return;
     if (c == collapse_states::MINIMIZED)
@@ -620,25 +588,22 @@ namespace nk {
       win->flags &= ~static_cast<flag>(window_flags::WINDOW_MINIMIZED);
   }
   NK_API void
-  window_collapse_if(struct context* ctx, const char* name,
-                     enum collapse_states c, int cond) {
+  window_collapse_if(context* ctx, const char* name,
+                     const collapse_states c, const int cond) {
     NK_ASSERT(ctx);
     if (!ctx || !cond)
       return;
     window_collapse(ctx, name, c);
   }
   NK_API void
-  window_show(struct context* ctx, const char* name, enum show_states s) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_show(context* ctx, const char* name, const show_states s) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
 
-    title_len = strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    window* win = find_window(ctx, title_hash, name);
     if (!win)
       return;
     if (s == show_states::HIDDEN) {
@@ -647,8 +612,8 @@ namespace nk {
       win->flags &= ~static_cast<flag>(window_flags::WINDOW_HIDDEN);
   }
   NK_API void
-  window_show_if(struct context* ctx, const char* name,
-                 enum show_states s, int cond) {
+  window_show_if(context* ctx, const char* name,
+                 const show_states s, const int cond) {
     NK_ASSERT(ctx);
     if (!ctx || !cond)
       return;
@@ -656,17 +621,14 @@ namespace nk {
   }
 
   NK_API void
-  window_set_focus(struct context* ctx, const char* name) {
-    int title_len;
-    hash title_hash;
-    struct window* win;
+  window_set_focus(context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
 
-    title_len = (int) strlen(name);
-    title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
-    win = find_window(ctx, title_hash, name);
+    const int title_len = (int) strlen(name);
+    const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
+    window* win = find_window(ctx, title_hash, name);
     if (win && ctx->end != win) {
       remove_window(ctx, win);
       insert_window(ctx, win, NK_INSERT_BACK);
@@ -674,10 +636,10 @@ namespace nk {
     ctx->active = win;
   }
   NK_API void
-  rule_horizontal(struct context* ctx, struct color color, bool rounding) {
+  rule_horizontal(context* ctx, const color color, const bool rounding) {
     rectf space;
-    enum widget_layout_states state = widget(&space, ctx);
-    struct command_buffer* canvas = window_get_canvas(ctx);
+    const widget_layout_states state = widget(&space, ctx);
+    command_buffer* canvas = window_get_canvas(ctx);
     if (!state)
       return;
     fill_rect(canvas, space, rounding && space.h > 1.5f ? space.h / 2.0f : 0, color);

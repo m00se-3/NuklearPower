@@ -7,23 +7,22 @@ namespace nk {
    *                              TABLE
    *
    * ===============================================================*/
-  NK_LIB struct table*
-  create_table(struct context* ctx) {
-    struct page_element* elem;
-    elem = create_page_element(ctx);
+  NK_LIB table*
+  create_table(context* ctx) {
+    page_element* elem = create_page_element(ctx);
     if (!elem)
       return 0;
     zero_struct(*elem);
     return &elem->data.tbl;
   }
   NK_LIB void
-  free_table(struct context* ctx, struct table* tbl) {
-    union page_data* pd = NK_CONTAINER_OF(tbl, union page_data, tbl);
-    struct page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
+  free_table(context* ctx, table* tbl) {
+    page_data* pd = NK_CONTAINER_OF(tbl, union page_data, tbl);
+    page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
     free_page_element(ctx, pe);
   }
   NK_LIB void
-  push_table(struct window* win, struct table* tbl) {
+  push_table(window* win, table* tbl) {
     if (!win->tables) {
       win->tables = tbl;
       tbl->next = 0;
@@ -40,7 +39,7 @@ namespace nk {
     win->table_count++;
   }
   NK_LIB void
-  remove_table(struct window* win, struct table* tbl) {
+  remove_table(window* win, table* tbl) {
     if (win->tables == tbl)
       win->tables = tbl->next;
     if (tbl->next)
@@ -51,14 +50,14 @@ namespace nk {
     tbl->prev = 0;
   }
   NK_LIB unsigned int*
-  add_value(struct context* ctx, struct window* win,
-            hash name, unsigned int value) {
+  add_value(context* ctx, window* win,
+            const hash name, const unsigned int value) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
     if (!win || !ctx)
       return 0;
     if (!win->tables || win->tables->size >= NK_VALUE_PAGE_CAPACITY) {
-      struct table* tbl = create_table(ctx);
+      table* tbl = create_table(ctx);
       NK_ASSERT(tbl);
       if (!tbl)
         return 0;
@@ -70,8 +69,8 @@ namespace nk {
     return &win->tables->values[win->tables->size++];
   }
   NK_LIB unsigned int*
-  find_value(const struct window* win, hash name) {
-    struct table* iter = win->tables;
+  find_value(const window* win, const hash name) {
+    table* iter = win->tables;
     while (iter) {
       unsigned int i = 0;
       unsigned int size = iter->size;

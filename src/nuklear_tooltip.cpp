@@ -8,12 +8,8 @@ namespace nk {
    *
    * ===============================================================*/
   NK_API bool
-  tooltip_begin(struct context* ctx, float width) {
-    int x, y, w, h;
-    struct window* win;
-    const struct input* in;
+  tooltip_begin(context* ctx, float width) {
     rectf bounds;
-    int ret;
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -22,23 +18,23 @@ namespace nk {
       return 0;
 
     /* make sure that no nonblocking popup is currently active */
-    win = ctx->current;
-    in = &ctx->input;
+    window* win = ctx->current;
+    const input* in = &ctx->input;
     if (win->popup.win && ((int) win->popup.type & static_cast<int>(panel_set::PANEL_SET_NONBLOCK)))
       return 0;
 
-    w = iceilf(width);
-    h = iceilf(null_rect.h);
-    x = ifloorf(in->mouse.pos.x + 1) - (int) win->layout->clip.x;
-    y = ifloorf(in->mouse.pos.y + 1) - (int) win->layout->clip.y;
+    const int w = iceilf(width);
+    const int h = iceilf(null_rect.h);
+    const int x = ifloorf(in->mouse.pos.x + 1) - (int) win->layout->clip.x;
+    const int y = ifloorf(in->mouse.pos.y + 1) - (int) win->layout->clip.y;
 
     bounds.x = (float) x;
     bounds.y = (float) y;
     bounds.w = (float) w;
     bounds.h = (float) h;
 
-    ret = popup_begin(ctx, popup_type::POPUP_DYNAMIC,
-                      "__##Tooltip##__", static_cast<flag>(panel_flags::WINDOW_NO_SCROLLBAR | panel_flags::WINDOW_BORDER), bounds);
+    const int ret = popup_begin(ctx, popup_type::POPUP_DYNAMIC,
+                          "__##Tooltip##__", static_cast<flag>(panel_flags::WINDOW_NO_SCROLLBAR | panel_flags::WINDOW_BORDER), bounds);
     if (ret)
       win->layout->flags &= ~static_cast<flag>(window_flags::WINDOW_ROM);
     win->popup.type = panel_type::PANEL_TOOLTIP;
@@ -47,7 +43,7 @@ namespace nk {
   }
 
   NK_API void
-  tooltip_end(struct context* ctx) {
+  tooltip_end(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
     if (!ctx || !ctx->current)
@@ -57,13 +53,7 @@ namespace nk {
     popup_end(ctx);
   }
   NK_API void
-  tooltip(struct context* ctx, const char* text) {
-    const struct style* style;
-    vec2f padding;
-
-    int text_len;
-    float text_width;
-    float text_height;
+  tooltip(context* ctx, const char* text) {
 
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -73,15 +63,15 @@ namespace nk {
       return;
 
     /* fetch configuration data */
-    style = &ctx->style;
-    padding = style->window.padding;
+    const style* style = &ctx->style;
+    const vec2f padding = style->window.padding;
 
     /* calculate size of the text and tooltip */
-    text_len = strlen(text);
-    text_width = style->font->width(style->font->userdata,
-                                    style->font->height, text, text_len);
+    const int text_len = strlen(text);
+    float text_width = style->font->width(style->font->userdata,
+                                          style->font->height, text, text_len);
     text_width += (4 * padding.x);
-    text_height = (style->font->height + 2 * padding.y);
+    float text_height = (style->font->height + 2 * padding.y);
 
     /* execute tooltip and fill with text */
     if (tooltip_begin(ctx, (float) text_width)) {
