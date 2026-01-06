@@ -1,7 +1,6 @@
 #include <cstring>
 #include <memory>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ==============================================================
@@ -133,7 +132,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* clip = &b->clip;
-      if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
+      if (!INTERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
@@ -157,7 +156,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* clip = &b->clip;
-      if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
+      if (!INTERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
@@ -182,7 +181,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* clip = &b->clip;
-      if (!intERSECT(rect.x, rect.y, rect.w, rect.h,
+      if (!INTERSECT(rect.x, rect.y, rect.w, rect.h,
                      clip->x, clip->y, clip->w, clip->h))
         return;
     }
@@ -207,7 +206,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* clip = &b->clip;
-      if (!intERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
+      if (!INTERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
@@ -229,7 +228,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* clip = &b->clip;
-      if (!intERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
+      if (!INTERSECT(r.x, r.y, r.w, r.h, clip->x, clip->y, clip->w, clip->h))
         return;
     }
 
@@ -403,7 +402,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* c = &b->clip;
-      if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
+      if (c->w == 0 || c->h == 0 || !INTERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
 
@@ -505,7 +504,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* c = &b->clip;
-      if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
+      if (c->w == 0 || c->h == 0 || !INTERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
 
@@ -532,7 +531,7 @@ namespace nk {
       return;
     if (b->use_clipping) {
       const rectf* c = &b->clip;
-      if (c->w == 0 || c->h == 0 || !intERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
+      if (c->w == 0 || c->h == 0 || !INTERSECT(r.x, r.y, r.w, r.h, c->x, c->y, c->w, c->h))
         return;
     }
 

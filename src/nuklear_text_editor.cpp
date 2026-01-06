@@ -1,6 +1,5 @@
 #include <cstring>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ===============================================================
@@ -999,8 +998,8 @@ namespace nk {
     NK_ASSERT(state);
     if (!state)
       return;
-    NK_MEMSET(state, 0, sizeof(struct text_edit));
-    textedit_clear_state(state, static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_SINGLE_LINE), 0);
+    std::memset(state, 0, sizeof(struct text_edit));
+    textedit_clear_state(state, text_edit_type::TEXT_EDIT_SINGLE_LINE, 0);
     str_init_default(&state->string);
   }
 #endif

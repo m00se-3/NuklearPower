@@ -87,7 +87,7 @@ NK_IMPLEMENTATION in *one* .c/.cpp file before #including this file, e.g.:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~C
     #define NK_IMPLEMENTATION
-    #include "nuklear.h"
+    #include <nk/nuklear.hpp>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Also optionally define the symbols listed in the section "OPTIONAL DEFINES"

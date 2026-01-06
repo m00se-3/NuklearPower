@@ -1,6 +1,5 @@
 #include <cmath>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 #include <algorithm>
 
 namespace nk {

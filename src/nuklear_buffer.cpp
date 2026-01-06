@@ -1,6 +1,5 @@
 #include <cstring>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ==============================================================
@@ -10,18 +9,18 @@ namespace nk {
    * ===============================================================*/
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
   NK_LIB void*
-  malloc(handle unused, void* old, std::size_t size) {
+  malloc(resource_handle unused, void* old, std::size_t size) {
     NK_UNUSED(unused);
     NK_UNUSED(old);
-    return malloc(size);
+    return std::malloc(size);
   }
   NK_LIB void
-  mfree(handle unused, void* ptr) {
+  free(resource_handle unused, void* ptr) {
     NK_UNUSED(unused);
-    free(ptr);
+    std::free(ptr);
   }
   NK_API void
-  buffer_init_default(struct buffer* buffer) {
+  buffer_init_default(memory_buffer* buffer) {
     struct allocator alloc;
     alloc.userdata.ptr = 0;
     alloc.alloc = malloc;

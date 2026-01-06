@@ -1,5 +1,4 @@
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ===============================================================
@@ -78,7 +77,7 @@ namespace nk {
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
-    if (!intERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
+    if (!INTERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
       return 0;
     return input_is_mouse_hovering_rect(&ctx->input, bounds);
   }
@@ -99,7 +98,7 @@ namespace nk {
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
-    if (!intERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
+    if (!INTERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
       return 0;
     return input_mouse_clicked(&ctx->input, btn, bounds);
   }
@@ -120,7 +119,7 @@ namespace nk {
 
     layout_peek(&bounds, ctx);
     unify(&v, &c, bounds.x, bounds.y, bounds.x + bounds.w, bounds.y + bounds.h);
-    if (!intERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
+    if (!INTERSECT(c.x, c.y, c.w, c.h, bounds.x, bounds.y, bounds.w, bounds.h))
       return 0;
     return input_has_mouse_click_down_in_rect(&ctx->input, btn, bounds, down);
   }
@@ -162,7 +161,7 @@ namespace nk {
     c.h = (float) ((int) c.h);
 
     unify(&v, &c, bounds->x, bounds->y, bounds->x + bounds->w, bounds->y + bounds->h);
-    if (!intERSECT(c.x, c.y, c.w, c.h, bounds->x, bounds->y, bounds->w, bounds->h))
+    if (!INTERSECT(c.x, c.y, c.w, c.h, bounds->x, bounds->y, bounds->w, bounds->h))
       return NK_WIDGET_INVALID;
     if (win->widgets_disabled)
       return NK_WIDGET_DISABLED;

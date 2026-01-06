@@ -1,5 +1,4 @@
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 #include <algorithm>
 
 namespace nk {
@@ -444,7 +443,7 @@ namespace nk {
         if ((root_window == ctx->active) && layout->has_scrolling) {
           /* and panel is being hovered and inside clip rect*/
           if (input_is_mouse_hovering_rect(in, layout->bounds) &&
-              intERSECT(layout->bounds.x, layout->bounds.y, layout->bounds.w, layout->bounds.h,
+              INTERSECT(layout->bounds.x, layout->bounds.y, layout->bounds.w, layout->bounds.h,
                         root_panel->clip.x, root_panel->clip.y, root_panel->clip.w, root_panel->clip.h)) {
             /* deactivate all parent scrolling */
             root_panel = window->layout;

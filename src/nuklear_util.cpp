@@ -1,6 +1,5 @@
 #include <cstring>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ===============================================================

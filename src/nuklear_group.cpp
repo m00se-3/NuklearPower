@@ -1,5 +1,4 @@
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
 
@@ -19,7 +18,7 @@ namespace nk {
     panel_alloc_space(&bounds, ctx);
     {
       const rectf* c = &win->layout->clip;
-      if (!intERSECT(c->x, c->y, c->w, c->h, bounds.x, bounds.y, bounds.w, bounds.h) &&
+      if (!INTERSECT(c->x, c->y, c->w, c->h, bounds.x, bounds.y, bounds.w, bounds.h) &&
           !(flags & panel_flags::WINDOW_MOVABLE)) {
         return false;
       }

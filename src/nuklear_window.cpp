@@ -1,6 +1,5 @@
 #include <cstring>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ===============================================================
@@ -219,13 +218,13 @@ namespace nk {
         iter = win->next;
         while (iter) {
           const rectf iter_bounds = (!(iter->flags & window_flags::WINDOW_MINIMIZED)) ? iter->bounds : rect(iter->bounds.x, iter->bounds.y, iter->bounds.w, h);
-          if (intERSECT(win_bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
+          if (INTERSECT(win_bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
                         iter_bounds.x, iter_bounds.y, iter_bounds.w, iter_bounds.h) &&
               (!(iter->flags & window_flags::WINDOW_HIDDEN)))
             break;
 
           if (iter->popup.win && iter->popup.active && !(iter->flags & window_flags::WINDOW_HIDDEN) &&
-              intERSECT(win->bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
+              INTERSECT(win->bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
                         iter->popup.win->bounds.x, iter->popup.win->bounds.y,
                         iter->popup.win->bounds.w, iter->popup.win->bounds.h))
             break;
@@ -244,7 +243,7 @@ namespace nk {
               !(iter->flags & window_flags::WINDOW_HIDDEN))
             break;
           if (iter->popup.win && iter->popup.active && !(iter->flags & window_flags::WINDOW_HIDDEN) &&
-              intERSECT(win_bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
+              INTERSECT(win_bounds.x, win_bounds.y, win_bounds.w, win_bounds.h,
                         iter->popup.win->bounds.x, iter->popup.win->bounds.y,
                         iter->popup.win->bounds.w, iter->popup.win->bounds.h))
             break;

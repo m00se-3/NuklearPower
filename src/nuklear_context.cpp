@@ -1,6 +1,5 @@
 #include <cstring>
-#include "nuklear.h"
-#include "nuklear_internal.h"
+#include <nk/nuklear.hpp>
 
 namespace nk {
   /* ==============================================================
@@ -78,7 +77,7 @@ namespace nk {
   }
 #ifdef NK_INCLUDE_COMMAND_USERDATA
   NK_API void
-  set_user_data(struct context* ctx, handle handle) {
+  set_user_data(struct context* ctx, resource_handle handle) {
     if (!ctx)
       return;
     ctx->userdata = handle;
