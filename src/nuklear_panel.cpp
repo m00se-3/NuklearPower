@@ -7,7 +7,7 @@ namespace nk {
    *                              PANEL
    *
    * ===============================================================*/
-  NK_LIB void*
+  void*
   create_panel(context* ctx) {
     page_element* elem = create_page_element(ctx);
     if (!elem)
@@ -15,13 +15,13 @@ namespace nk {
     zero_struct(*elem);
     return &elem->data.pan;
   }
-  NK_LIB void
+  void
   free_panel(context* ctx, panel* pan) {
     page_data* pd = NK_CONTAINER_OF(pan, union page_data, pan);
     page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
     free_page_element(ctx, pe);
   }
-  NK_LIB bool
+  bool
   panel_has_header(const flag flags, const char* title) {
     bool active = 0;
     active = (flags & (panel_flags::WINDOW_CLOSABLE | panel_flags::WINDOW_MINIMIZABLE));
@@ -29,7 +29,7 @@ namespace nk {
     active = active && !(flags & window_flags::WINDOW_HIDDEN) && title;
     return active;
   }
-  NK_LIB vec2f
+  vec2f
   panel_get_padding(const style* style, const panel_type::value_type type) {
     switch (type) {
       default:
@@ -49,7 +49,7 @@ namespace nk {
         return style->window.menu_padding;
     }
   }
-  NK_LIB float
+  float
   panel_get_border(const style* style, const flag flags,
                    const panel_type::value_type type) {
     if (flags & panel_flags::WINDOW_BORDER) {
@@ -73,7 +73,7 @@ namespace nk {
     } else
       return 0;
   }
-  NK_LIB color
+  color
   panel_get_border_color(const style* style, const panel_type::value_type type) {
     switch (type) {
       default:
@@ -93,15 +93,15 @@ namespace nk {
         return style->window.menu_border_color;
     }
   }
-  NK_LIB bool
+  bool
   panel_is_sub(const panel_type::value_type type) {
     return ((int) type & (int) panel_set::PANEL_SET_SUB) ? 1 : 0;
   }
-  NK_LIB bool
+  bool
   panel_is_nonblock(const panel_type::value_type type) {
     return ((int) type & (int) panel_set::PANEL_SET_NONBLOCK) ? 1 : 0;
   }
-  NK_LIB bool
+  bool
   panel_begin(context* ctx, const char* title, panel_type::value_type panel_type) {
     input* in;
     window* win;
@@ -345,7 +345,7 @@ namespace nk {
     }
     return !(layout->flags & window_flags::WINDOW_HIDDEN) && !(layout->flags & window_flags::WINDOW_MINIMIZED);
   }
-  NK_LIB void
+  void
   panel_end(context* ctx) {
     input* in;
     window* window;

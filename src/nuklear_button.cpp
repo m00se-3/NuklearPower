@@ -1,4 +1,5 @@
 #include <nk/nuklear.hpp>
+#include <algorithm>
 
 namespace nk {
   /* ==============================================================
@@ -6,7 +7,7 @@ namespace nk {
    *                          BUTTON
    *
    * ===============================================================*/
-  NK_LIB void
+  void
   draw_symbol(command_buffer* out, const symbol_type type,
               const rectf content, const color background, const color foreground,
               float border_width, const user_font* font) {
@@ -70,7 +71,7 @@ namespace nk {
         break;
     }
   }
-  NK_LIB bool
+  bool
   button_behavior(flag* state, const rectf r,
                   const input* i, const btn_behavior behavior) {
     int ret = 0;
@@ -96,7 +97,7 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return ret;
   }
-  NK_LIB const style_item*
+  const style_item*
   draw_button(command_buffer* out,
               const rectf* bounds, const flag state,
               const style_button* style) {
@@ -122,7 +123,7 @@ namespace nk {
     }
     return background;
   }
-  NK_LIB bool
+  bool
   do_button(flag* state, command_buffer* out, const rectf r,
             const style_button* style, const input* in,
             const btn_behavior behavior, rectf* content) {
@@ -146,7 +147,7 @@ namespace nk {
     bounds.h = r.h + 2 * style->touch_padding.y;
     return button_behavior(state, bounds, in, behavior);
   }
-  NK_LIB void
+  void
   draw_button_text(command_buffer* out,
                    const rectf* bounds, const rectf* content, const flag state,
                    const style_button* style, const char* txt, const int len,
@@ -171,7 +172,7 @@ namespace nk {
     text.padding = vec2_from_floats(0, 0);
     widget_text(out, *content, txt, len, &text, text_alignment, font);
   }
-  NK_LIB bool
+  bool
   do_button_text(flag* state,
                  command_buffer* out, const rectf bounds,
                  const char* string, const int len, const flag align, const btn_behavior behavior,
@@ -196,7 +197,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return ret;
   }
-  NK_LIB void
+  void
   draw_button_symbol(command_buffer* out,
                      const rectf* bounds, const rectf* content,
                      const flag state, const style_button* style,
@@ -220,7 +221,7 @@ namespace nk {
     sym = rgb_factor(sym, style->color_factor_text);
     draw_symbol(out, type, *content, bg, sym, 1, font);
   }
-  NK_LIB bool
+  bool
   do_button_symbol(flag* state,
                    command_buffer* out, const rectf bounds,
                    const symbol_type symbol, const btn_behavior behavior,
@@ -243,14 +244,14 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return ret;
   }
-  NK_LIB void
+  void
   draw_button_image(command_buffer* out,
                     const rectf* bounds, const rectf* content,
                     const flag state, const style_button* style, const struct image* img) {
     draw_button(out, bounds, state, style);
     draw_image(out, *content, img, rgb_factor(white, style->color_factor_background));
   }
-  NK_LIB bool
+  bool
   do_button_image(flag* state,
                   command_buffer* out, const rectf bounds,
                   struct image img, const btn_behavior b,
@@ -276,7 +277,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return ret;
   }
-  NK_LIB void
+  void
   draw_button_text_symbol(command_buffer* out,
                           const rectf* bounds, const rectf* label,
                           const rectf* symbol, const flag state, const style_button* style,
@@ -310,7 +311,7 @@ namespace nk {
     draw_symbol(out, type, *symbol, style->text_background, sym, 0, font);
     widget_text(out, *label, str, len, &text, NK_TEXT_CENTERED, font);
   }
-  NK_LIB bool
+  bool
   do_button_text_symbol(flag* state,
                         command_buffer* out, const rectf bounds,
                         const symbol_type symbol, const char* str, const int len, const flag align,
@@ -344,7 +345,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return ret;
   }
-  NK_LIB void
+  void
   draw_button_text_image(command_buffer* out,
                          const rectf* bounds, const rectf* label,
                          const rectf* image, const flag state, const style_button* style,
@@ -370,7 +371,7 @@ namespace nk {
     widget_text(out, *label, str, len, &text, NK_TEXT_CENTERED, font);
     draw_image(out, *image, img, rgb_factor(white, style->color_factor_background));
   }
-  NK_LIB bool
+  bool
   do_button_text_image(flag* state,
                        command_buffer* out, const rectf bounds,
                        struct image img, const char* str, const int len, const flag align,
@@ -407,14 +408,14 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return ret;
   }
-  NK_API void
+  void
   button_set_behavior(context* ctx, const btn_behavior behavior) {
     NK_ASSERT(ctx);
     if (!ctx)
       return;
     ctx->button_behavior = behavior;
   }
-  NK_API bool
+  bool
   button_push_behavior(context* ctx, const btn_behavior behavior) {
 
     NK_ASSERT(ctx);
@@ -432,7 +433,7 @@ namespace nk {
     ctx->button_behavior = behavior;
     return 1;
   }
-  NK_API bool
+  bool
   button_pop_behavior(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -448,7 +449,7 @@ namespace nk {
     *element->address = element->old_value;
     return 1;
   }
-  NK_API bool
+  bool
   button_text_styled(context* ctx,
                      const style_button* style, const char* title, const int len) {
 
@@ -472,21 +473,21 @@ namespace nk {
                           title, len, style->text_alignment, ctx->button_behavior,
                           style, in, ctx->style.font);
   }
-  NK_API bool
+  bool
   button_text(context* ctx, const char* title, const int len) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
     return button_text_styled(ctx, &ctx->style.button, title, len);
   }
-  NK_API bool button_label_styled(context* ctx,
+  bool button_label_styled(context* ctx,
                                   const style_button* style, const char* title) {
     return button_text_styled(ctx, style, title, strlen(title));
   }
-  NK_API bool button_label(context* ctx, const char* title) {
+  bool button_label(context* ctx, const char* title) {
     return button_text(ctx, title, strlen(title));
   }
-  NK_API bool
+  bool
   button_color(context* ctx, const color color) {
     style_button button;
 
@@ -517,7 +518,7 @@ namespace nk {
     draw_button(&win->buffer, &bounds, ctx->last_widget_state, &button);
     return ret;
   }
-  NK_API bool
+  bool
   button_symbol_styled(context* ctx,
                        const style_button* style, const symbol_type symbol) {
 
@@ -538,14 +539,14 @@ namespace nk {
     return do_button_symbol(&ctx->last_widget_state, &win->buffer, bounds,
                             symbol, ctx->button_behavior, style, in, ctx->style.font);
   }
-  NK_API bool
+  bool
   button_symbol(context* ctx, const symbol_type symbol) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
     return button_symbol_styled(ctx, &ctx->style.button, symbol);
   }
-  NK_API bool
+  bool
   button_image_styled(context* ctx, const style_button* style,
                       struct image img) {
 
@@ -567,14 +568,14 @@ namespace nk {
     return do_button_image(&ctx->last_widget_state, &win->buffer, bounds,
                            img, ctx->button_behavior, style, in);
   }
-  NK_API bool
+  bool
   button_image(context* ctx, struct image img) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
     return button_image_styled(ctx, &ctx->style.button, img);
   }
-  NK_API bool
+  bool
   button_symbol_text_styled(context* ctx,
                             const style_button* style, const symbol_type symbol,
                             const char* text, const int len, const flag align) {
@@ -598,7 +599,7 @@ namespace nk {
                                  symbol, text, len, align, ctx->button_behavior,
                                  style, ctx->style.font, in);
   }
-  NK_API bool
+  bool
   button_symbol_text(context* ctx, const symbol_type symbol,
                      const char* text, const int len, const flag align) {
     NK_ASSERT(ctx);
@@ -606,16 +607,16 @@ namespace nk {
       return 0;
     return button_symbol_text_styled(ctx, &ctx->style.button, symbol, text, len, align);
   }
-  NK_API bool button_symbol_label(context* ctx, const symbol_type symbol,
+  bool button_symbol_label(context* ctx, const symbol_type symbol,
                                   const char* label, const flag align) {
     return button_symbol_text(ctx, symbol, label, strlen(label), align);
   }
-  NK_API bool button_symbol_label_styled(context* ctx,
+  bool button_symbol_label_styled(context* ctx,
                                          const style_button* style, const symbol_type symbol,
                                          const char* title, const flag align) {
     return button_symbol_text_styled(ctx, style, symbol, title, strlen(title), align);
   }
-  NK_API bool
+  bool
   button_image_text_styled(context* ctx,
                            const style_button* style, struct image img, const char* text,
                            const int len, const flag align) {
@@ -639,16 +640,16 @@ namespace nk {
                                 bounds, img, text, len, align, ctx->button_behavior,
                                 style, ctx->style.font, in);
   }
-  NK_API bool
+  bool
   button_image_text(context* ctx, struct image img,
                     const char* text, const int len, const flag align) {
     return button_image_text_styled(ctx, &ctx->style.button, img, text, len, align);
   }
-  NK_API bool button_image_label(context* ctx, struct image img,
+  bool button_image_label(context* ctx, struct image img,
                                  const char* label, const flag align) {
     return button_image_text(ctx, img, label, strlen(label), align);
   }
-  NK_API bool button_image_label_styled(context* ctx,
+  bool button_image_label_styled(context* ctx,
                                         const style_button* style, struct image img,
                                         const char* label, const flag text_alignment) {
     return button_image_text_styled(ctx, style, img, label, strlen(label), text_alignment);

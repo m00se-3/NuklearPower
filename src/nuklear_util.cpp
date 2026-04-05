@@ -7,19 +7,19 @@ namespace nk {
    *                              UTIL
    *
    * ===============================================================*/
-  INTERN int str_match_here(const char* regexp, const char* text);
-  INTERN int str_match_star(int c, const char* regexp, const char* text);
-  NK_LIB bool is_lower(const int c) { return (c >= 'a' && c <= 'z') || (c >= 0xE0 && c <= 0xFF); }
-  NK_LIB bool is_upper(const int c) { return (c >= 'A' && c <= 'Z') || (c >= 0xC0 && c <= 0xDF); }
-  NK_LIB int to_upper(const int c) { return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c; }
-  NK_LIB int to_lower(const int c) { return (c >= 'A' && c <= 'Z') ? (c - ('a' + 'A')) : c; }
+  int str_match_here(const char* regexp, const char* text);
+  int str_match_star(int c, const char* regexp, const char* text);
+  bool is_lower(const int c) { return (c >= 'a' && c <= 'z') || (c >= 0xE0 && c <= 0xFF); }
+  bool is_upper(const int c) { return (c >= 'A' && c <= 'Z') || (c >= 0xC0 && c <= 0xDF); }
+  int to_upper(const int c) { return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c; }
+  int to_lower(const int c) { return (c >= 'A' && c <= 'Z') ? (c - ('a' + 'A')) : c; }
 
-  NK_LIB void
+  void
   zero(void* ptr, const std::size_t size) {
     NK_ASSERT(ptr);
     std::memset(ptr, 0, size);
   }
-  NK_API int
+  int
   strlen(const char* str) {
     int siz = 0;
     NK_ASSERT(str);
@@ -27,7 +27,7 @@ namespace nk {
       siz++;
     return siz;
   }
-  NK_API int
+  int
   strtoi(const char* str, char** endptr) {
     int neg = 1;
     const char* p = str;
@@ -52,7 +52,7 @@ namespace nk {
       *endptr = (char*) p;
     return neg * value;
   }
-  NK_API double
+  double
   strtod(const char* str, char** endptr) {
     double m;
     double neg = 1.0;
@@ -112,13 +112,13 @@ namespace nk {
       *endptr = p;
     return number;
   }
-  NK_API float
+  float
   strtof(const char* str, char** endptr) {
     const double double_value = NK_STRTOD(str, endptr);
     float float_value = (float) double_value;
     return float_value;
   }
-  NK_API int
+  int
   stricmp(const char* s1, const char* s2) {
     int c1;
     do {
@@ -141,7 +141,7 @@ namespace nk {
     } while (c1);
     return 0;
   }
-  NK_API int
+  int
   stricmpn(const char* s1, const char* s2, int n) {
     int c1;
     NK_ASSERT(n >= 0);
@@ -168,7 +168,7 @@ namespace nk {
     } while (c1);
     return 0;
   }
-  INTERN int
+  int
   str_match_here(const char* regexp, const char* text) {
     if (regexp[0] == '\0')
       return 1;
@@ -180,7 +180,7 @@ namespace nk {
       return str_match_here(regexp + 1, text + 1);
     return 0;
   }
-  INTERN int
+  int
   str_match_star(const int c, const char* regexp, const char* text) {
     do { /* a '* matches zero or more instances */
       if (str_match_here(regexp, text))
@@ -188,7 +188,7 @@ namespace nk {
     } while (*text != '\0' && (*text++ == c || c == '.'));
     return 0;
   }
-  NK_API int
+  int
   strfilter(const char* text, const char* regexp) {
     /*
     c    matches any literal character c
@@ -204,7 +204,7 @@ namespace nk {
     } while (*text++ != '\0');
     return 0;
   }
-  NK_API int
+  int
   strmatch_fuzzy_text(const char* str, const int str_len,
                       const char* pattern, int* out_score) {
     /* Returns true if each character in pattern is found sequentially within str
@@ -323,11 +323,11 @@ namespace nk {
       *out_score = score;
     return true;
   }
-  NK_API int
+  int
   strmatch_fuzzy_string(char const* str, char const* pattern, int* out_score) {
     return strmatch_fuzzy_text(str, strlen(str), pattern, out_score);
   }
-  NK_LIB int
+  int
   string_float_limit(char* string, const int prec) {
     int dot = 0;
     char* c = string;
@@ -347,7 +347,7 @@ namespace nk {
     }
     return (int) (c - string);
   }
-  INTERN void
+  void
   strrev_ascii(char* s) {
     const int len = strlen(s);
     const int end = len / 2;
@@ -358,7 +358,7 @@ namespace nk {
       s[len - 1 - i] = t;
     }
   }
-  NK_LIB char*
+  char*
   itoa(char* s, long n) {
     long i = 0;
     if (n == 0) {
@@ -383,7 +383,7 @@ namespace nk {
   }
 #ifndef NK_DTOA
 #define NK_DTOA dtoa
-  NK_LIB char*
+  char*
   dtoa(char* s, double n) {
     int useExp = 0;
     int digit = 0, m = 0, m1 = 0;
@@ -467,7 +467,7 @@ namespace nk {
 #endif
 #ifdef NK_INCLUDE_STANDARD_VARARGS
 #ifndef NK_INCLUDE_STANDARD_IO
-  INTERN int
+  int
   vsnprintf(char* buf, int buf_size, const char* fmt, va_list args) {
     enum arg_type {
       NK_ARG_TYPE_CHAR,
@@ -807,7 +807,7 @@ namespace nk {
     return result;
   }
 #endif
-  NK_LIB int
+  int
   strfmt(char* buf, int buf_size, const char* fmt, va_list args) {
     int result = -1;
     NK_ASSERT(buf);
@@ -824,7 +824,7 @@ namespace nk {
     return result;
   }
 #endif
-  NK_API hash
+  hash
   murmur_hash(const void* key, const int len, const hash seed) {
     /* 32-Bit MurmurHash3: https://code.google.com/p/smhasher/wiki/MurmurHash3*/
 #define NK_ROTL(x, r) ((x) << (r) | ((x) >> (32 - r)))
@@ -889,7 +889,7 @@ namespace nk {
     return h1;
   }
 #ifdef NK_INCLUDE_STANDARD_IO
-  NK_LIB char*
+  char*
   file_load(const char* path, std::size_t* siz, const struct allocator* alloc) {
     char* buf;
     FILE* fd;
@@ -923,7 +923,7 @@ namespace nk {
     return buf;
   }
 #endif
-  NK_LIB int
+  int
   text_clamp(const user_font* font, const char* text,
              const int text_len, float space, int* glyphs, float* text_width,
              rune* sep_list, int sep_count) {
@@ -970,7 +970,7 @@ namespace nk {
       return (!sep_len) ? len : sep_len;
     }
   }
-  NK_LIB vec2f
+  vec2f
   text_calculate_text_bounds(const user_font* font,
                              const char* begin, const int byte_len, float row_height, const char** remaining,
                              vec2f* out_offset, int* glyphs, const int op) {

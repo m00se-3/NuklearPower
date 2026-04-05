@@ -6,7 +6,7 @@ namespace nk {
    *                              TOOLTIP
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   tooltip_begin(context* ctx, float width) {
     rectf bounds;
 
@@ -41,7 +41,7 @@ namespace nk {
     return ret;
   }
 
-  NK_API void
+  void
   tooltip_end(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -51,7 +51,7 @@ namespace nk {
     popup_close(ctx);
     popup_end(ctx);
   }
-  NK_API void
+  void
   tooltip(context* ctx, const char* text) {
 
     NK_ASSERT(ctx);
@@ -80,14 +80,14 @@ namespace nk {
     }
   }
 #ifdef NK_INCLUDE_STANDARD_VARARGS
-  NK_API void
+  void
   tooltipf(struct context* ctx, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     tooltipfv(ctx, fmt, args);
     va_end(args);
   }
-  NK_API void
+  void
   tooltipfv(struct context* ctx, const char* fmt, va_list args) {
     char buf[256];
     strfmt(buf, NK_LEN(buf), fmt, args);

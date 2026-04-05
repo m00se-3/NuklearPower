@@ -34,58 +34,42 @@ namespace nk {
   ///  (it can actually approximate a lot more functions) can be
   ///  found here: www.lolengine.net/wiki/oss/lolremez
   */
-#ifndef NK_INV_SQRT
-#define NK_INV_SQRT inv_sqrt
-  NK_LIB float
-  inv_sqrt(float n) {
-    const float threehalfs = 1.5f;
-    union {
-      unsigned int i;
-      float f;
-    } conv = {0};
-    conv.f = n;
-    float x2 = n * 0.5f;
-    conv.i = 0x5f375A84 - (conv.i >> 1);
-    conv.f = conv.f * (threehalfs - (x2 * conv.f * conv.f));
-    return conv.f;
-  }
-#endif
 #ifndef NK_SIN
 #define NK_SIN sin
-  NK_LIB float
+  float
   sin(float x) {
-    NK_STORAGE const float a0 = +1.91059300966915117e-31f;
-    NK_STORAGE const float a1 = +1.00086760103908896f;
-    NK_STORAGE const float a2 = -1.21276126894734565e-2f;
-    NK_STORAGE const float a3 = -1.38078780785773762e-1f;
-    NK_STORAGE const float a4 = -2.67353392911981221e-2f;
-    NK_STORAGE const float a5 = +2.08026600266304389e-2f;
-    NK_STORAGE const float a6 = -3.03996055049204407e-3f;
-    NK_STORAGE const float a7 = +1.38235642404333740e-4f;
+    static constexpr float a0 = +1.91059300966915117e-31f;
+    static constexpr float a1 = +1.00086760103908896f;
+    static constexpr float a2 = -1.21276126894734565e-2f;
+    static constexpr float a3 = -1.38078780785773762e-1f;
+    static constexpr float a4 = -2.67353392911981221e-2f;
+    static constexpr float a5 = +2.08026600266304389e-2f;
+    static constexpr float a6 = -3.03996055049204407e-3f;
+    static constexpr float a7 = +1.38235642404333740e-4f;
     return a0 + x * (a1 + x * (a2 + x * (a3 + x * (a4 + x * (a5 + x * (a6 + x * a7))))));
   }
 #endif
 #ifndef NK_COS
 #define NK_COS cos
-  NK_LIB float
+  float
   cos(float x) {
     /* New implementation. Also generated using lolremez. */
     /* Old version significantly deviated from expected results. */
-    NK_STORAGE const float a0 = 9.9995999154986614e-1f;
-    NK_STORAGE const float a1 = 1.2548995793001028e-3f;
-    NK_STORAGE const float a2 = -5.0648546280678015e-1f;
-    NK_STORAGE const float a3 = 1.2942246466519995e-2f;
-    NK_STORAGE const float a4 = 2.8668384702547972e-2f;
-    NK_STORAGE const float a5 = 7.3726485210586547e-3f;
-    NK_STORAGE const float a6 = -3.8510875386947414e-3f;
-    NK_STORAGE const float a7 = 4.7196604604366623e-4f;
-    NK_STORAGE const float a8 = -1.8776444013090451e-5f;
+    static constexpr float a0 = 9.9995999154986614e-1f;
+    static constexpr float a1 = 1.2548995793001028e-3f;
+    static constexpr float a2 = -5.0648546280678015e-1f;
+    static constexpr float a3 = 1.2942246466519995e-2f;
+    static constexpr float a4 = 2.8668384702547972e-2f;
+    static constexpr float a5 = 7.3726485210586547e-3f;
+    static constexpr float a6 = -3.8510875386947414e-3f;
+    static constexpr float a7 = 4.7196604604366623e-4f;
+    static constexpr float a8 = -1.8776444013090451e-5f;
     return a0 + x * (a1 + x * (a2 + x * (a3 + x * (a4 + x * (a5 + x * (a6 + x * (a7 + x * a8)))))));
   }
 #endif
 #ifndef NK_ATAN
 #define NK_ATAN atan
-  NK_LIB float
+  float
   atan(float x) {
     /* ./lolremez --progress --float -d 9 -r "0:pi*2" "atan(x)" */
     float u = -1.0989005e-05f;
@@ -104,7 +88,7 @@ namespace nk {
 #endif
 #ifndef NK_ATAN2
 #define NK_ATAN2 atan2
-  NK_LIB float
+  float
   atan2(float y, float x) {
     float ax = NK_ABS(x),
           ay = NK_ABS(y);
@@ -131,7 +115,7 @@ namespace nk {
     return 0.0f; /* prevents warning */
   }
 #endif
-  NK_LIB std::size_t
+  std::size_t
   round_up_pow2(std::size_t v) {
     v--;
     v |= v >> 1;
@@ -142,7 +126,7 @@ namespace nk {
     v++;
     return v;
   }
-  NK_LIB double
+  double
   pow(double x, int n) {
     /*  check the sign of n */
     double r = 1;
@@ -156,17 +140,17 @@ namespace nk {
     }
     return plus ? r : 1.0 / r;
   }
-  NK_LIB int
+  int
   ifloord(double x) {
     x = (double) ((int) x - ((x < 0.0) ? 1 : 0));
     return (int) x;
   }
-  NK_LIB int
+  int
   ifloorf(float x) {
     x = (float) ((int) x - ((x < 0.0f) ? 1 : 0));
     return (int) x;
   }
-  NK_LIB int
+  int
   iceilf(float x) {
     if (x >= 0) {
       const int i = (int) x;
@@ -177,7 +161,7 @@ namespace nk {
       return (r > 0.0f) ? t + 1 : t;
     }
   }
-  NK_LIB int
+  int
   log10(const double n) {
     int exp = 0;
 
@@ -191,15 +175,15 @@ namespace nk {
       exp = -exp;
     return exp;
   }
-  NK_LIB float
+  float
   roundf(float x) {
     return (x >= 0.0f) ? (float) ifloorf(x + 0.5f) : (float) iceilf(x - 0.5f);
   }
-  NK_API rectf
+  rectf
   get_null_rect(void) {
     return null_rect;
   }
-  NK_API rectf
+  rectf
   rect(float x, float y, float w, float h) {
     rectf r;
     r.x = x;
@@ -208,8 +192,8 @@ namespace nk {
     r.h = h;
     return r;
   }
-  NK_API rectf
-  recti(const int x, const int y, const int w, const int h) {
+  rectf
+  rect_from_ints(const int x, const int y, const int w, const int h) {
     rectf r;
     r.x = (float) x;
     r.y = (float) y;
@@ -217,33 +201,33 @@ namespace nk {
     r.h = (float) h;
     return r;
   }
-  NK_API rectf
+  rectf
   recta(const vec2f pos, const vec2f size) {
     return rect(pos.x, pos.y, size.x, size.y);
   }
-  NK_API rectf
+  rectf
   rectv(const float* r) {
     return rect(r[0], r[1], r[2], r[3]);
   }
-  NK_API rectf
+  rectf
   rectiv(const int* r) {
-    return recti(r[0], r[1], r[2], r[3]);
+    return rect_from_ints(r[0], r[1], r[2], r[3]);
   }
-  NK_API vec2f
+  vec2f
   rect_pos(const rectf r) {
     vec2f ret;
     ret.x = r.x;
     ret.y = r.y;
     return ret;
   }
-  NK_API vec2f
+  vec2f
   rect_size(const rectf r) {
     vec2f ret;
     ret.x = r.w;
     ret.y = r.h;
     return ret;
   }
-  NK_LIB rectf
+  rectf
   shrirect(rectf r, float amount) {
     rectf res;
     r.w = std::max(r.w, 2 * amount);
@@ -254,7 +238,7 @@ namespace nk {
     res.h = r.h - 2 * amount;
     return res;
   }
-  NK_LIB rectf
+  rectf
   pad_rect(rectf r, const vec2f pad) {
     r.w = std::max(r.w, 2 * pad.x);
     r.h = std::max(r.h, 2 * pad.y);
@@ -264,29 +248,29 @@ namespace nk {
     r.h -= 2 * pad.y;
     return r;
   }
-  NK_API vec2f
+  vec2f
   vec2_from_floats(float x, float y) {
     vec2f ret;
     ret.x = x;
     ret.y = y;
     return ret;
   }
-  NK_API vec2f
+  vec2f
   vec2i_from_ints(const int x, const int y) {
     vec2f ret;
     ret.x = (float) x;
     ret.y = (float) y;
     return ret;
   }
-  NK_API vec2f
+  vec2f
   vec2v(const float* v) {
     return vec2_from_floats(v[0], v[1]);
   }
-  NK_API vec2f
+  vec2f
   vec2iv(const int* v) {
     return vec2i_from_ints(v[0], v[1]);
   }
-  NK_LIB void
+  void
   unify(rectf* clip, const rectf* a, float x0, float y0,
         float x1, float y1) {
     NK_ASSERT(a);
@@ -299,7 +283,7 @@ namespace nk {
     clip->h = std::max(0.0f, clip->h);
   }
 
-  NK_API void
+  void
   triangle_from_direction(vec2f* result, rectf r,
                           float pad_x, float pad_y, const heading direction) {
     NK_ASSERT(result);

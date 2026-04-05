@@ -6,7 +6,7 @@ namespace nk {
    *                              POPUP
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   popup_begin(context* ctx, const popup_type type,
               const char* title, const flag flags, rectf rect) {
 
@@ -93,7 +93,7 @@ namespace nk {
       return 0;
     }
   }
-  NK_LIB bool
+  bool
   nonblock_begin(context* ctx,
                  const flag flags, const rectf body, const rectf header,
                  const panel_type::value_type panel_type) {
@@ -173,7 +173,7 @@ namespace nk {
     }
     return is_active;
   }
-  NK_API void
+  void
   popup_close(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx || !ctx->current)
@@ -184,7 +184,7 @@ namespace nk {
     NK_ASSERT((int) popup->layout->type & static_cast<int>(panel_set::PANEL_SET_POPUP));
     popup->flags |= window_flags::WINDOW_HIDDEN;
   }
-  NK_API void
+  void
   popup_end(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -213,7 +213,7 @@ namespace nk {
     ctx->current = win;
     push_scissor(&win->buffer, win->layout->clip);
   }
-  NK_API void
+  void
   popup_get_scroll(const context* ctx, unsigned int* offset_x, unsigned int* offset_y) {
 
     NK_ASSERT(ctx);
@@ -228,7 +228,7 @@ namespace nk {
     if (offset_y)
       *offset_y = popup->scrollbar.y;
   }
-  NK_API void
+  void
   popup_set_scroll(context* ctx, const unsigned int offset_x, const unsigned int offset_y) {
 
     NK_ASSERT(ctx);

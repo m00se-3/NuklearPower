@@ -11,7 +11,7 @@ namespace nk {
 
 #ifndef NK_ATAN
 #define NK_ATAN atan
-  NK_LIB float
+  float
   atan(float x) {
     /* ./lolremez --progress --float -d 9 -r "0:pi*2" "atan(x)" */
     float u = -1.0989005e-05f;
@@ -30,7 +30,7 @@ namespace nk {
 #endif
 #ifndef NK_ATAN2
 #define NK_ATAN2 atan2
-  NK_LIB float
+  float
   atan2(float y, float x) {
     float ax = NK_ABS(x),
           ay = NK_ABS(y);
@@ -58,7 +58,7 @@ namespace nk {
   }
 #endif
 
-  NK_LIB float
+  float
   knob_behavior(flag* state, input* in,
                 const rectf bounds, float knob_min, float knob_max, float knob_value,
                 float knob_step, float knob_steps,
@@ -123,7 +123,7 @@ namespace nk {
 
     return knob_value;
   }
-  NK_LIB void
+  void
   draw_knob(command_buffer* out, const flag state,
             const style_knob* style, const rectf* bounds, float min, float value, float max,
             heading zero_direction, float dead_zone_percent) {
@@ -208,7 +208,7 @@ namespace nk {
       stroke_line(out, cursor_start.x, cursor_start.y, cursor_end.x, cursor_end.y, 2, rgb_factor(cursor, style->color_factor));
     }
   }
-  NK_LIB float
+  float
   do_knob(flag* state,
           command_buffer* out, rectf bounds,
           float min, float val, float max, float step,
@@ -249,7 +249,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return knob_value;
   }
-  NK_API bool
+  bool
   knob_float(context* ctx, float min_value, float* value, float max_value,
              float value_step, const heading zero_direction, float dead_zone_degrees) {
 
@@ -279,7 +279,7 @@ namespace nk {
 
     return (old_value > *value || old_value < *value);
   }
-  NK_API bool
+  bool
   knob_int(context* ctx, const int min, int* val, const int max, const int step,
            const heading zero_direction, float dead_zone_degrees) {
     float value = (float) *val;

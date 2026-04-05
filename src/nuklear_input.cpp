@@ -6,7 +6,7 @@ namespace nk {
    *                          INPUT
    *
    * ===============================================================*/
-  NK_API void
+  void
   input_begin(context* ctx) {
     int i;
     NK_ASSERT(ctx);
@@ -25,7 +25,7 @@ namespace nk {
     for (i = 0; i < NK_KEY_MAX; i++)
       in->keyboard.keys[i].clicked = 0;
   }
-  NK_API void
+  void
   input_end(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -39,7 +39,7 @@ namespace nk {
       in->mouse.grab = 0;
     }
   }
-  NK_API void
+  void
   input_motion(context* ctx, const int x, const int y) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -50,7 +50,7 @@ namespace nk {
     in->mouse.delta.x = in->mouse.pos.x - in->mouse.prev.x;
     in->mouse.delta.y = in->mouse.pos.y - in->mouse.prev.y;
   }
-  NK_API void
+  void
   input_key(context* ctx, const keys key, const bool down) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -64,7 +64,7 @@ namespace nk {
 #endif
     in->keyboard.keys[key].down = down;
   }
-  NK_API void
+  void
   input_button(context* ctx, const buttons id, const int x, const int y, const bool down) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -89,7 +89,7 @@ namespace nk {
     }
 #endif
   }
-  NK_API void
+  void
   input_scroll(context* ctx, const vec2f val) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -97,7 +97,7 @@ namespace nk {
     ctx->input.mouse.scroll_delta.x += val.x;
     ctx->input.mouse.scroll_delta.y += val.y;
   }
-  NK_API void
+  void
   input_glyph(context* ctx, const glyph glyph) {
     int len = 0;
     rune unicode;
@@ -114,7 +114,7 @@ namespace nk {
       in->keyboard.text_len += len;
     }
   }
-  NK_API void
+  void
   input_char(context* ctx, const char c) {
     glyph glyph = {0};
     NK_ASSERT(ctx);
@@ -123,7 +123,7 @@ namespace nk {
     glyph[0] = c;
     input_glyph(ctx, glyph);
   }
-  NK_API void
+  void
   input_unicode(context* ctx, const rune unicode) {
     glyph rune;
     NK_ASSERT(ctx);
@@ -132,14 +132,14 @@ namespace nk {
     utf_encode(unicode, rune, NK_UTF_SIZE);
     input_glyph(ctx, rune);
   }
-  NK_API bool
+  bool
   input_has_mouse_click(const input* i, const buttons id) {
     if (!i)
       return false;
     const mouse_button* btn = &i->mouse.buttons[id];
     return (btn->clicked && btn->down == false) ? true : false;
   }
-  NK_API bool
+  bool
   input_has_mouse_click_in_rect(const input* i, const buttons id,
                                 const rectf b) {
     if (!i)
@@ -149,7 +149,7 @@ namespace nk {
       return false;
     return true;
   }
-  NK_API bool
+  bool
   input_has_mouse_click_in_button_rect(const input* i, const buttons id,
                                        rectf b) {
     if (!i)
@@ -163,7 +163,7 @@ namespace nk {
       return false;
     return true;
   }
-  NK_API bool
+  bool
   input_has_mouse_click_down_in_rect(const input* i, const buttons id,
                                      const rectf b, const bool down) {
     if (!i)
@@ -171,7 +171,7 @@ namespace nk {
     const mouse_button* btn = &i->mouse.buttons[id];
     return input_has_mouse_click_in_rect(i, id, b) && (btn->down == down);
   }
-  NK_API bool
+  bool
   input_is_mouse_click_in_rect(const input* i, const buttons id,
                                const rectf b) {
     if (!i)
@@ -182,7 +182,7 @@ namespace nk {
                ? true
                : false;
   }
-  NK_API bool
+  bool
   input_is_mouse_click_down_in_rect(const input* i, const buttons id,
                                     const rectf b, const bool down) {
     if (!i)
@@ -193,26 +193,26 @@ namespace nk {
                ? true
                : false;
   }
-  NK_API bool
+  bool
   input_any_mouse_click_in_rect(const input* in, const rectf b) {
     int down = 0;
     for (int i = 0; i < NK_BUTTON_MAX; ++i)
       down = down || input_is_mouse_click_in_rect(in, (buttons) i, b);
     return down;
   }
-  NK_API bool
+  bool
   input_is_mouse_hovering_rect(const input* i, const rectf rect) {
     if (!i)
       return false;
     return NK_INBOX(i->mouse.pos.x, i->mouse.pos.y, rect.x, rect.y, rect.w, rect.h);
   }
-  NK_API bool
+  bool
   input_is_mouse_prev_hovering_rect(const input* i, const rectf rect) {
     if (!i)
       return false;
     return NK_INBOX(i->mouse.prev.x, i->mouse.prev.y, rect.x, rect.y, rect.w, rect.h);
   }
-  NK_API bool
+  bool
   input_mouse_clicked(const input* i, const buttons id, const rectf rect) {
     if (!i)
       return false;
@@ -220,13 +220,13 @@ namespace nk {
       return false;
     return input_is_mouse_click_in_rect(i, id, rect);
   }
-  NK_API bool
+  bool
   input_is_mouse_down(const input* i, const buttons id) {
     if (!i)
       return false;
     return i->mouse.buttons[id].down;
   }
-  NK_API bool
+  bool
   input_is_mouse_pressed(const input* i, const buttons id) {
     if (!i)
       return false;
@@ -235,13 +235,13 @@ namespace nk {
       return true;
     return false;
   }
-  NK_API bool
+  bool
   input_is_mouse_released(const input* i, const buttons id) {
     if (!i)
       return false;
     return (!i->mouse.buttons[id].down && i->mouse.buttons[id].clicked);
   }
-  NK_API bool
+  bool
   input_is_key_pressed(const input* i, const keys key) {
     if (!i)
       return false;
@@ -250,7 +250,7 @@ namespace nk {
       return true;
     return false;
   }
-  NK_API bool
+  bool
   input_is_key_released(const input* i, const keys key) {
     if (!i)
       return false;
@@ -259,7 +259,7 @@ namespace nk {
       return true;
     return false;
   }
-  NK_API bool
+  bool
   input_is_key_down(const input* i, const keys key) {
     if (!i)
       return false;

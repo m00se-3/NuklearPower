@@ -15,7 +15,7 @@ namespace nk {
    *
    * \param[in] ctx Must point to a previously initialized `context` struct
    */
-  NK_API void input_begin(context*);
+  void input_begin(context*);
 
   /**
    * \brief Mirrors current mouse position to nuklear
@@ -29,7 +29,7 @@ namespace nk {
    * \param[in] x     Must hold an integer describing the current mouse cursor x-position
    * \param[in] y     Must hold an integer describing the current mouse cursor y-position
    */
-  NK_API void input_motion(context*, int x, int y);
+  void input_motion(context*, int x, int y);
 
   /**
    * \brief Mirrors the state of a specific key to nuklear
@@ -43,7 +43,7 @@ namespace nk {
    * \param[in] key      Must be any value specified in enum `keys` that needs to be mirrored
    * \param[in] down     Must be 0 for key is up and 1 for key is down
    */
-  NK_API void input_key(context*, keys, bool down);
+  void input_key(context*, keys, bool down);
 
   /**
    * \brief Mirrors the state of a specific mouse button to nuklear
@@ -59,7 +59,7 @@ namespace nk {
    * \param[in] y       Must contain an integer describing mouse cursor y-position on click up/down
    * \param[in] down    Must be 0 for key is up and 1 for key is down
    */
-  NK_API void input_button(context*, buttons, int x, int y, bool down);
+  void input_button(context*, buttons, int x, int y, bool down);
 
   /**
    * \brief Copies the last mouse scroll value to nuklear.
@@ -75,7 +75,7 @@ namespace nk {
    * \param[in] ctx     | Must point to a previously initialized `context` struct
    * \param[in] val     | vector with both X- as well as Y-scroll value
    */
-  NK_API void input_scroll(context*, vec2f val);
+  void input_scroll(context*, vec2f val);
 
   /**
    * \brief Copies a single ASCII character into an internal text buffer
@@ -94,7 +94,7 @@ namespace nk {
    * \param[in] ctx     | Must point to a previously initialized `context` struct
    * \param[in] c       | Must be a single ASCII character preferable one that can be printed
    */
-  NK_API void input_char(context*, char);
+  void input_char(context*, char);
 
   /**
    * \brief Converts an encoded unicode rune into UTF-8 and copies the result into an
@@ -110,7 +110,7 @@ namespace nk {
    * \param[in] ctx     | Must point to a previously initialized `context` struct
    * \param[in] g       | UTF-32 unicode codepoint
    */
-  NK_API void input_glyph(context*, const glyph);
+  void input_glyph(context*, const glyph);
 
   /**
    * \brief Converts a unicode rune into UTF-8 and copies the result
@@ -127,7 +127,7 @@ namespace nk {
    * \param[in] ctx     | Must point to a previously initialized `context` struct
    * \param[in] rune    | UTF-32 unicode codepoint
    */
-  NK_API void input_unicode(context*, rune);
+  void input_unicode(context*, rune);
 
   /**
    * \brief End the input mirroring process by resetting mouse grabbing
@@ -140,7 +140,7 @@ namespace nk {
    *
    * \param[in] ctx     | Must point to a previously initialized `context` struct
    */
-  NK_API void input_end(context*);
+  void input_end(context*);
 
   /**
    * \brief Returns a draw command list iterator to iterate all draw
@@ -155,7 +155,7 @@ namespace nk {
    *
    * \returns draw command pointer pointing to the first command inside the draw command list
    */
-  NK_API const struct command* _begin(context*);
+  const struct command* _begin(context*);
 
   /**
    * \brief Returns draw command pointer pointing to the next command inside the draw command list
@@ -170,7 +170,7 @@ namespace nk {
    *
    * \returns draw command pointer pointing to the next command inside the draw command list
    */
-  NK_API const command* _next(context*, const command*);
+  const command* _next(context*, const command*);
 
   /**
    * \brief Iterates over each draw command inside the context draw command list
@@ -215,7 +215,7 @@ namespace nk {
    * NK_CONVERT_VERTEX_BUFFER_FULL   | The provided buffer for storing vertices is full or failed to allocate more memory
    * NK_CONVERT_ELEMENT_BUFFER_FULL  | The provided buffer for storing indices is full or failed to allocate more memory
    */
-  NK_API flag convert(struct context*, struct buffer* cmds, struct buffer* vertices, struct buffer* elements, const struct convert_config*);
+  flag convert(context*, memory_buffer* cmds, memory_buffer* vertices, memory_buffer* elements, const convert_config*);
 
   /**
    * \brief Returns a draw vertex command buffer iterator to iterate over the vertex draw command buffer
@@ -230,7 +230,7 @@ namespace nk {
    *
    * \returns vertex draw command pointer pointing to the first command inside the vertex draw command buffer
    */
-  NK_API const struct draw_command* _draw_begin(const struct context*, const struct buffer*);
+  const draw_command* _draw_begin(const context*, const memory_buffer*);
 
   /**
 
@@ -249,7 +249,7 @@ namespace nk {
    * \returns vertex draw command pointer pointing to the end of the last vertex draw command inside the vertex draw command buffer
 
    */
-  NK_API const struct draw_command* _draw_end(const struct context*, const struct buffer*);
+  const draw_command* _draw_end(const context*, const memory_buffer*);
 
   /**
    * # # _draw_next
@@ -268,7 +268,7 @@ namespace nk {
    * \returns vertex draw command pointer pointing to the end of the last vertex draw command inside the vertex draw command buffer
 
    */
-  NK_API const struct draw_command* _draw_next(const struct draw_command*, const struct buffer*, const struct context*);
+  const draw_command* _draw_next(const draw_command*, const memory_buffer*, const context*);
 
   /**
    * # # draw_foreach
@@ -356,22 +356,22 @@ namespace nk {
    * \ref input_unicode| Adds a single unicode rune into an internal text buffer
    * \ref input_end    | Ends the input mirroring process by calculating state changes. Don't call any `input_xxx` function referenced above after this call
    */
-  NK_API bool input_has_mouse_click(const input*, buttons);
-  NK_API bool input_has_mouse_click_in_rect(const input*, buttons, rectf);
-  NK_API bool input_has_mouse_click_in_button_rect(const input*, buttons, rectf);
-  NK_API bool input_has_mouse_click_down_in_rect(const input*, buttons, rectf, bool down);
-  NK_API bool input_is_mouse_click_in_rect(const input*, buttons, rectf);
-  NK_API bool input_is_mouse_click_down_in_rect(const input* i, buttons id, rectf b, bool down);
-  NK_API bool input_any_mouse_click_in_rect(const input*, rectf);
-  NK_API bool input_is_mouse_prev_hovering_rect(const input*, rectf);
-  NK_API bool input_is_mouse_hovering_rect(const input*, rectf);
-  NK_API bool input_mouse_clicked(const input*, buttons, rectf);
-  NK_API bool input_is_mouse_down(const input*, buttons);
-  NK_API bool input_is_mouse_pressed(const input*, buttons);
-  NK_API bool input_is_mouse_released(const input*, buttons);
-  NK_API bool input_is_key_pressed(const input*, keys);
-  NK_API bool input_is_key_released(const input*, keys);
-  NK_API bool input_is_key_down(const input*, keys);
+  bool input_has_mouse_click(const input*, buttons);
+  bool input_has_mouse_click_in_rect(const input*, buttons, rectf);
+  bool input_has_mouse_click_in_button_rect(const input*, buttons, rectf);
+  bool input_has_mouse_click_down_in_rect(const input*, buttons, rectf, bool down);
+  bool input_is_mouse_click_in_rect(const input*, buttons, rectf);
+  bool input_is_mouse_click_down_in_rect(const input* i, buttons id, rectf b, bool down);
+  bool input_any_mouse_click_in_rect(const input*, rectf);
+  bool input_is_mouse_prev_hovering_rect(const input*, rectf);
+  bool input_is_mouse_hovering_rect(const input*, rectf);
+  bool input_mouse_clicked(const input*, buttons, rectf);
+  bool input_is_mouse_down(const input*, buttons);
+  bool input_is_mouse_pressed(const input*, buttons);
+  bool input_is_mouse_released(const input*, buttons);
+  bool input_is_key_pressed(const input*, keys);
+  bool input_is_key_released(const input*, keys);
+  bool input_is_key_down(const input*, keys);
 
 }
 

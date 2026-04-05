@@ -171,7 +171,7 @@ namespace nk {
    * until `end` or `false(0)` otherwise for example if minimized
 
    */
-  NK_API bool begin(context* ctx, const char* title, rectf bounds, flag flags);
+  bool begin(context* ctx, const char* title, rectf bounds, flag flags);
 
   /**
    * # # begin_titled
@@ -194,7 +194,7 @@ namespace nk {
    * until `end` or `false(0)` otherwise for example if minimized
 
    */
-  NK_API bool begin_titled(context* ctx, const char* name, const char* title, rectf bounds, flag flags);
+  bool begin_titled(context* ctx, const char* name, const char* title, rectf bounds, flag flags);
 
   /**
    * # # end
@@ -210,7 +210,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct
 
    */
-  NK_API void end(context* ctx);
+  void end(context* ctx);
 
   /**
    * # # window_find
@@ -228,7 +228,7 @@ namespace nk {
    * \returns a `window` struct pointing to the identified window or NULL if
    * no window with the given name was found
    */
-  NK_API struct window* window_find(const context* ctx, const char* name);
+  struct window* window_find(const context* ctx, const char* name);
 
   /**
    * # # window_get_bounds
@@ -247,7 +247,7 @@ namespace nk {
    * \returns a `rect` struct with window upper left window position and size
 
    */
-  NK_API rectf window_get_bounds(const context* ctx);
+  rectf window_get_bounds(const context* ctx);
 
   /**
    * # # window_get_position
@@ -266,7 +266,7 @@ namespace nk {
    * \returns a `vec2` struct with window upper left position
 
    */
-  NK_API vec2f window_get_position(const context* ctx);
+  vec2f window_get_position(const context* ctx);
 
   /**
    * # # window_get_size
@@ -285,7 +285,7 @@ namespace nk {
    * \returns a `vec2` struct with window width and height
 
    */
-  NK_API vec2f window_get_size(const context* ctx);
+  vec2f window_get_size(const context* ctx);
 
   /**
    * window_get_width
@@ -303,7 +303,7 @@ namespace nk {
    *
    * \returns the current window width
    */
-  NK_API float window_get_width(const context* ctx);
+  float window_get_width(const context* ctx);
 
   /**
    * # # window_get_height
@@ -322,7 +322,7 @@ namespace nk {
    * \returns the current window height
 
    */
-  NK_API float window_get_height(const context* ctx);
+  float window_get_height(const context* ctx);
 
   /**
    * # # window_get_panel
@@ -343,7 +343,7 @@ namespace nk {
    * \returns a pointer to window internal `panel` state.
 
    */
-  NK_API panel* window_get_panel(const context* ctx);
+  panel* window_get_panel(const context* ctx);
 
   /**
    * # # window_get_content_region
@@ -365,7 +365,7 @@ namespace nk {
    * of the visible space inside the current window
 
    */
-  NK_API rectf window_get_content_region(const context* ctx);
+  rectf window_get_content_region(const context* ctx);
 
   /**
    * # # window_get_content_region_min
@@ -387,7 +387,7 @@ namespace nk {
    * of the visible space inside the current window
 
    */
-  NK_API vec2f window_get_content_region_min(const context* ctx);
+  vec2f window_get_content_region_min(const context* ctx);
 
   /**
    * # # window_get_content_region_max
@@ -409,7 +409,7 @@ namespace nk {
    * of the visible space inside the current window
 
    */
-  NK_API vec2f window_get_content_region_max(const context* ctx);
+  vec2f window_get_content_region_max(const context* ctx);
 
   /**
    * # # window_get_content_region_size
@@ -430,7 +430,7 @@ namespace nk {
    * \returns `vec2` struct with size the visible space inside the current window
 
    */
-  NK_API vec2f window_get_content_region_size(const context* ctx);
+  vec2f window_get_content_region_size(const context* ctx);
 
   /**
    * # # window_get_canvas
@@ -451,7 +451,7 @@ namespace nk {
    * \returns a pointer to window internal `command_buffer` struct used as
    * drawing canvas. Can be used to do custom drawing.
    */
-  NK_API command_buffer* window_get_canvas(const context* ctx);
+  command_buffer* window_get_canvas(const context* ctx);
 
   /**
    * # # window_get_scroll
@@ -470,7 +470,7 @@ namespace nk {
    * \param[in] offset_y | A pointer to the y offset output (or NULL to ignore)
 
    */
-  NK_API void window_get_scroll(const context* ctx, unsigned int* offset_x, unsigned int* offset_y);
+  void window_get_scroll(const context* ctx, unsigned int* offset_x, unsigned int* offset_y);
 
   /**
    * # # window_has_focus
@@ -488,7 +488,7 @@ namespace nk {
    * \returns `false(0)` if current window is not active or `true(1)` if it is
 
    */
-  NK_API bool window_has_focus(const context* ctx);
+  bool window_has_focus(const context* ctx);
 
   /**
    * # # window_is_hovered
@@ -506,7 +506,7 @@ namespace nk {
    * \returns `true(1)` if current window is hovered or `false(0)` otherwise
 
    */
-  NK_API bool window_is_hovered(const context* ctx);
+  bool window_is_hovered(const context* ctx);
 
   /**
    * # # window_is_collapsed
@@ -524,7 +524,7 @@ namespace nk {
    * found or is not minimized
 
    */
-  NK_API bool window_is_collapsed(const context* ctx, const char* name);
+  bool window_is_collapsed(const context* ctx, const char* name);
 
   /**
    * # # window_is_closed
@@ -541,7 +541,7 @@ namespace nk {
    * \returns `true(1)` if current window was closed or `false(0)` window not found or not closed
 
    */
-  NK_API bool window_is_closed(const context* ctx, const char* name);
+  bool window_is_closed(const context* ctx, const char* name);
 
   /**
    * # # window_is_hidden
@@ -558,7 +558,7 @@ namespace nk {
    * \returns `true(1)` if current window is hidden or `false(0)` window not found or visible
 
    */
-  NK_API bool window_is_hidden(const context* ctx, const char* name);
+  bool window_is_hidden(const context* ctx, const char* name);
 
   /**
    * # # window_is_active
@@ -574,7 +574,7 @@ namespace nk {
    *
    * \returns `true(1)` if current window is active or `false(0)` window not found or not active
    */
-  NK_API bool window_is_active(const context* ctx, const char* name);
+  bool window_is_active(const context* ctx, const char* name);
 
   /**
    * # # window_is_any_hovered
@@ -589,7 +589,7 @@ namespace nk {
    *
    * \returns `true(1)` if any window is hovered or `false(0)` otherwise
    */
-  NK_API bool window_is_any_hovered(const context* ctx);
+  bool window_is_any_hovered(const context* ctx);
 
   /**
    * # # item_is_any_active
@@ -607,7 +607,7 @@ namespace nk {
    * \returns `true(1)` if any window is hovered or any item is active or `false(0)` otherwise
 
    */
-  NK_API bool item_is_any_active(const context* ctx);
+  bool item_is_any_active(const context* ctx);
 
   /**
    * # # window_set_bounds
@@ -623,7 +623,7 @@ namespace nk {
    * \param[in] bounds  | Must point to a `rect` struct with the new position and size
 
    */
-  NK_API void window_set_bounds(context* ctx, const char* name, rectf bounds);
+  void window_set_bounds(context* ctx, const char* name, rectf bounds);
 
   /**
    * # # window_set_position
@@ -639,7 +639,7 @@ namespace nk {
    * \param[in] pos     | Must point to a `vec2` struct with the new position
 
    */
-  NK_API void window_set_position(context* ctx, const char* name, vec2f pos);
+  void window_set_position(context* ctx, const char* name, vec2f pos);
 
   /**
    * # # window_set_size
@@ -655,7 +655,7 @@ namespace nk {
    * \param[in] size    | Must point to a `vec2` struct with new window size
 
    */
-  NK_API void window_set_size(context* ctx, const char* name, vec2f size);
+  void window_set_size(context* ctx, const char* name, vec2f size);
 
   /**
    * # # window_set_focus
@@ -670,7 +670,7 @@ namespace nk {
    * \param[in] name    | Identifier of the window to set focus on
 
    */
-  NK_API void window_set_focus(context* ctx, const char* name);
+  void window_set_focus(context* ctx, const char* name);
 
   /**
    * # # window_set_scroll
@@ -689,7 +689,7 @@ namespace nk {
    * \param[in] offset_y | The y offset to scroll to
 
    */
-  NK_API void window_set_scroll(context* ctx, std::uint32_t offset_x, std::uint32_t offset_y);
+  void window_set_scroll(context* ctx, std::uint32_t offset_x, std::uint32_t offset_y);
 
   /**
    * # # window_close
@@ -704,7 +704,7 @@ namespace nk {
    * \param[in] name    | Identifier of the window to close
 
    */
-  NK_API void window_close(context* ctx, const char* name);
+  void window_close(context* ctx, const char* name);
 
   /**
    * # # window_collapse
@@ -720,7 +720,7 @@ namespace nk {
    * \param[in] state   | value out of collapse_states section
 
    */
-  NK_API void window_collapse(context* ctx, const char* name, nk::collapse_states state);
+  void window_collapse(context* ctx, const char* name, nk::collapse_states state);
 
   /**
    * # # window_collapse_if
@@ -737,7 +737,7 @@ namespace nk {
    * \param[in] cond    | condition that has to be met to actually commit the collapse state change
 
    */
-  NK_API void window_collapse_if(context* ctx, const char* name, nk::collapse_states state, int cond);
+  void window_collapse_if(context* ctx, const char* name, nk::collapse_states state, int cond);
 
   /**
    * # # window_show
@@ -752,7 +752,7 @@ namespace nk {
    * \param[in] name    | Identifier of the window to either collapse or maximize
    * \param[in] state   | state with either visible or hidden to modify the window with
    */
-  NK_API void window_show(context* ctx, const char* name, nk::show_states state);
+  void window_show(context* ctx, const char* name, nk::show_states state);
 
   /**
    * # # window_show_if
@@ -769,7 +769,7 @@ namespace nk {
    * \param[in] cond    | condition that has to be met to actually commit the visibility state change
 
    */
-  NK_API void window_show_if(context* ctx, const char* name, nk::show_states state, int cond);
+  void window_show_if(context* ctx, const char* name, nk::show_states state, int cond);
 
   /**
    * # # window_show_if
@@ -784,89 +784,89 @@ namespace nk {
    * \param[in] color       | Color of the horizontal line
    * \param[in] rounding    | Whether or not to make the line round
    */
-  NK_API void rule_horizontal(context* ctx, color color, bool rounding);
+  void rule_horizontal(context* ctx, color color, bool rounding);
 
-  NK_LIB bool is_lower(int c);
-  NK_LIB bool is_upper(int c);
-  NK_LIB int to_upper(int c);
-  NK_LIB int to_lower(int c);
+  bool is_lower(int c);
+  bool is_upper(int c);
+  int to_upper(int c);
+  int to_lower(int c);
 
-  NK_LIB void zero(void* ptr, std::size_t size);
-  NK_LIB char* itoa(char* s, long n);
-  NK_LIB int string_float_limit(char* string, int prec);
+  void zero(void* ptr, std::size_t size);
+  char* itoa(char* s, long n);
+  int string_float_limit(char* string, int prec);
 #ifndef NK_DTOA
-  NK_LIB char* dtoa(char* s, double n);
+  char* dtoa(char* s, double n);
 #endif
-  NK_LIB int text_clamp(const user_font* font, const char* text, int text_len, float space, int* glyphs, float* text_width, rune* sep_list, int sep_count);
-  NK_LIB vec2f text_calculate_text_bounds(const user_font* font, const char* begin, int byte_len, float row_height, const char** remaining, vec2f* out_offset, int* glyphs, int op);
+  int text_clamp(const user_font* font, const char* text, int text_len, float space, int* glyphs, float* text_width, rune* sep_list, int sep_count);
+  vec2f text_calculate_text_bounds(const user_font* font, const char* begin, int byte_len, float row_height, const char** remaining, vec2f* out_offset, int* glyphs, int op);
 #ifdef NK_INCLUDE_STANDARD_VARARGS
-  NK_LIB int strfmt(char* buf, int buf_size, const char* fmt, va_list args);
+  int strfmt(char* buf, int buf_size, const char* fmt, va_list args);
 #endif
 #ifdef NK_INCLUDE_STANDARD_IO
-  NK_LIB char* file_load(const char* path, std::size_t* siz, const struct allocator* alloc);
+  char* file_load(const char* path, std::size_t* siz, const struct allocator* alloc);
 #endif
 
 /* buffer */
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_LIB void* malloc(resource_handle unused, void* old, std::size_t size);
-  NK_LIB void mfree(resource_handle unused, void* ptr);
+  void* malloc(resource_handle unused, void* old, std::size_t size);
+  inline void mfree([[maybe_unused]] resource_handle unused, void* ptr) { free(static_cast<context*>(ptr)); }
 #endif
-  NK_LIB void* buffer_align(void* unaligned, std::size_t align, std::size_t* alignment, buffer_allocation_type type);
-  NK_LIB void* buffer_alloc(memory_buffer* b, buffer_allocation_type type, std::size_t size, std::size_t align);
-  NK_LIB void* buffer_realloc(memory_buffer* b, std::size_t capacity, std::size_t* size);
+  void* buffer_align(void* unaligned, std::size_t align, std::size_t* alignment, buffer_allocation_type type);
+  void* buffer_alloc(memory_buffer* b, buffer_allocation_type type, std::size_t size, std::size_t align);
+  void* buffer_realloc(memory_buffer* b, std::size_t capacity, std::size_t* size);
 
   /* draw */
-  NK_LIB void command_buffer_init(command_buffer* cb, memory_buffer* b, command_clipping clip);
-  NK_LIB void command_buffer_reset(command_buffer* b);
-  NK_LIB void* command_buffer_push(command_buffer* b, command_type t, std::size_t size);
-  NK_LIB void draw_symbol(command_buffer* out, symbol_type type, rectf content, color background, color foreground, float border_width, const user_font* font);
+  void command_buffer_init(command_buffer* cb, memory_buffer* b, command_clipping clip);
+  void command_buffer_reset(command_buffer* b);
+  void* command_buffer_push(command_buffer* b, command_type t, std::size_t size);
+  void draw_symbol(command_buffer* out, symbol_type type, rectf content, color background, color foreground, float border_width, const user_font* font);
 
   /* buffering */
-  NK_LIB void start_buffer(context* ctx, command_buffer* b);
-  NK_LIB void start(context* ctx, window* win);
-  NK_LIB void start_popup(context* ctx, window* win);
-  NK_LIB void finish_popup(context* ctx, window*);
-  NK_LIB void finish_buffer(context* ctx, command_buffer* b);
-  NK_LIB void finish(context* ctx, window* w);
-  NK_LIB void build(context* ctx);
+  void start_buffer(context* ctx, command_buffer* b);
+  void start(context* ctx, window* win);
+  void start_popup(context* ctx, window* win);
+  void finish_popup(context* ctx, window*);
+  void finish_buffer(context* ctx, command_buffer* b);
+  void finish(context* ctx, window* w);
+  void build(context* ctx);
 
   /* text editor */
-  NK_LIB void textedit_clear_state(text_edit* state, text_edit_type type, plugin_filter filter);
-  NK_LIB void textedit_click(text_edit* state, float x, float y, const user_font* font, float row_height);
-  NK_LIB void textedit_drag(text_edit* state, float x, float y, const user_font* font, float row_height);
-  NK_LIB void textedit_key(text_edit* state, keys key, int shift_mod, const user_font* font, float row_height);
+  void textedit_clear_state(text_edit* state, text_edit_type type, plugin_filter filter);
+  void textedit_click(text_edit* state, float x, float y, const user_font* font, float row_height);
+  void textedit_drag(text_edit* state, float x, float y, const user_font* font, float row_height);
+  void textedit_key(text_edit* state, keys key, int shift_mod, const user_font* font, float row_height);
 
 
-  NK_LIB void* create_window(context* ctx);
-  NK_LIB void remove_window(context*, window*);
-  NK_LIB void free_window(context* ctx, window* win);
-  NK_LIB window* find_window(const context* ctx, hash hash, const char* name);
-  NK_LIB void insert_window(context* ctx, window* win, window_insert_location loc);
+  void* create_window(context* ctx);
+  void remove_window(context*, window*);
+  void free_window(context* ctx, window* win);
+  window* find_window(const context* ctx, hash hash, const char* name);
+  void insert_window(context* ctx, window* win, window_insert_location loc);
 
   /* page-element */
-  NK_LIB page_element* create_page_element(context* ctx);
-  NK_LIB void lipage_element_into_freelist(context* ctx, page_element* elem);
-  NK_LIB void free_page_element(context* ctx, page_element* elem);
+  page_element* create_page_element(context* ctx);
+  void lipage_element_into_freelist(context* ctx, page_element* elem);
+  void free_page_element(context* ctx, page_element* elem);
 
   /* table */
-  NK_LIB table* create_table(context* ctx);
-  NK_LIB void remove_table(window* win, table* tbl);
-  NK_LIB void free_table(context* ctx, table* tbl);
-  NK_LIB void push_table(window* win, table* tbl);
-  NK_LIB std::uint32_t* add_value(context* ctx, window* win, hash name, std::uint32_t value);
-  NK_LIB std::uint32_t* find_value(const window* win, hash name);
+  table* create_table(context* ctx);
+  void remove_table(window* win, table* tbl);
+  void free_table(context* ctx, table* tbl);
+  void push_table(window* win, table* tbl);
+  std::uint32_t* add_value(context* ctx, window* win, hash name, std::uint32_t value);
+  std::uint32_t* find_value(const window* win, hash name);
 
   /* panel */
-  NK_LIB void* create_panel(context* ctx);
-  NK_LIB void free_panel(context*, panel* pan);
-  NK_LIB bool panel_has_header(flag flags, const char* title);
-  NK_LIB vec2f panel_get_padding(const style* style, panel_type::value_type type);
-  NK_LIB float panel_get_border(const style* style, flag flags, panel_type::value_type type);
-  NK_LIB color panel_get_border_color(const style* style, panel_type::value_type type);
-  NK_LIB bool panel_is_sub(panel_type::value_type type);
-  NK_LIB bool panel_is_nonblock(panel_type::value_type type);
-  NK_LIB bool panel_begin(context* ctx, const char* title, panel_type::value_type panel_type);
-  NK_LIB void panel_end(context* ctx);
+  void* create_panel(context* ctx);
+  void free_panel(context*, panel* pan);
+  bool panel_has_header(flag flags, const char* title);
+  vec2f panel_get_padding(const style* style, panel_type::value_type type);
+  float panel_get_border(const style* style, flag flags, panel_type::value_type type);
+  color panel_get_border_color(const style* style, panel_type::value_type type);
+  bool panel_is_sub(panel_type::value_type type);
+  bool panel_is_nonblock(panel_type::value_type type);
+  bool panel_begin(context* ctx, const char* title, panel_type::value_type panel_type);
+  void panel_end(context* ctx);
 }
 
 #endif

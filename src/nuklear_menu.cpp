@@ -6,7 +6,7 @@ namespace nk {
    *                              MENU
    *
    * ===============================================================*/
-  NK_API void
+  void
   menubar_begin(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -41,7 +41,7 @@ namespace nk {
     layout->menu.offset.y = *layout->offset_y;
     *layout->offset_y = 0;
   }
-  NK_API void
+  void
   menubar_end(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -70,7 +70,7 @@ namespace nk {
     layout->clip.h = layout->bounds.h;
     push_scissor(out, layout->clip);
   }
-  INTERN int
+  int
   menu_begin(context* ctx, window* win,
              const char* id, const int is_clicked, const rectf header, const vec2f size) {
     int is_open = 0;
@@ -102,7 +102,7 @@ namespace nk {
     win->popup.name = hsh;
     return 1;
   }
-  NK_API bool
+  bool
   menu_begin_text(context* ctx, const char* title, const int len,
                   const flag align, const vec2f size) {
     rectf header;
@@ -124,11 +124,11 @@ namespace nk {
       is_clicked = true;
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
-  NK_API bool menu_begin_label(context* ctx,
+  bool menu_begin_label(context* ctx,
                                const char* text, const flag align, const vec2f size) {
     return menu_begin_text(ctx, text, strlen(text), align, size);
   }
-  NK_API bool
+  bool
   menu_begin_image(context* ctx, const char* id, struct image img,
                    const vec2f size) {
     rectf header;
@@ -150,7 +150,7 @@ namespace nk {
       is_clicked = true;
     return menu_begin(ctx, win, id, is_clicked, header, size);
   }
-  NK_API bool
+  bool
   menu_begin_symbol(context* ctx, const char* id,
                     const symbol_type sym, const vec2f size) {
     rectf header;
@@ -172,7 +172,7 @@ namespace nk {
       is_clicked = true;
     return menu_begin(ctx, win, id, is_clicked, header, size);
   }
-  NK_API bool
+  bool
   menu_begin_image_text(context* ctx, const char* title, const int len,
                         const flag align, struct image img, const vec2f size) {
     rectf header;
@@ -195,12 +195,12 @@ namespace nk {
       is_clicked = true;
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
-  NK_API bool
+  bool
   menu_begin_image_label(context* ctx,
                          const char* title, const flag align, struct image img, const vec2f size) {
     return menu_begin_image_text(ctx, title, strlen(title), align, img, size);
   }
-  NK_API bool
+  bool
   menu_begin_symbol_text(context* ctx, const char* title, const int len,
                          const flag align, const symbol_type sym, const vec2f size) {
     rectf header;
@@ -224,41 +224,41 @@ namespace nk {
       is_clicked = true;
     return menu_begin(ctx, win, title, is_clicked, header, size);
   }
-  NK_API bool
+  bool
   menu_begin_symbol_label(context* ctx,
                           const char* title, const flag align, const symbol_type sym, const vec2f size) {
     return menu_begin_symbol_text(ctx, title, strlen(title), align, sym, size);
   }
-  NK_API bool
+  bool
   menu_item_text(context* ctx, const char* title, const int len, const flag align) {
     return contextual_item_text(ctx, title, len, align);
   }
-  NK_API bool
+  bool
   menu_item_label(context* ctx, const char* label, const flag align) {
     return contextual_item_label(ctx, label, align);
   }
-  NK_API bool
+  bool
   menu_item_image_label(context* ctx, struct image img,
                         const char* label, const flag align) {
     return contextual_item_image_label(ctx, img, label, align);
   }
-  NK_API bool
+  bool
   menu_item_image_text(context* ctx, struct image img,
                        const char* text, const int len, const flag align) {
     return contextual_item_image_text(ctx, img, text, len, align);
   }
-  NK_API bool menu_item_symbol_text(context* ctx, const symbol_type sym,
+  bool menu_item_symbol_text(context* ctx, const symbol_type sym,
                                     const char* text, const int len, const flag align) {
     return contextual_item_symbol_text(ctx, sym, text, len, align);
   }
-  NK_API bool menu_item_symbol_label(context* ctx, const symbol_type sym,
+  bool menu_item_symbol_label(context* ctx, const symbol_type sym,
                                      const char* label, const flag align) {
     return contextual_item_symbol_label(ctx, sym, label, align);
   }
-  NK_API void menu_close(context* ctx) {
+  void menu_close(context* ctx) {
     contextual_close(ctx);
   }
-  NK_API void
+  void
   menu_end(context* ctx) {
     contextual_end(ctx);
   }

@@ -8,7 +8,7 @@ namespace nk {
    *                          DRAW
    *
    * ===============================================================*/
-  NK_LIB void
+  void
   command_buffer_init(command_buffer* cb,
                       memory_buffer* b, const command_clipping clip) {
     NK_ASSERT(cb);
@@ -21,7 +21,7 @@ namespace nk {
     cb->end = b->allocated;
     cb->last = b->allocated;
   }
-  NK_LIB void
+  void
   command_buffer_reset(command_buffer* b) {
     NK_ASSERT(b);
     if (!b)
@@ -34,10 +34,10 @@ namespace nk {
     b->userdata.ptr = 0;
 #endif
   }
-  NK_LIB void*
+  void*
   command_buffer_push(command_buffer* b,
                       const command_type t, const std::size_t size) {
-    NK_STORAGE const std::size_t align = alignof(command);
+    static constexpr std::size_t align = alignof(command);
 
     NK_ASSERT(b);
     NK_ASSERT(b->base);
@@ -64,7 +64,7 @@ namespace nk {
     b->end = cmd->next;
     return cmd;
   }
-  NK_API void
+  void
   push_scissor(command_buffer* b, const rectf r) {
     NK_ASSERT(b);
     if (!b)
@@ -84,7 +84,7 @@ namespace nk {
     cmd->w = (unsigned short) std::max(0.0f, r.w);
     cmd->h = (unsigned short) std::max(0.0f, r.h);
   }
-  NK_API void
+  void
   stroke_line(command_buffer* b, float x0, float y0,
               float x1, float y1, float line_thickness, const color c) {
     NK_ASSERT(b);
@@ -101,7 +101,7 @@ namespace nk {
     cmd->end.y = (short) y1;
     cmd->color = c;
   }
-  NK_API void
+  void
   stroke_curve(command_buffer* b, float ax, float ay,
                float ctrl0x, float ctrl0y, float ctrl1x, float ctrl1y,
                float bx, float by, float line_thickness, const color col) {
@@ -124,7 +124,7 @@ namespace nk {
     cmd->end.y = (short) by;
     cmd->color = col;
   }
-  NK_API void
+  void
   stroke_rect(command_buffer* b, const rectf rect,
               float rounding, float line_thickness, const color c) {
     NK_ASSERT(b);
@@ -148,7 +148,7 @@ namespace nk {
     cmd->h = (unsigned short) std::max(0.0f, rect.h);
     cmd->color = c;
   }
-  NK_API void
+  void
   fill_rect(command_buffer* b, const rectf rect,
             float rounding, const color c) {
     NK_ASSERT(b);
@@ -172,7 +172,7 @@ namespace nk {
     cmd->h = (unsigned short) std::max(0.0f, rect.h);
     cmd->color = c;
   }
-  NK_API void
+  void
   fill_rect_multi_color(command_buffer* b, const rectf rect,
                         const color left, const color top, const color right,
                         const color bottom) {
@@ -199,7 +199,7 @@ namespace nk {
     cmd->right = right;
     cmd->bottom = bottom;
   }
-  NK_API void
+  void
   stroke_circle(command_buffer* b, const rectf r,
                 float line_thickness, const color c) {
     if (!b || r.w == 0 || r.h == 0 || line_thickness <= 0)
@@ -221,7 +221,7 @@ namespace nk {
     cmd->h = (unsigned short) std::max(r.h, 0.0f);
     cmd->color = c;
   }
-  NK_API void
+  void
   fill_circle(command_buffer* b, const rectf r, const color c) {
     NK_ASSERT(b);
     if (!b || c.a == 0 || r.w == 0 || r.h == 0)
@@ -242,7 +242,7 @@ namespace nk {
     cmd->h = (unsigned short) std::max(r.h, 0.0f);
     cmd->color = c;
   }
-  NK_API void
+  void
   stroke_arc(command_buffer* b, float cx, float cy, float radius,
              float a_min, float a_max, float line_thickness, const color c) {
     if (!b || c.a == 0 || line_thickness <= 0)
@@ -259,7 +259,7 @@ namespace nk {
     cmd->a[1] = a_max;
     cmd->color = c;
   }
-  NK_API void
+  void
   fill_arc(command_buffer* b, float cx, float cy, float radius,
            float a_min, float a_max, const color c) {
     NK_ASSERT(b);
@@ -276,7 +276,7 @@ namespace nk {
     cmd->a[1] = a_max;
     cmd->color = c;
   }
-  NK_API void
+  void
   stroke_triangle(command_buffer* b, float x0, float y0, float x1,
                   float y1, float x2, float y2, float line_thickness, const color c) {
     NK_ASSERT(b);
@@ -303,7 +303,7 @@ namespace nk {
     cmd->c.y = (short) y2;
     cmd->color = c;
   }
-  NK_API void
+  void
   fill_triangle(command_buffer* b, float x0, float y0, float x1,
                 float y1, float x2, float y2, const color c) {
     NK_ASSERT(b);
@@ -331,7 +331,7 @@ namespace nk {
     cmd->c.y = (short) y2;
     cmd->color = c;
   }
-  NK_API void
+  void
   stroke_polygon(command_buffer* b, const float* points, const int point_count,
                  float line_thickness, const color col) {
     std::size_t size = 0;
@@ -352,7 +352,7 @@ namespace nk {
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
-  NK_API void
+  void
   fill_polygon(command_buffer* b, const float* points, const int point_count,
                const color col) {
     std::size_t size = 0;
@@ -373,7 +373,7 @@ namespace nk {
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
-  NK_API void
+  void
   stroke_polyline(command_buffer* b, const float* points, const int point_count,
                   float line_thickness, const color col) {
     std::size_t size = 0;
@@ -394,7 +394,7 @@ namespace nk {
       cmd->points[i].y = (short) points[i * 2 + 1];
     }
   }
-  NK_API void
+  void
   draw_image(command_buffer* b, const rectf r,
              const struct image* img, const color col) {
     NK_ASSERT(b);
@@ -417,7 +417,7 @@ namespace nk {
     cmd->img = *img;
     cmd->col = col;
   }
-  NK_API void
+  void
   draw_nine_slice(command_buffer* b, const rectf r,
                   const nine_slice* slc, const color col) {
     struct image img;
@@ -496,7 +496,7 @@ namespace nk {
 
 #undef IMG_RGN
   }
-  NK_API void
+  void
   push_custom(command_buffer* b, const rectf r,
               const command_custom_callback cb, const resource_handle usr) {
     NK_ASSERT(b);
@@ -519,7 +519,7 @@ namespace nk {
     cmd->callback_data = usr;
     cmd->callback = cb;
   }
-  NK_API void
+  void
   draw_text(command_buffer* b, const rectf r,
             const char* string, int length, const user_font* font,
             const color bg, const color fg) {

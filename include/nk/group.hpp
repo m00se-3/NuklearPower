@@ -109,7 +109,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool group_begin(context*, const char* title, flag);
+  bool group_begin(context*, const char* title, flag);
 
   /**
    * \brief Starts a new widget group. Requires a previous layouting function to specify a pos/size.
@@ -124,7 +124,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool group_begin_titled(context*, const char* name, const char* title, flag);
+  bool group_begin_titled(context*, const char* name, const char* title, flag);
 
   /**
    * # # group_end
@@ -137,7 +137,7 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct
    */
-  NK_API void group_end(context*);
+  void group_end(context*);
 
   /**
    * # # group_scrolled_offset_begin
@@ -157,7 +157,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool group_scrolled_offset_begin(context*, std::uint32_t* x_offset, std::uint32_t* y_offset, const char* title, flag flags);
+  bool group_scrolled_offset_begin(context*, std::uint32_t* x_offset, std::uint32_t* y_offset, const char* title, flag flags);
 
   /**
    * # # group_scrolled_begin
@@ -176,7 +176,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool group_scrolled_begin(context*, scroll* off, const char* title, flag);
+  bool group_scrolled_begin(context*, scroll* off, const char* title, flag);
 
   /**
    * # # group_scrolled_end
@@ -189,7 +189,7 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct
    */
-  NK_API void group_scrolled_end(context*);
+  void group_scrolled_end(context*);
 
   /**
    * # # group_get_scroll
@@ -205,7 +205,7 @@ namespace nk {
    * \param[in] x_offset | A pointer to the x offset output (or NULL to ignore)
    * \param[in] y_offset | A pointer to the y offset output (or NULL to ignore)
    */
-  NK_API void group_get_scroll(context*, const char* id, std::uint32_t* x_offset, std::uint32_t* y_offset);
+  void group_get_scroll(context*, const char* id, std::uint32_t* x_offset, std::uint32_t* y_offset);
 
   /**
    * # # group_set_scroll
@@ -221,7 +221,7 @@ namespace nk {
    * \param[in] x_offset | The x offset to scroll to
    * \param[in] y_offset | The y offset to scroll to
    */
-  NK_API void group_set_scroll(context*, const char* id, std::uint32_t x_offset, std::uint32_t y_offset);
+  void group_set_scroll(context*, const char* id, std::uint32_t x_offset, std::uint32_t y_offset);
 
 }
 

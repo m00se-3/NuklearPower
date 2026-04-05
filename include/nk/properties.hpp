@@ -102,7 +102,7 @@ namespace nk {
    * \param[in] step            | Increment added and subtracted on increment and decrement button
    * \param[in] inc_per_pixel   | Value per pixel added or subtracted on dragging
    */
-  NK_API void property_int(context*, const char* name, int min, int* val, int max, int step, float inc_per_pixel);
+  void property_int(context*, const char* name, int min, int* val, int max, int step, float inc_per_pixel);
 
   /**
    * # # property_float
@@ -125,7 +125,7 @@ namespace nk {
    * \param[in] step            | Increment added and subtracted on increment and decrement button
    * \param[in] inc_per_pixel   | Value per pixel added or subtracted on dragging
    */
-  NK_API void property_float(context*, const char* name, float min, float* val, float max, float step, float inc_per_pixel);
+  void property_float(context*, const char* name, float min, float* val, float max, float step, float inc_per_pixel);
 
   /**
    * # # property_double
@@ -148,7 +148,7 @@ namespace nk {
    * \param[in] step            | Increment added and subtracted on increment and decrement button
    * \param[in] inc_per_pixel   | Value per pixel added or subtracted on dragging
    */
-  NK_API void property_double(context*, const char* name, double min, double* val, double max, double step, float inc_per_pixel);
+  void property_double(context*, const char* name, double min, double* val, double max, double step, float inc_per_pixel);
 
   /**
    * # # propertyi
@@ -171,7 +171,7 @@ namespace nk {
    *
    * \returns the new modified integer value
    */
-  NK_API int propertyi(context*, const char* name, int min, int val, int max, int step, float inc_per_pixel);
+  int propertyi(context*, const char* name, int min, int val, int max, int step, float inc_per_pixel);
 
   /**
    * # # propertyf
@@ -194,7 +194,7 @@ namespace nk {
    *
    * \returns the new modified float value
    */
-  NK_API float propertyf(context*, const char* name, float min, float val, float max, float step, float inc_per_pixel);
+  float propertyf(context*, const char* name, float min, float val, float max, float step, float inc_per_pixel);
 
   /**
    * # # propertyd
@@ -217,17 +217,17 @@ namespace nk {
    *
    * \returns the new modified double value
    */
-  NK_API double propertyd(context*, const char* name, double min, double val, double max, double step, float inc_per_pixel);
+  double propertyd(context*, const char* name, double min, double val, double max, double step, float inc_per_pixel);
 
-  NK_LIB property_variant property_variant_int(int value, int min_value, int max_value, int step);
-  NK_LIB property_variant property_variant_float(float value, float min_value, float max_value, float step);
-  NK_LIB property_variant property_variant_double(double value, double min_value, double max_value, double step);
+  property_variant property_variant_int(int value, int min_value, int max_value, int step);
+  property_variant property_variant_float(float value, float min_value, float max_value, float step);
+  property_variant property_variant_double(double value, double min_value, double max_value, double step);
 
-  NK_LIB void drag_behavior(flag* state, const input* in, rectf drag, property_variant* variant, float inc_per_pixel);
-  NK_LIB void property_behavior(flag* ws, const input* in, rectf property, rectf label, rectf edit, rectf empty, int* state, property_variant* variant, float inc_per_pixel);
-  NK_LIB void draw_property(command_buffer* out, const style_property* style, const rectf* bounds, const rectf* label, flag state, const char* name, int len, const user_font* font);
-  NK_LIB void do_property(flag* ws, command_buffer* out, rectf property, const char* name, property_variant* variant, float inc_per_pixel, char* buffer, int* len, int* state, int* cursor, int* select_begin, int* select_end, const style_property* style, property_filter filter, input* in, const user_font* font, text_edit* text_edit, btn_behavior behavior);
-  NK_LIB void property(context* ctx, const char* name, property_variant* variant, float inc_per_pixel, const property_filter filter);
+  void drag_behavior(flag* state, const input* in, rectf drag, property_variant* variant, float inc_per_pixel);
+  void property_behavior(flag* ws, const input* in, rectf property, rectf label, rectf edit, rectf empty, int* state, property_variant* variant, float inc_per_pixel);
+  void draw_property(command_buffer* out, const style_property* style, const rectf* bounds, const rectf* label, flag state, const char* name, int len, const user_font* font);
+  void do_property(flag* ws, command_buffer* out, rectf property, const char* name, property_variant* variant, float inc_per_pixel, char* buffer, int* len, int* state, int* cursor, int* select_begin, int* select_end, const style_property* style, property_filter filter, input* in, const user_font* font, text_edit* text_edit, btn_behavior behavior);
+  void property(context* ctx, const char* name, property_variant* variant, float inc_per_pixel, const property_filter filter);
 
 }
 

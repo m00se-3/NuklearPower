@@ -7,7 +7,7 @@ namespace nk {
    *                              WINDOW
    *
    * ===============================================================*/
-  NK_LIB void*
+  void*
   create_window(context* ctx) {
     page_element* elem = create_page_element(ctx);
     if (elem == nullptr)
@@ -15,7 +15,7 @@ namespace nk {
     elem->data.win.seq = ctx->seq;
     return &elem->data.win;
   }
-  NK_LIB void
+  void
   free_window(context* ctx, window* win) {
     /* unlink windows from list */
     table* it = win->tables;
@@ -43,7 +43,7 @@ namespace nk {
       free_page_element(ctx, pe);
     }
   }
-  NK_LIB window*
+  window*
   find_window(const context* ctx, const hash hash, const char* name) {
     window* iter = ctx->begin;
     while (iter != nullptr) {
@@ -57,7 +57,7 @@ namespace nk {
     }
     return 0;
   }
-  NK_LIB void
+  void
   insert_window(context* ctx, window* win,
                 const window_insert_location loc) {
     NK_ASSERT(ctx);
@@ -101,7 +101,7 @@ namespace nk {
     }
     ctx->count++;
   }
-  NK_LIB void
+  void
   remove_window(context* ctx, window* win) {
     if (win == ctx->begin || win == ctx->end) {
       if (win == ctx->begin) {
@@ -129,12 +129,12 @@ namespace nk {
     win->prev = 0;
     ctx->count--;
   }
-  NK_API bool
+  bool
   begin(context* ctx, const char* title,
         const rectf bounds, const flag flags) {
     return begin_titled(ctx, title, title, bounds, flags);
   }
-  NK_API bool
+  bool
   begin_titled(context* ctx, const char* name, const char* title,
                const rectf bounds, const flag flags) {
     int ret = 0;
@@ -282,7 +282,7 @@ namespace nk {
     win->layout->offset_y = &win->scrollbar.y;
     return ret;
   }
-  NK_API void
+  void
   end(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current && "if this triggers you forgot to call `begin`");
@@ -298,7 +298,7 @@ namespace nk {
     free_panel(ctx, ctx->current->layout);
     ctx->current = 0;
   }
-  NK_API rectf
+  rectf
   window_get_bounds(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -306,7 +306,7 @@ namespace nk {
       return rect(0, 0, 0, 0);
     return ctx->current->bounds;
   }
-  NK_API vec2f
+  vec2f
   window_get_position(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -314,7 +314,7 @@ namespace nk {
       return vec2_from_floats(0.0f, 0.0f);
     return vec2_from_floats(ctx->current->bounds.x, ctx->current->bounds.y);
   }
-  NK_API vec2f
+  vec2f
   window_get_size(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -322,7 +322,7 @@ namespace nk {
       return vec2_from_floats(0.0f, 0.0f);
     return vec2_from_floats(ctx->current->bounds.w, ctx->current->bounds.h);
   }
-  NK_API float
+  float
   window_get_width(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -330,7 +330,7 @@ namespace nk {
       return 0;
     return ctx->current->bounds.w;
   }
-  NK_API float
+  float
   window_get_height(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -338,7 +338,7 @@ namespace nk {
       return 0;
     return ctx->current->bounds.h;
   }
-  NK_API rectf
+  rectf
   window_get_content_region(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -346,7 +346,7 @@ namespace nk {
       return rect(0, 0, 0, 0);
     return ctx->current->layout->clip;
   }
-  NK_API vec2f
+  vec2f
   window_get_content_region_min(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -355,7 +355,7 @@ namespace nk {
       return vec2_from_floats(0, 0);
     return vec2_from_floats(ctx->current->layout->clip.x, ctx->current->layout->clip.y);
   }
-  NK_API vec2f
+  vec2f
   window_get_content_region_max(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -365,7 +365,7 @@ namespace nk {
     return vec2_from_floats(ctx->current->layout->clip.x + ctx->current->layout->clip.w,
                             ctx->current->layout->clip.y + ctx->current->layout->clip.h);
   }
-  NK_API vec2f
+  vec2f
   window_get_content_region_size(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -374,7 +374,7 @@ namespace nk {
       return vec2_from_floats(0, 0);
     return vec2_from_floats(ctx->current->layout->clip.w, ctx->current->layout->clip.h);
   }
-  NK_API command_buffer*
+  command_buffer*
   window_get_canvas(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -383,7 +383,7 @@ namespace nk {
       return 0;
     return &ctx->current->buffer;
   }
-  NK_API panel*
+  panel*
   window_get_panel(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -391,7 +391,7 @@ namespace nk {
       return 0;
     return ctx->current->layout;
   }
-  NK_API void
+  void
   window_get_scroll(const context* ctx, std::uint32_t* offset_x, std::uint32_t* offset_y) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -403,7 +403,7 @@ namespace nk {
     if (offset_y)
       *offset_y = win->scrollbar.y;
   }
-  NK_API bool
+  bool
   window_has_focus(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -412,7 +412,7 @@ namespace nk {
       return 0;
     return ctx->current == ctx->active;
   }
-  NK_API bool
+  bool
   window_is_hovered(const context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -426,7 +426,7 @@ namespace nk {
       return input_is_mouse_hovering_rect(&ctx->input, actual_bounds);
     }
   }
-  NK_API bool
+  bool
   window_is_any_hovered(const context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -452,13 +452,13 @@ namespace nk {
     }
     return 0;
   }
-  NK_API bool
+  bool
   item_is_any_active(const context* ctx) {
     const int any_hovered = window_is_any_hovered(ctx);
     const int any_active = (ctx->last_widget_state & NK_WIDGET_STATE_MODIFIED);
     return any_hovered || any_active;
   }
-  NK_API bool
+  bool
   window_is_collapsed(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -471,7 +471,7 @@ namespace nk {
       return 0;
     return win->flags & window_flags::WINDOW_MINIMIZED;
   }
-  NK_API bool
+  bool
   window_is_closed(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -484,7 +484,7 @@ namespace nk {
       return 1;
     return (win->flags & window_flags::WINDOW_CLOSED);
   }
-  NK_API bool
+  bool
   window_is_hidden(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -497,7 +497,7 @@ namespace nk {
       return 1;
     return (win->flags & window_flags::WINDOW_HIDDEN);
   }
-  NK_API bool
+  bool
   window_is_active(const context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -510,13 +510,13 @@ namespace nk {
       return 0;
     return win == ctx->active;
   }
-  NK_API window*
+  window*
   window_find(const context* ctx, const char* name) {
     const int title_len = (int) strlen(name);
     const hash title_hash = murmur_hash(name, title_len, static_cast<hash>(panel_flags::WINDOW_TITLE));
     return find_window(ctx, title_hash, name);
   }
-  NK_API void
+  void
   window_close(context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -530,7 +530,7 @@ namespace nk {
     win->flags |= window_flags::WINDOW_HIDDEN;
     win->flags |= window_flags::WINDOW_CLOSED;
   }
-  NK_API void
+  void
   window_set_bounds(context* ctx,
                     const char* name, const rectf bounds) {
     NK_ASSERT(ctx);
@@ -541,7 +541,7 @@ namespace nk {
       return;
     win->bounds = bounds;
   }
-  NK_API void
+  void
   window_set_position(context* ctx,
                       const char* name, const vec2f pos) {
     window* win = window_find(ctx, name);
@@ -550,7 +550,7 @@ namespace nk {
     win->bounds.x = pos.x;
     win->bounds.y = pos.y;
   }
-  NK_API void
+  void
   window_set_size(context* ctx,
                   const char* name, const vec2f size) {
     window* win = window_find(ctx, name);
@@ -559,7 +559,7 @@ namespace nk {
     win->bounds.w = size.x;
     win->bounds.h = size.y;
   }
-  NK_API void
+  void
   window_set_scroll(context* ctx, const std::uint32_t offset_x, const std::uint32_t offset_y) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -569,7 +569,7 @@ namespace nk {
     win->scrollbar.x = offset_x;
     win->scrollbar.y = offset_y;
   }
-  NK_API void
+  void
   window_collapse(context* ctx, const char* name,
                   const collapse_states c) {
     NK_ASSERT(ctx);
@@ -586,7 +586,7 @@ namespace nk {
     else
       win->flags &= ~static_cast<flag>(window_flags::WINDOW_MINIMIZED);
   }
-  NK_API void
+  void
   window_collapse_if(context* ctx, const char* name,
                      const collapse_states c, const int cond) {
     NK_ASSERT(ctx);
@@ -594,7 +594,7 @@ namespace nk {
       return;
     window_collapse(ctx, name, c);
   }
-  NK_API void
+  void
   window_show(context* ctx, const char* name, const show_states s) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -610,7 +610,7 @@ namespace nk {
     } else
       win->flags &= ~static_cast<flag>(window_flags::WINDOW_HIDDEN);
   }
-  NK_API void
+  void
   window_show_if(context* ctx, const char* name,
                  const show_states s, const int cond) {
     NK_ASSERT(ctx);
@@ -619,7 +619,7 @@ namespace nk {
     window_show(ctx, name, s);
   }
 
-  NK_API void
+  void
   window_set_focus(context* ctx, const char* name) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -634,7 +634,7 @@ namespace nk {
     }
     ctx->active = win;
   }
-  NK_API void
+  void
   rule_horizontal(context* ctx, const color color, const bool rounding) {
     rectf space;
     const widget_layout_states state = widget(&space, ctx);

@@ -7,7 +7,7 @@ namespace nk {
    *                          GROUP
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   group_scrolled_offset_begin(context* ctx,
                               unsigned int* x_offset, unsigned int* y_offset, const char* title, flag flags) {
     rectf bounds;
@@ -59,7 +59,7 @@ namespace nk {
     }
     return 1;
   }
-  NK_API void
+  void
   group_scrolled_end(context* ctx) {
     window* win;
     panel* parent;
@@ -120,12 +120,12 @@ namespace nk {
     g->bounds = pan.bounds;
     return;
   }
-  NK_API bool
+  bool
   group_scrolled_begin(context* ctx,
                        scroll* scroll, const char* title, const flag flags) {
     return group_scrolled_offset_begin(ctx, &scroll->x, &scroll->y, title, flags);
   }
-  NK_API bool
+  bool
   group_begin_titled(context* ctx, const char* id,
                      const char* title, const flag flags) {
     unsigned int* y_offset;
@@ -155,15 +155,15 @@ namespace nk {
       y_offset = find_value(win, id_hash + 1);
     return group_scrolled_offset_begin(ctx, x_offset, y_offset, title, flags);
   }
-  NK_API bool
+  bool
   group_begin(context* ctx, const char* title, const flag flags) {
     return group_begin_titled(ctx, title, title, flags);
   }
-  NK_API void
+  void
   group_end(context* ctx) {
     group_scrolled_end(ctx);
   }
-  NK_API void
+  void
   group_get_scroll(context* ctx, const char* id, unsigned int* x_offset, unsigned int* y_offset) {
     unsigned int* y_offset_ptr;
 
@@ -195,7 +195,7 @@ namespace nk {
     if (y_offset)
       *y_offset = *y_offset_ptr;
   }
-  NK_API void
+  void
   group_set_scroll(context* ctx, const char* id, const unsigned int x_offset, const unsigned int y_offset) {
     unsigned int* y_offset_ptr;
 

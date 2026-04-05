@@ -11,7 +11,7 @@ namespace nk {
    * ===============================================================*/
 #ifndef NK_INV_SQRT
 #define NK_INV_SQRT inv_sqrt
-  NK_LIB float
+  float
   inv_sqrt(float n) {
     const float threehalfs = 1.5f;
     union {
@@ -26,7 +26,7 @@ namespace nk {
   }
 #endif
 #ifdef NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-  NK_API void
+  void
   draw_list_init(struct draw_list* list) {
     std::size_t i = 0;
     NK_ASSERT(list);
@@ -39,7 +39,7 @@ namespace nk {
       list->circle_vtx[i].y = std::sinf(a);
     }
   }
-  NK_API void
+  void
   draw_list_setup(struct draw_list* canvas, const struct convert_config* config,
                    memory_buffer* cmds, memory_buffer* vertices, memory_buffer* elements,
                   enum anti_aliasing line_aa, enum anti_aliasing shape_aa) {
@@ -66,7 +66,7 @@ namespace nk {
     canvas->cmd_count = 0;
     canvas->path_count = 0;
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_list_begin(const struct draw_list* canvas, const memory_buffer* buffer) {
     std::byte* memory;
     std::size_t offset;
@@ -81,7 +81,7 @@ namespace nk {
     cmd = ptr_add(const struct draw_command, memory, offset);
     return cmd;
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_list_end(const struct draw_list* canvas, const struct memory_buffer* buffer) {
     std::size_t size;
     std::size_t offset;
@@ -100,7 +100,7 @@ namespace nk {
     end -= (canvas->cmd_count - 1);
     return end;
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_list_next(const struct draw_command* cmd,
                   const memory_buffer* buffer, const struct draw_list* canvas) {
     const struct draw_command* end;
@@ -114,11 +114,11 @@ namespace nk {
       return 0;
     return (cmd - 1);
   }
-  INTERN vec2f*
+  vec2f*
   draw_list_alloc_path(struct draw_list* list, int count) {
     vec2f* points;
-    NK_STORAGE const std::size_t point_align = alignof(vec2f);
-    NK_STORAGE const std::size_t point_size = sizeof(vec2f);
+    const std::size_t point_align = alignof(vec2f);
+    const std::size_t point_size = sizeof(vec2f);
     points = (vec2f*)
         buffer_alloc(list->buffer, buffer_allocation_type::BUFFER_FRONT,
                      point_size * (std::size_t) count, point_align);
@@ -132,7 +132,7 @@ namespace nk {
     list->path_count += (unsigned int) count;
     return points;
   }
-  INTERN vec2f
+  vec2f
   draw_list_path_last(struct draw_list* list) {
     void* memory;
     vec2f* point;
@@ -142,11 +142,11 @@ namespace nk {
     point += (list->path_count - 1);
     return *point;
   }
-  INTERN struct draw_command*
+  struct draw_command*
   draw_list_push_command(struct draw_list* list, rectf clip,
                          resource_handle texture) {
-    NK_STORAGE const std::size_t cmd_align = alignof(struct draw_command);
-    NK_STORAGE const std::size_t cmd_size = sizeof(struct draw_command);
+    const std::size_t cmd_align = alignof(struct draw_command);
+    const std::size_t cmd_size = sizeof(struct draw_command);
     struct draw_command* cmd;
 
     NK_ASSERT(list);
@@ -173,7 +173,7 @@ namespace nk {
     list->clip_rect = clip;
     return cmd;
   }
-  INTERN struct draw_command*
+  struct draw_command*
   draw_list_command_last(struct draw_list* list) {
     void* memory;
     std::size_t size;
@@ -185,7 +185,7 @@ namespace nk {
     cmd = ptr_add(struct draw_command, memory, size - list->cmd_offset);
     return (cmd - (list->cmd_count - 1));
   }
-  INTERN void
+  void
   draw_list_add_clip(struct draw_list* list, rectf rect) {
     NK_ASSERT(list);
     if (!list)
@@ -199,7 +199,7 @@ namespace nk {
       draw_list_push_command(list, rect, prev->texture);
     }
   }
-  INTERN void
+  void
   draw_list_push_image(struct draw_list* list, resource_handle texture) {
     NK_ASSERT(list);
     if (!list)
@@ -223,12 +223,12 @@ namespace nk {
     }
   }
 #ifdef NK_INCLUDE_COMMAND_USERDATA
-  NK_API void
+  void
   draw_list_push_userdata(struct draw_list* list, resource_handle userdata) {
     list->userdata = userdata;
   }
 #endif
-  INTERN void*
+  void*
   draw_list_alloc_vertices(struct draw_list* list, std::size_t count) {
     void* vtx;
     NK_ASSERT(list);
@@ -254,12 +254,12 @@ namespace nk {
                  "To many vertices for 16-bit vertex indices. Please read comment above on how to solve this problem"));
     return vtx;
   }
-  INTERN draw_index*
+  draw_index*
   draw_list_alloc_elements(struct draw_list* list, std::size_t count) {
     draw_index* ids;
     struct draw_command* cmd;
-    NK_STORAGE const std::size_t elem_align = alignof(draw_index);
-    NK_STORAGE const std::size_t elem_size = sizeof(draw_index);
+    const std::size_t elem_align = alignof(draw_index);
+    const std::size_t elem_size = sizeof(draw_index);
     NK_ASSERT(list);
     if (!list)
       return 0;
@@ -273,13 +273,13 @@ namespace nk {
     cmd->elem_count += (unsigned int) count;
     return ids;
   }
-  INTERN int
+  int
   draw_vertex_layout_element_is_end_of_layout(
       const struct draw_vertex_layout_element* element) {
     return (element->attribute == NK_VERTEX_ATTRIBUTE_COUNT ||
             element->format == NK_FORMAT_COUNT);
   }
-  INTERN void
+  void
   draw_vertex_color(void* attr, const float* vals,
                     enum draw_vertex_layout_format format) {
     /* if this triggers you tried to provide a value format for a color */
@@ -357,7 +357,7 @@ namespace nk {
       } break;
     }
   }
-  INTERN void
+  void
   draw_vertex_element(void* dst, const float* values, int value_count,
                       enum draw_vertex_layout_format format) {
     int value_index;
@@ -413,7 +413,7 @@ namespace nk {
       }
     }
   }
-  INTERN void*
+  void*
   draw_vertex(void* dst, const struct convert_config* config,
               vec2f pos, vec2f uv, struct colorf color) {
     void* result = (void*) ((char*) dst + config->vertex_size);
@@ -439,7 +439,7 @@ namespace nk {
     }
     return result;
   }
-  NK_API void
+  void
   draw_list_stroke_poly_line(struct draw_list* list, const vec2f* points,
                              const unsigned int points_count, struct color color, enum draw_list_stroke closed,
                              float thickness, enum anti_aliasing aliasing) {
@@ -469,8 +469,8 @@ namespace nk {
     if (aliasing == NK_ANTI_ALIASING_ON) {
       /* ANTI-ALIASED STROKE */
       const float AA_SIZE = 1.0f;
-      NK_STORAGE const std::size_t pnt_align = alignof(vec2f);
-      NK_STORAGE const std::size_t pnt_size = sizeof(vec2f);
+      const std::size_t pnt_align = alignof(vec2f);
+      const std::size_t pnt_size = sizeof(vec2f);
 
       /* allocate vertices and elements  */
       std::size_t i1 = 0;
@@ -703,15 +703,15 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   draw_list_fill_poly_convex(struct draw_list* list,
                              const vec2f* points, const unsigned int points_count,
                              struct color color, enum anti_aliasing aliasing) {
     struct colorf col;
     struct colorf col_trans;
 
-    NK_STORAGE const std::size_t pnt_align = alignof(vec2f);
-    NK_STORAGE const std::size_t pnt_size = sizeof(vec2f);
+    const std::size_t pnt_align = alignof(vec2f);
+    const std::size_t pnt_size = sizeof(vec2f);
     NK_ASSERT(list);
     if (!list || points_count < 3)
       return;
@@ -831,7 +831,7 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   draw_list_path_clear(struct draw_list* list) {
     NK_ASSERT(list);
     if (!list)
@@ -840,7 +840,7 @@ namespace nk {
     list->path_count = 0;
     list->path_offset = 0;
   }
-  NK_API void
+  void
   draw_list_path_line_to(struct draw_list* list, vec2f pos) {
     vec2f* points = 0;
     struct draw_command* cmd = 0;
@@ -859,7 +859,7 @@ namespace nk {
       return;
     points[0] = pos;
   }
-  NK_API void
+  void
   draw_list_path_arc_to_fast(struct draw_list* list, vec2f center,
                              float radius, int a_min, int a_max) {
     int a = 0;
@@ -875,7 +875,7 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   draw_list_path_arc_to(struct draw_list* list, vec2f center,
                         float radius, float a_min, float a_max, unsigned int segments) {
     unsigned int i = 0;
@@ -923,7 +923,7 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   draw_list_path_rect_to(struct draw_list* list, vec2f a,
                          vec2f b, float rounding) {
     float r;
@@ -946,7 +946,7 @@ namespace nk {
       draw_list_path_arc_to_fast(list, vec2_from_floats(a.x + r, b.y - r), r, 3, 6);
     }
   }
-  NK_API void
+  void
   draw_list_path_curve_to(struct draw_list* list, vec2f p2,
                           vec2f p3, vec2f p4, unsigned int num_segments) {
     float t_step;
@@ -973,7 +973,7 @@ namespace nk {
       draw_list_path_line_to(list, vec2_from_floats(x, y));
     }
   }
-  NK_API void
+  void
   draw_list_path_fill(struct draw_list* list, struct color color) {
     vec2f* points;
     NK_ASSERT(list);
@@ -983,7 +983,7 @@ namespace nk {
     draw_list_fill_poly_convex(list, points, list->path_count, color, list->config.shape_AA);
     draw_list_path_clear(list);
   }
-  NK_API void
+  void
   draw_list_path_stroke(struct draw_list* list, struct color color,
                         enum draw_list_stroke closed, float thickness) {
     vec2f* points;
@@ -995,7 +995,7 @@ namespace nk {
                                closed, thickness, list->config.line_AA);
     draw_list_path_clear(list);
   }
-  NK_API void
+  void
   draw_list_stroke_line(struct draw_list* list, vec2f a,
                         vec2f b, struct color col, float thickness) {
     NK_ASSERT(list);
@@ -1010,7 +1010,7 @@ namespace nk {
     }
     draw_list_path_stroke(list, col, NK_STROKE_OPEN, thickness);
   }
-  NK_API void
+  void
   draw_list_fill_rect(struct draw_list* list, rectf rect,
                       struct color col, float rounding) {
     NK_ASSERT(list);
@@ -1026,7 +1026,7 @@ namespace nk {
     }
     draw_list_path_fill(list, col);
   }
-  NK_API void
+  void
   draw_list_stroke_rect(struct draw_list* list, rectf rect,
                         struct color col, float rounding, float thickness) {
     NK_ASSERT(list);
@@ -1041,7 +1041,7 @@ namespace nk {
     }
     draw_list_path_stroke(list, col, NK_STROKE_CLOSED, thickness);
   }
-  NK_API void
+  void
   draw_list_fill_rect_multi_color(struct draw_list* list, rectf rect,
                                   struct color left, struct color top, struct color right,
                                   struct color bottom) {
@@ -1079,7 +1079,7 @@ namespace nk {
     vtx = draw_vertex(vtx, &list->config, vec2_from_floats(rect.x + rect.w, rect.y + rect.h), list->config.tex_null.uv, col_right);
     vtx = draw_vertex(vtx, &list->config, vec2_from_floats(rect.x, rect.y + rect.h), list->config.tex_null.uv, col_bottom);
   }
-  NK_API void
+  void
   draw_list_fill_triangle(struct draw_list* list, vec2f a,
                           vec2f b, vec2f c, struct color col) {
     NK_ASSERT(list);
@@ -1090,7 +1090,7 @@ namespace nk {
     draw_list_path_line_to(list, c);
     draw_list_path_fill(list, col);
   }
-  NK_API void
+  void
   draw_list_stroke_triangle(struct draw_list* list, vec2f a,
                             vec2f b, vec2f c, struct color col, float thickness) {
     NK_ASSERT(list);
@@ -1101,7 +1101,7 @@ namespace nk {
     draw_list_path_line_to(list, c);
     draw_list_path_stroke(list, col, NK_STROKE_CLOSED, thickness);
   }
-  NK_API void
+  void
   draw_list_fill_circle(struct draw_list* list, vec2f center,
                         float radius, struct color col, unsigned int segs) {
     float a_max;
@@ -1112,7 +1112,7 @@ namespace nk {
     draw_list_path_arc_to(list, center, radius, 0.0f, a_max, segs);
     draw_list_path_fill(list, col);
   }
-  NK_API void
+  void
   draw_list_stroke_circle(struct draw_list* list, vec2f center,
                           float radius, struct color col, unsigned int segs, float thickness) {
     float a_max;
@@ -1123,7 +1123,7 @@ namespace nk {
     draw_list_path_arc_to(list, center, radius, 0.0f, a_max, segs);
     draw_list_path_stroke(list, col, NK_STROKE_CLOSED, thickness);
   }
-  NK_API void
+  void
   draw_list_stroke_curve(struct draw_list* list, vec2f p0,
                          vec2f cp0, vec2f cp1, vec2f p1,
                          struct color col, unsigned int segments, float thickness) {
@@ -1134,7 +1134,7 @@ namespace nk {
     draw_list_path_curve_to(list, cp0, cp1, p1, segments);
     draw_list_path_stroke(list, col, NK_STROKE_OPEN, thickness);
   }
-  INTERN void
+  void
   draw_list_push_rect_uv(struct draw_list* list, vec2f a,
                          vec2f c, vec2f uva, vec2f uvc,
                          struct color color) {
@@ -1175,7 +1175,7 @@ namespace nk {
     vtx = draw_vertex(vtx, &list->config, c, uvc, col);
     vtx = draw_vertex(vtx, &list->config, d, uvd, col);
   }
-  NK_API void
+  void
   draw_list_add_image(struct draw_list* list, struct image texture,
                       rectf rect, struct color color) {
     NK_ASSERT(list);
@@ -1197,7 +1197,7 @@ namespace nk {
                              vec2_from_floats(rect.x + rect.w, rect.y + rect.h),
                              vec2_from_floats(0.0f, 0.0f), vec2_from_floats(1.0f, 1.0f), color);
   }
-  NK_API void
+  void
   draw_list_add_text(struct draw_list* list, const struct user_font* font,
                      rectf rect, const char* text, int len, float font_height,
                      struct color fg) {
@@ -1251,7 +1251,7 @@ namespace nk {
       unicode = next;
     }
   }
-  NK_API flag
+  flag
   convert(struct context* ctx, memory_buffer* cmds,
           memory_buffer* vertices, memory_buffer* elements,
           const struct convert_config* config) {
@@ -1390,16 +1390,16 @@ namespace nk {
     res |= (elements->needed > elements->allocated) ? NK_CONVERT_ELEMENT_BUFFER_FULL : 0;
     return res;
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_begin(const struct context* ctx,
               const memory_buffer* buffer) {
     return _draw_list_begin(&ctx->draw_list, buffer);
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_end(const struct context* ctx, const memory_buffer* buffer) {
     return _draw_list_end(&ctx->draw_list, buffer);
   }
-  NK_API const struct draw_command*
+  const struct draw_command*
   _draw_next(const struct draw_command* cmd,
              const memory_buffer* buffer, const struct context* ctx) {
     return _draw_list_next(cmd, buffer, &ctx->draw_list);

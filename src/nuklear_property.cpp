@@ -10,7 +10,7 @@ namespace nk {
    * ===============================================================*/
 #ifndef NK_DTOA
 #define NK_DTOA dtoa
-  NK_LIB char*
+  char*
   dtoa(char* s, double n) {
     int useExp = 0;
     int digit = 0, m = 0, m1 = 0;
@@ -93,7 +93,7 @@ namespace nk {
   }
 #endif
 
-  NK_LIB void
+  void
   drag_behavior(flag* state, const input* in,
                 const rectf drag, property_variant* variant,
                 float inc_per_pixel) {
@@ -131,7 +131,7 @@ namespace nk {
     else if (input_is_mouse_prev_hovering_rect(in, drag))
       *state |= NK_WIDGET_STATE_LEFT;
   }
-  NK_LIB void
+  void
   property_behavior(flag* ws, const input* in,
                     const rectf property, const rectf label, const rectf edit,
                     const rectf empty, int* state, property_variant* variant,
@@ -151,7 +151,7 @@ namespace nk {
         *state = NK_PROPERTY_DEFAULT;
     }
   }
-  NK_LIB void
+  void
   draw_property(command_buffer* out, const style_property* style,
                 const rectf* bounds, const rectf* label, const flag state,
                 const char* name, const int len, const user_font* font) {
@@ -195,7 +195,7 @@ namespace nk {
       widget_text(out, *label, name, len, &text, NK_TEXT_CENTERED, font);
     }
   }
-  NK_LIB void
+  void
   do_property(flag* ws,
               command_buffer* out, const rectf property,
               const char* name, property_variant* variant,
@@ -383,7 +383,7 @@ namespace nk {
       }
     }
   }
-  NK_LIB property_variant
+  property_variant
   property_variant_int(const int value, const int min_value, const int max_value, const int step) {
     property_variant result;
     result.kind = NK_PROPERTY_INT;
@@ -393,7 +393,7 @@ namespace nk {
     result.step.i = step;
     return result;
   }
-  NK_LIB property_variant
+  property_variant
   property_variant_float(float value, float min_value, float max_value, float step) {
     property_variant result;
     result.kind = NK_PROPERTY_FLOAT;
@@ -403,7 +403,7 @@ namespace nk {
     result.step.f = step;
     return result;
   }
-  NK_LIB property_variant
+  property_variant
   property_variant_double(const double value, const double min_value, const double max_value,
                           const double step) {
     property_variant result;
@@ -414,7 +414,7 @@ namespace nk {
     result.step.d = step;
     return result;
   }
-  NK_LIB void
+  void
   property(context* ctx, const char* name, property_variant* variant,
            float inc_per_pixel, const property_filter filter) {
 
@@ -511,7 +511,7 @@ namespace nk {
       win->property.active = 0;
     }
   }
-  NK_API void
+  void
   property_int(context* ctx, const char* name,
                const int min, int* val, const int max, const int step, float inc_per_pixel) {
     property_variant variant;
@@ -525,7 +525,7 @@ namespace nk {
     property(ctx, name, &variant, inc_per_pixel, NK_FILTER_INT);
     *val = variant.value.i;
   }
-  NK_API void
+  void
   property_float(context* ctx, const char* name,
                  float min, float* val, float max, float step, float inc_per_pixel) {
     property_variant variant;
@@ -539,7 +539,7 @@ namespace nk {
     property(ctx, name, &variant, inc_per_pixel, NK_FILTER_FLOAT);
     *val = variant.value.f;
   }
-  NK_API void
+  void
   property_double(context* ctx, const char* name,
                   const double min, double* val, const double max, const double step, float inc_per_pixel) {
     property_variant variant;
@@ -553,7 +553,7 @@ namespace nk {
     property(ctx, name, &variant, inc_per_pixel, NK_FILTER_FLOAT);
     *val = variant.value.d;
   }
-  NK_API int
+  int
   propertyi(context* ctx, const char* name, const int min, int val,
             const int max, const int step, float inc_per_pixel) {
     property_variant variant;
@@ -567,7 +567,7 @@ namespace nk {
     val = variant.value.i;
     return val;
   }
-  NK_API float
+  float
   propertyf(context* ctx, const char* name, float min,
             float val, float max, float step, float inc_per_pixel) {
     property_variant variant;
@@ -581,7 +581,7 @@ namespace nk {
     val = variant.value.f;
     return val;
   }
-  NK_API double
+  double
   propertyd(context* ctx, const char* name, const double min,
             double val, const double max, const double step, float inc_per_pixel) {
     property_variant variant;

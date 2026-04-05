@@ -6,7 +6,7 @@ namespace nk {
    *                          PAGE ELEMENT
    *
    * ===============================================================*/
-  NK_LIB page_element*
+  page_element*
   create_page_element(context* ctx) {
     page_element* elem;
     if (ctx->freelist) {
@@ -21,8 +21,8 @@ namespace nk {
         return 0;
     } else {
       /* allocate new page element from back of fixed size memory buffer */
-      NK_STORAGE const std::size_t size = sizeof(struct page_element);
-      NK_STORAGE const std::size_t align = alignof(struct page_element);
+      const std::size_t size = sizeof(struct page_element);
+      const std::size_t align = alignof(struct page_element);
       elem = (page_element*) buffer_alloc(&ctx->memory, buffer_allocation_type::BUFFER_BACK, size, align);
       NK_ASSERT(elem);
       if (!elem)
@@ -33,7 +33,7 @@ namespace nk {
     elem->prev = 0;
     return elem;
   }
-  NK_LIB void
+  void
   lipage_element_into_freelist(context* ctx,
                                page_element* elem) {
     /* link table into freelist */
@@ -44,7 +44,7 @@ namespace nk {
       ctx->freelist = elem;
     }
   }
-  NK_LIB void
+  void
   free_page_element(context* ctx, page_element* elem) {
     /* we have a pool so just add to free list */
     if (ctx->use_pool) {

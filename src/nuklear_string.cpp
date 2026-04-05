@@ -9,7 +9,7 @@ namespace nk {
    *
    * ===============================================================*/
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API void
+  void
   str_init_default(struct str* str) {
     struct allocator alloc;
     alloc.userdata.ptr = 0;
@@ -20,17 +20,17 @@ namespace nk {
   }
 #endif
 
-  NK_API void
+  void
   str_init(str* str, const allocator* alloc, const std::size_t size) {
     buffer_init(&str->buffer, alloc, size);
     str->len = 0;
   }
-  NK_API void
+  void
   str_init_fixed(str* str, void* memory, const std::size_t size) {
     buffer_init_fixed(&str->buffer, memory, size);
     str->len = 0;
   }
-  NK_API int
+  int
   str_append_text_char(str* s, const char* str, const int len) {
     NK_ASSERT(s);
     NK_ASSERT(str);
@@ -43,11 +43,11 @@ namespace nk {
     s->len += utf_len(str, len);
     return len;
   }
-  NK_API int
+  int
   str_append_str_char(str* s, const char* str) {
     return str_append_text_char(s, str, strlen(str));
   }
-  NK_API int
+  int
   str_append_text_utf8(str* str, const char* text, const int len) {
     int i = 0;
     int byte_len = 0;
@@ -59,7 +59,7 @@ namespace nk {
     str_append_text_char(str, text, byte_len);
     return len;
   }
-  NK_API int
+  int
   str_append_str_utf8(str* str, const char* text) {
     int byte_len = 0;
     int num_runes = 0;
@@ -77,7 +77,7 @@ namespace nk {
     str_append_text_char(str, text, byte_len);
     return num_runes;
   }
-  NK_API int
+  int
   str_append_text_runes(str* str, const rune* text, const int len) {
     int i = 0;
     int byte_len = 0;
@@ -94,7 +94,7 @@ namespace nk {
     }
     return len;
   }
-  NK_API int
+  int
   str_append_str_runes(str* str, const rune* runes) {
     int i = 0;
     glyph glyph;
@@ -108,7 +108,7 @@ namespace nk {
     }
     return i;
   }
-  NK_API int
+  int
   str_insert_at_char(str* s, const int pos, const char* str, const int len) {
 
     NK_ASSERT(s);
@@ -141,7 +141,7 @@ namespace nk {
     s->len = utf_len((char*) s->buffer.memory.ptr, (int) s->buffer.allocated);
     return 1;
   }
-  NK_API int
+  int
   str_insert_at_rune(str* str, const int pos, const char* cstr, const int len) {
     int glyph_len;
     rune unicode;
@@ -159,15 +159,15 @@ namespace nk {
       return 0;
     return str_insert_at_char(str, (int) (begin - buffer), cstr, len);
   }
-  NK_API int
+  int
   str_insert_text_char(str* str, const int pos, const char* text, const int len) {
     return str_insert_text_utf8(str, pos, text, len);
   }
-  NK_API int
+  int
   str_insert_str_char(str* str, const int pos, const char* text) {
     return str_insert_text_utf8(str, pos, text, strlen(text));
   }
-  NK_API int
+  int
   str_insert_text_utf8(str* str, const int pos, const char* text, const int len) {
     int i = 0;
     int byte_len = 0;
@@ -182,7 +182,7 @@ namespace nk {
     str_insert_at_rune(str, pos, text, byte_len);
     return len;
   }
-  NK_API int
+  int
   str_insert_str_utf8(str* str, const int pos, const char* text) {
     int byte_len = 0;
     int num_runes = 0;
@@ -200,7 +200,7 @@ namespace nk {
     str_insert_at_rune(str, pos, text, byte_len);
     return num_runes;
   }
-  NK_API int
+  int
   str_insert_text_runes(str* str, const int pos, const rune* runes, const int len) {
     int i = 0;
     int byte_len = 0;
@@ -217,7 +217,7 @@ namespace nk {
     }
     return len;
   }
-  NK_API int
+  int
   str_insert_str_runes(str* str, const int pos, const rune* runes) {
     int i = 0;
     glyph glyph;
@@ -231,7 +231,7 @@ namespace nk {
     }
     return i;
   }
-  NK_API void
+  void
   str_remove_chars(str* s, const int len) {
     NK_ASSERT(s);
     NK_ASSERT(len >= 0);
@@ -241,7 +241,7 @@ namespace nk {
     s->buffer.allocated -= (std::size_t) len;
     s->len = utf_len((char*) s->buffer.memory.ptr, (int) s->buffer.allocated);
   }
-  NK_API void
+  void
   str_remove_runes(str* str, int len) {
     rune unicode;
 
@@ -259,7 +259,7 @@ namespace nk {
     const char* end = (const char*) str->buffer.memory.ptr + str->buffer.allocated;
     str_remove_chars(str, (int) (end - begin) + 1);
   }
-  NK_API void
+  void
   str_delete_chars(str* s, const int pos, const int len) {
     NK_ASSERT(s);
     if (!s || !len || (std::size_t) pos > s->buffer.allocated ||
@@ -277,7 +277,7 @@ namespace nk {
       str_remove_chars(s, len);
     s->len = utf_len((char*) s->buffer.memory.ptr, (int) s->buffer.allocated);
   }
-  NK_API void
+  void
   str_delete_runes(str* s, const int pos, int len) {
     rune unicode;
     int unused;
@@ -300,14 +300,14 @@ namespace nk {
       return;
     str_delete_chars(s, (int) (begin - temp), (int) (end - begin));
   }
-  NK_API char*
+  char*
   str_at_char(str* s, const int pos) {
     NK_ASSERT(s);
     if (!s || pos > (int) s->buffer.allocated)
       return 0;
     return ptr_add(char, s->buffer.memory.ptr, pos);
   }
-  NK_API char*
+  char*
   str_at_rune(str* str, const int pos, rune* unicode, int* len) {
     int i = 0;
     int src_len = 0;
@@ -342,14 +342,14 @@ namespace nk {
       return 0;
     return text + src_len;
   }
-  NK_API const char*
+  const char*
   str_at_char_const(const str* s, const int pos) {
     NK_ASSERT(s);
     if (!s || pos > (int) s->buffer.allocated)
       return 0;
     return ptr_add(char, s->buffer.memory.ptr, pos);
   }
-  NK_API const char*
+  const char*
   str_at_const(const str* str, const int pos, rune* unicode, int* len) {
     int i = 0;
     int src_len = 0;
@@ -384,48 +384,48 @@ namespace nk {
       return 0;
     return text + src_len;
   }
-  NK_API rune
+  rune
   str_rune_at(const str* str, const int pos) {
     int len;
     rune unicode = 0;
     str_at_const(str, pos, &unicode, &len);
     return unicode;
   }
-  NK_API char*
+  char*
   str_get(str* s) {
     NK_ASSERT(s);
     if (!s || !s->len || !s->buffer.allocated)
       return 0;
     return (char*) s->buffer.memory.ptr;
   }
-  NK_API const char*
+  const char*
   str_get_const(const str* s) {
     NK_ASSERT(s);
     if (!s || !s->len || !s->buffer.allocated)
       return 0;
     return (const char*) s->buffer.memory.ptr;
   }
-  NK_API int
+  int
   str_len(const str* s) {
     NK_ASSERT(s);
     if (!s || !s->len || !s->buffer.allocated)
       return 0;
     return s->len;
   }
-  NK_API int
+  int
   str_len_char(const str* s) {
     NK_ASSERT(s);
     if (!s || !s->len || !s->buffer.allocated)
       return 0;
     return (int) s->buffer.allocated;
   }
-  NK_API void
+  void
   str_clear(str* str) {
     NK_ASSERT(str);
     buffer_clear(&str->buffer);
     str->len = 0;
   }
-  NK_API void
+  void
   str_free(str* str) {
     NK_ASSERT(str);
     buffer_free(&str->buffer);

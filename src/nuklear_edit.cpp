@@ -6,13 +6,13 @@ namespace nk {
    *                          FILTER
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   filter_default(const text_edit* box, const rune unicode) {
     NK_UNUSED(unicode);
     NK_UNUSED(box);
     return true;
   }
-  NK_API bool
+  bool
   filter_ascii(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode > 128)
@@ -20,7 +20,7 @@ namespace nk {
     else
       return true;
   }
-  NK_API bool
+  bool
   filter_float(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') && unicode != '.' && unicode != '-')
@@ -28,7 +28,7 @@ namespace nk {
     else
       return true;
   }
-  NK_API bool
+  bool
   filter_decimal(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') && unicode != '-')
@@ -36,7 +36,7 @@ namespace nk {
     else
       return true;
   }
-  NK_API bool
+  bool
   filter_hex(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if ((unicode < '0' || unicode > '9') &&
@@ -46,7 +46,7 @@ namespace nk {
     else
       return true;
   }
-  NK_API bool
+  bool
   filter_oct(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode < '0' || unicode > '7')
@@ -54,7 +54,7 @@ namespace nk {
     else
       return true;
   }
-  NK_API bool
+  bool
   filter_binary(const text_edit* box, const rune unicode) {
     NK_UNUSED(box);
     if (unicode != '0' && unicode != '1')
@@ -68,7 +68,7 @@ namespace nk {
    *                          EDIT
    *
    * ===============================================================*/
-  NK_LIB void
+  void
   edit_draw_text(command_buffer* out,
                  const style_edit* style, float pos_x, float pos_y,
                  float x_offset, const char* text, const int byte_len, float row_height,
@@ -152,7 +152,7 @@ namespace nk {
       }
     }
   }
-  NK_LIB flag
+  flag
   do_edit(flag* state, command_buffer* out,
           rectf bounds, flag flags, plugin_filter filter,
           text_edit* edit, const style_edit* style,
@@ -683,7 +683,7 @@ namespace nk {
     }
     return ret;
   }
-  NK_API void
+  void
   edit_focus(context* ctx, const flag flags) {
 
     NK_ASSERT(ctx);
@@ -698,7 +698,7 @@ namespace nk {
     if (flags & edit_flags::EDIT_ALWAYS_INSERT_MODE)
       win->edit.mode = static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_INSERT);
   }
-  NK_API void
+  void
   edit_unfocus(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -709,7 +709,7 @@ namespace nk {
     win->edit.active = false;
     win->edit.name = 0;
   }
-  NK_API flag
+  flag
   edit_string(context* ctx, const flag flags,
               char* memory, int* len, int max, plugin_filter filter) {
 
@@ -762,7 +762,7 @@ namespace nk {
     }
     return state;
   }
-  NK_API flag
+  flag
   edit_buffer(context* ctx, flag flags,
               text_edit* edit, plugin_filter filter) {
 
@@ -821,7 +821,7 @@ namespace nk {
     }
     return ret_flags;
   }
-  NK_API flag
+  flag
   edit_string_zero_terminated(context* ctx, const flag flags,
                               char* buffer, const int max, const plugin_filter filter) {
     int len = strlen(buffer);

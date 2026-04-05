@@ -41,32 +41,32 @@ namespace nk {
    * memory in this library.
    */
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API void buffer_init_default(memory_buffer*);
+  void buffer_init_default(memory_buffer*);
 #endif
-  NK_API void buffer_init(memory_buffer*, const allocator*, std::size_t initial_size);
-  NK_API void buffer_init_fixed(memory_buffer*, void* memory, std::size_t size);
-  NK_API void buffer_info(memory_status*, const memory_buffer*);
-  NK_API void buffer_push(memory_buffer*, buffer_allocation_type type, const void* memory, std::size_t size, std::size_t align);
-  NK_API void buffer_mark(memory_buffer*, buffer_allocation_type type);
-  NK_API void buffer_reset(memory_buffer*, buffer_allocation_type type);
-  NK_API void buffer_clear(memory_buffer*);
-  NK_API void buffer_free(memory_buffer*);
-  NK_API void* buffer_memory(const memory_buffer*);
-  NK_API const void* buffer_memory_const(const memory_buffer*);
-  NK_API std::size_t buffer_total(const memory_buffer*);
+  void buffer_init(memory_buffer*, const allocator*, std::size_t initial_size);
+  void buffer_init_fixed(memory_buffer*, void* memory, std::size_t size);
+  void buffer_info(memory_status*, const memory_buffer*);
+  void buffer_push(memory_buffer*, buffer_allocation_type type, const void* memory, std::size_t size, std::size_t align);
+  void buffer_mark(memory_buffer*, buffer_allocation_type type);
+  void buffer_reset(memory_buffer*, buffer_allocation_type type);
+  void buffer_clear(memory_buffer*);
+  void buffer_free(memory_buffer*);
+  void* buffer_memory(const memory_buffer*);
+  const void* buffer_memory_const(const memory_buffer*);
+  std::size_t buffer_total(const memory_buffer*);
 
 #ifndef NK_MEMCPY
-  NK_LIB void* memcopy(void* dst, const void* src, std::size_t n);
+  void* memcopy(void* dst, const void* src, std::size_t n);
 #endif
 #ifndef NK_MEMSET
-  NK_LIB void memset(void* ptr, int c0, std::size_t size);
+  void memset(void* ptr, int c0, std::size_t size);
 #endif
 
   /* pool */
-  NK_LIB void pool_init(pool* pool, const allocator* alloc, unsigned int capacity);
-  NK_LIB void pool_free(pool* pool);
-  NK_LIB void pool_init_fixed(pool* pool, void* memory, std::size_t size);
-  NK_LIB page_element* pool_alloc(pool* pool);
+  void pool_init(pool* pool, const allocator* alloc, unsigned int capacity);
+  void pool_free(pool* pool);
+  void pool_init_fixed(pool* pool, void* memory, std::size_t size);
+  page_element* pool_alloc(pool* pool);
 
 
 }

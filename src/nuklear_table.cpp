@@ -6,7 +6,7 @@ namespace nk {
    *                              TABLE
    *
    * ===============================================================*/
-  NK_LIB table*
+  table*
   create_table(context* ctx) {
     page_element* elem = create_page_element(ctx);
     if (!elem)
@@ -14,13 +14,13 @@ namespace nk {
     zero_struct(*elem);
     return &elem->data.tbl;
   }
-  NK_LIB void
+  void
   free_table(context* ctx, table* tbl) {
     page_data* pd = NK_CONTAINER_OF(tbl, union page_data, tbl);
     page_element* pe = NK_CONTAINER_OF(pd, struct page_element, data);
     free_page_element(ctx, pe);
   }
-  NK_LIB void
+  void
   push_table(window* win, table* tbl) {
     if (!win->tables) {
       win->tables = tbl;
@@ -37,7 +37,7 @@ namespace nk {
     win->tables = tbl;
     win->table_count++;
   }
-  NK_LIB void
+  void
   remove_table(window* win, table* tbl) {
     if (win->tables == tbl)
       win->tables = tbl->next;
@@ -48,7 +48,7 @@ namespace nk {
     tbl->next = 0;
     tbl->prev = 0;
   }
-  NK_LIB unsigned int*
+  unsigned int*
   add_value(context* ctx, window* win,
             const hash name, const unsigned int value) {
     NK_ASSERT(ctx);
@@ -67,7 +67,7 @@ namespace nk {
     win->tables->values[win->tables->size] = value;
     return &win->tables->values[win->tables->size++];
   }
-  NK_LIB unsigned int*
+  unsigned int*
   find_value(const window* win, const hash name) {
     table* iter = win->tables;
     while (iter) {

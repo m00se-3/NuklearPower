@@ -1,4 +1,5 @@
 #include <cstring>
+#include <string>
 #include <nk/nuklear.hpp>
 
 namespace nk {
@@ -8,20 +9,20 @@ namespace nk {
    *
    * ===============================================================*/
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_LIB void*
+  void*
   malloc(resource_handle unused, void* old, std::size_t size) {
     NK_UNUSED(unused);
     NK_UNUSED(old);
     return std::malloc(size);
   }
-  NK_LIB void
+  void
   free(resource_handle unused, void* ptr) {
     NK_UNUSED(unused);
     std::free(ptr);
   }
-  NK_API void
+  void
   buffer_init_default(memory_buffer* buffer) {
-    struct allocator alloc;
+    allocator alloc;
     alloc.userdata.ptr = 0;
     alloc.alloc = malloc;
     alloc.free = mfree;
@@ -29,7 +30,7 @@ namespace nk {
   }
 #endif
 
-  NK_API void
+  void
   buffer_init(memory_buffer* b, const allocator* a,
               const std::size_t initial_size) {
     NK_ASSERT(b);
@@ -46,7 +47,7 @@ namespace nk {
     b->grow_factor = 2.0f;
     b->pool = *a;
   }
-  NK_API void
+  void
   buffer_init_fixed(memory_buffer* b, void* memory, const std::size_t size) {
     NK_ASSERT(b);
     NK_ASSERT(memory);
@@ -60,7 +61,7 @@ namespace nk {
     b->memory.size = size;
     b->size = size;
   }
-  NK_LIB void*
+  void*
   buffer_align(void* unaligned,
                const std::size_t align, std::size_t* alignment,
                const buffer_allocation_type type) {
@@ -89,7 +90,7 @@ namespace nk {
     }
     return memory;
   }
-  NK_LIB void*
+  void*
   buffer_realloc(memory_buffer* b, const std::size_t capacity, std::size_t* size) {
     void* temp = nullptr;
 
@@ -124,7 +125,7 @@ namespace nk {
     }
     return temp;
   }
-  NK_LIB void*
+  void*
   buffer_alloc(memory_buffer* b, const buffer_allocation_type type,
                const std::size_t size, const std::size_t align) {
     int full;
@@ -180,7 +181,7 @@ namespace nk {
     b->calls++;
     return memory;
   }
-  NK_API void
+  void
   buffer_push(memory_buffer* b, const buffer_allocation_type type,
               const void* memory, const std::size_t size, const std::size_t align) {
     void* mem = buffer_alloc(b, type, size, align);
@@ -188,7 +189,7 @@ namespace nk {
       return;
     std::memcpy(mem, memory, size);
   }
-  NK_API void
+  void
   buffer_mark(memory_buffer* buffer, buffer_allocation_type type) {
     NK_ASSERT(buffer);
     if (!buffer)
@@ -199,7 +200,7 @@ namespace nk {
     else
       buffer->marker[static_cast<unsigned>(type)].offset = buffer->allocated;
   }
-  NK_API void
+  void
   buffer_reset(memory_buffer* buffer, buffer_allocation_type type) {
     NK_ASSERT(buffer);
     if (!buffer)
@@ -222,7 +223,7 @@ namespace nk {
       buffer->marker[static_cast<unsigned>(type)].active = false;
     }
   }
-  NK_API void
+  void
   buffer_clear(memory_buffer* b) {
     NK_ASSERT(b);
     if (!b)
@@ -232,7 +233,7 @@ namespace nk {
     b->calls = 0;
     b->needed = 0;
   }
-  NK_API void
+  void
   buffer_free(memory_buffer* b) {
     NK_ASSERT(b);
     if (!b || !b->memory.ptr)
@@ -244,7 +245,7 @@ namespace nk {
     NK_ASSERT(b->pool.free);
     b->pool.free(b->pool.userdata, b->memory.ptr);
   }
-  NK_API void
+  void
   buffer_info(memory_status* s, const memory_buffer* b) {
     NK_ASSERT(b);
     NK_ASSERT(s);
@@ -256,21 +257,21 @@ namespace nk {
     s->memory = b->memory.ptr;
     s->calls = b->calls;
   }
-  NK_API void*
+  void*
   buffer_memory(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)
       return 0;
     return buffer->memory.ptr;
   }
-  NK_API const void*
+  const void*
   buffer_memory_const(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)
       return 0;
     return buffer->memory.ptr;
   }
-  NK_API std::size_t
+  std::size_t
   buffer_total(const memory_buffer* buffer) {
     NK_ASSERT(buffer);
     if (!buffer)

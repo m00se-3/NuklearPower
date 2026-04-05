@@ -7,7 +7,7 @@ namespace nk {
    *                              SCROLLBAR
    *
    * ===============================================================*/
-  NK_LIB float
+  float
   scrollbar_behavior(flag* state, input* in,
                      const int has_scrolling, const rectf* scroll,
                      const rectf* cursor, const rectf* empty0,
@@ -82,7 +82,7 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return scroll_offset;
   }
-  NK_LIB void
+  void
   draw_scrollbar(command_buffer* out, const flag state,
                  const style_scrollbar* style, const rectf* bounds,
                  const rectf* scroll) {
@@ -129,7 +129,7 @@ namespace nk {
         break;
     }
   }
-  NK_LIB float
+  float
   do_scrollbarv(flag* state,
                 command_buffer* out, rectf scroll, const int has_scrolling,
                 float offset, float target, float step, float button_pixel_inc,
@@ -217,7 +217,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return scroll_offset;
   }
-  NK_LIB float
+  float
   do_scrollbarh(flag* state,
                 command_buffer* out, rectf scroll, const int has_scrolling,
                 float offset, float target, float step, float button_pixel_inc,

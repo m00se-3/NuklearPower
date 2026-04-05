@@ -6,7 +6,7 @@ namespace nk {
    *                              WIDGET
    *
    * ===============================================================*/
-  NK_API rectf
+  rectf
   widget_bounds(const context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
@@ -16,7 +16,7 @@ namespace nk {
     layout_peek(&bounds, ctx);
     return bounds;
   }
-  NK_API vec2f
+  vec2f
   widget_position(const context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
@@ -27,7 +27,7 @@ namespace nk {
     layout_peek(&bounds, ctx);
     return vec2_from_floats(bounds.x, bounds.y);
   }
-  NK_API vec2f
+  vec2f
   widget_size(const context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
@@ -38,7 +38,7 @@ namespace nk {
     layout_peek(&bounds, ctx);
     return vec2_from_floats(bounds.w, bounds.h);
   }
-  NK_API float
+  float
   widget_width(const context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
@@ -49,7 +49,7 @@ namespace nk {
     layout_peek(&bounds, ctx);
     return bounds.w;
   }
-  NK_API float
+  float
   widget_height(const context* ctx) {
     rectf bounds;
     NK_ASSERT(ctx);
@@ -60,7 +60,7 @@ namespace nk {
     layout_peek(&bounds, ctx);
     return bounds.h;
   }
-  NK_API bool
+  bool
   widget_is_hovered(const context* ctx) {
     rectf v;
     rectf bounds;
@@ -81,7 +81,7 @@ namespace nk {
       return 0;
     return input_is_mouse_hovering_rect(&ctx->input, bounds);
   }
-  NK_API bool
+  bool
   widget_is_mouse_clicked(const context* ctx, const buttons btn) {
     rectf v;
     rectf bounds;
@@ -102,7 +102,7 @@ namespace nk {
       return 0;
     return input_mouse_clicked(&ctx->input, btn, bounds);
   }
-  NK_API bool
+  bool
   widget_has_mouse_click_down(const context* ctx, const buttons btn, const bool down) {
     rectf v;
     rectf bounds;
@@ -123,7 +123,7 @@ namespace nk {
       return 0;
     return input_has_mouse_click_down_in_rect(&ctx->input, btn, bounds, down);
   }
-  NK_API widget_layout_states
+  widget_layout_states
   widget(rectf* bounds, const context* ctx) {
     rectf v;
 
@@ -169,7 +169,7 @@ namespace nk {
       return NK_WIDGET_ROM;
     return NK_WIDGET_VALID;
   }
-  NK_API widget_layout_states
+  widget_layout_states
   widget_fitting(rectf* bounds, const context* ctx,
                  const vec2f item_padding) {
     /* update the bounds to stand without padding  */
@@ -184,7 +184,7 @@ namespace nk {
     const widget_layout_states state = widget(bounds, ctx);
     return state;
   }
-  NK_API void
+  void
   spacing(context* ctx, int cols) {
     rectf none;
     int i;
@@ -213,7 +213,7 @@ namespace nk {
     }
     layout->row.index = index;
   }
-  NK_API void
+  void
   widget_disable_begin(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -273,7 +273,7 @@ namespace nk {
     style->tab.tab_minimize_button.color_factor_background = style->tab.tab_minimize_button.disabled_factor;
     style->text.color_factor = style->text.disabled_factor;
   }
-  NK_API void
+  void
   widget_disable_end(context* ctx) {
 
     NK_ASSERT(ctx);

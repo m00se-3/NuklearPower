@@ -238,29 +238,29 @@ namespace nk {
 
 
   /** shape outlines */
-  NK_API void stroke_line(command_buffer* b, float x0, float y0, float x1, float y1, float line_thickness, color);
-  NK_API void stroke_curve(command_buffer*, float, float, float, float, float, float, float, float, float line_thickness, color);
-  NK_API void stroke_rect(command_buffer*, rectf, float rounding, float line_thickness, color);
-  NK_API void stroke_circle(command_buffer*, rectf, float line_thickness, color);
-  NK_API void stroke_arc(command_buffer*, float cx, float cy, float radius, float a_min, float a_max, float line_thickness, color);
-  NK_API void stroke_triangle(command_buffer*, float, float, float, float, float, float, float line_thichness, color);
-  NK_API void stroke_polyline(command_buffer*, const float* points, int point_count, float line_thickness, color col);
-  NK_API void stroke_polygon(command_buffer*, const float* points, int point_count, float line_thickness, color);
+  void stroke_line(command_buffer* b, float x0, float y0, float x1, float y1, float line_thickness, color);
+  void stroke_curve(command_buffer*, float, float, float, float, float, float, float, float, float line_thickness, color);
+  void stroke_rect(command_buffer*, rectf, float rounding, float line_thickness, color);
+  void stroke_circle(command_buffer*, rectf, float line_thickness, color);
+  void stroke_arc(command_buffer*, float cx, float cy, float radius, float a_min, float a_max, float line_thickness, color);
+  void stroke_triangle(command_buffer*, float, float, float, float, float, float, float line_thichness, color);
+  void stroke_polyline(command_buffer*, const float* points, int point_count, float line_thickness, color col);
+  void stroke_polygon(command_buffer*, const float* points, int point_count, float line_thickness, color);
 
   /** filled shades */
-  NK_API void fill_rect(command_buffer*, rectf, float rounding, color);
-  NK_API void fill_rect_multi_color(command_buffer*, rectf, color left, color top, color right, color bottom);
-  NK_API void fill_circle(command_buffer*, rectf, color);
-  NK_API void fill_arc(command_buffer*, float cx, float cy, float radius, float a_min, float a_max, color);
-  NK_API void fill_triangle(command_buffer*, float x0, float y0, float x1, float y1, float x2, float y2, color);
-  NK_API void fill_polygon(command_buffer*, const float* points, int point_count, color);
+  void fill_rect(command_buffer*, rectf, float rounding, color);
+  void fill_rect_multi_color(command_buffer*, rectf, color left, color top, color right, color bottom);
+  void fill_circle(command_buffer*, rectf, color);
+  void fill_arc(command_buffer*, float cx, float cy, float radius, float a_min, float a_max, color);
+  void fill_triangle(command_buffer*, float x0, float y0, float x1, float y1, float x2, float y2, color);
+  void fill_polygon(command_buffer*, const float* points, int point_count, color);
 
   /** misc */
-  NK_API void draw_image(command_buffer*, rectf, const struct image*, color);
-  NK_API void draw_nine_slice(command_buffer*, rectf, const nine_slice*, color);
-  NK_API void draw_text(command_buffer*, rectf, const char* text, int len, const user_font*, color, color);
-  NK_API void push_scissor(command_buffer*, rectf);
-  NK_API void push_custom(command_buffer*, rectf, command_custom_callback, resource_handle usr);
+  void draw_image(command_buffer*, rectf, const struct image*, color);
+  void draw_nine_slice(command_buffer*, rectf, const nine_slice*, color);
+  void draw_text(command_buffer*, rectf, const char* text, int len, const user_font*, color, color);
+  void push_scissor(command_buffer*, rectf);
+  void push_custom(command_buffer*, rectf, command_custom_callback, resource_handle usr);
 
 }
 

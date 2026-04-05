@@ -75,45 +75,45 @@ namespace nk {
 #define NK_VERTEX_LAYOUT_END NK_VERTEX_ATTRIBUTE_COUNT, NK_FORMAT_COUNT, 0
 
   /* draw list */
-  NK_API void draw_list_init(struct draw_list*);
-  NK_API void draw_list_setup(struct draw_list*, const struct convert_config*, struct buffer* cmds, struct buffer* vertices, struct buffer* elements, enum anti_aliasing line_aa, enum anti_aliasing shape_aa);
+  void draw_list_init(struct draw_list*);
+  void draw_list_setup(struct draw_list*, const struct convert_config*, struct buffer* cmds, struct buffer* vertices, struct buffer* elements, enum anti_aliasing line_aa, enum anti_aliasing shape_aa);
 
   /* drawing */
 #define draw_list_foreach(cmd, can, b) for ((cmd) = _draw_list_begin(can, b); (cmd) != 0; (cmd) = _draw_list_next(cmd, b, can))
-  NK_API const struct draw_command* _draw_list_begin(const struct draw_list*, const struct buffer*);
-  NK_API const struct draw_command* _draw_list_next(const struct draw_command*, const struct buffer*, const struct draw_list*);
-  NK_API const struct draw_command* _draw_list_end(const struct draw_list*, const struct buffer*);
+  const struct draw_command* _draw_list_begin(const struct draw_list*, const struct buffer*);
+  const struct draw_command* _draw_list_next(const struct draw_command*, const struct buffer*, const struct draw_list*);
+  const struct draw_command* _draw_list_end(const struct draw_list*, const struct buffer*);
 
   /* path */
-  NK_API void draw_list_path_clear(struct draw_list*);
-  NK_API void draw_list_path_line_to(struct draw_list*, struct vec2 pos);
-  NK_API void draw_list_path_arc_to_fast(struct draw_list*, struct vec2 center, float radius, int a_min, int a_max);
-  NK_API void draw_list_path_arc_to(struct draw_list*, struct vec2 center, float radius, float a_min, float a_max, unsigned int segments);
-  NK_API void draw_list_path_rect_to(struct draw_list*, struct vec2 a, struct vec2 b, float rounding);
-  NK_API void draw_list_path_curve_to(struct draw_list*, struct vec2 p2, struct vec2 p3, struct vec2 p4, unsigned int num_segments);
-  NK_API void draw_list_path_fill(struct draw_list*, struct color);
-  NK_API void draw_list_path_stroke(struct draw_list*, struct color, enum draw_list_stroke closed, float thickness);
+  void draw_list_path_clear(struct draw_list*);
+  void draw_list_path_line_to(struct draw_list*, struct vec2 pos);
+  void draw_list_path_arc_to_fast(struct draw_list*, struct vec2 center, float radius, int a_min, int a_max);
+  void draw_list_path_arc_to(struct draw_list*, struct vec2 center, float radius, float a_min, float a_max, unsigned int segments);
+  void draw_list_path_rect_to(struct draw_list*, struct vec2 a, struct vec2 b, float rounding);
+  void draw_list_path_curve_to(struct draw_list*, struct vec2 p2, struct vec2 p3, struct vec2 p4, unsigned int num_segments);
+  void draw_list_path_fill(struct draw_list*, struct color);
+  void draw_list_path_stroke(struct draw_list*, struct color, enum draw_list_stroke closed, float thickness);
 
   /* stroke */
-  NK_API void draw_list_stroke_line(struct draw_list*, struct vec2 a, struct vec2 b, struct color, float thickness);
-  NK_API void draw_list_stroke_rect(struct draw_list*, struct rect rect, struct color, float rounding, float thickness);
-  NK_API void draw_list_stroke_triangle(struct draw_list*, struct vec2 a, struct vec2 b, struct vec2 c, struct color, float thickness);
-  NK_API void draw_list_stroke_circle(struct draw_list*, struct vec2 center, float radius, struct color, unsigned int segs, float thickness);
-  NK_API void draw_list_stroke_curve(struct draw_list*, struct vec2 p0, struct vec2 cp0, struct vec2 cp1, struct vec2 p1, struct color, unsigned int segments, float thickness);
-  NK_API void draw_list_stroke_poly_line(struct draw_list*, const struct vec2* pnts, const unsigned int cnt, struct color, enum draw_list_stroke, float thickness, enum anti_aliasing);
+  void draw_list_stroke_line(struct draw_list*, struct vec2 a, struct vec2 b, struct color, float thickness);
+  void draw_list_stroke_rect(struct draw_list*, struct rect rect, struct color, float rounding, float thickness);
+  void draw_list_stroke_triangle(struct draw_list*, struct vec2 a, struct vec2 b, struct vec2 c, struct color, float thickness);
+  void draw_list_stroke_circle(struct draw_list*, struct vec2 center, float radius, struct color, unsigned int segs, float thickness);
+  void draw_list_stroke_curve(struct draw_list*, struct vec2 p0, struct vec2 cp0, struct vec2 cp1, struct vec2 p1, struct color, unsigned int segments, float thickness);
+  void draw_list_stroke_poly_line(struct draw_list*, const struct vec2* pnts, const unsigned int cnt, struct color, enum draw_list_stroke, float thickness, enum anti_aliasing);
 
   /* fill */
-  NK_API void draw_list_fill_rect(struct draw_list*, struct rect rect, struct color, float rounding);
-  NK_API void draw_list_fill_rect_multi_color(struct draw_list*, struct rect rect, struct color left, struct color top, struct color right, struct color bottom);
-  NK_API void draw_list_fill_triangle(struct draw_list*, struct vec2 a, struct vec2 b, struct vec2 c, struct color);
-  NK_API void draw_list_fill_circle(struct draw_list*, struct vec2 center, float radius, struct color col, unsigned int segs);
-  NK_API void draw_list_fill_poly_convex(struct draw_list*, const struct vec2* points, const unsigned int count, struct color, enum anti_aliasing);
+  void draw_list_fill_rect(struct draw_list*, struct rect rect, struct color, float rounding);
+  void draw_list_fill_rect_multi_color(struct draw_list*, struct rect rect, struct color left, struct color top, struct color right, struct color bottom);
+  void draw_list_fill_triangle(struct draw_list*, struct vec2 a, struct vec2 b, struct vec2 c, struct color);
+  void draw_list_fill_circle(struct draw_list*, struct vec2 center, float radius, struct color col, unsigned int segs);
+  void draw_list_fill_poly_convex(struct draw_list*, const struct vec2* points, const unsigned int count, struct color, enum anti_aliasing);
 
   /* misc */
-  NK_API void draw_list_add_image(struct draw_list*, struct image texture, struct rect rect, struct color);
-  NK_API void draw_list_add_text(struct draw_list*, const struct user_font*, struct rect, const char* text, int len, float font_height, struct color);
+  void draw_list_add_image(struct draw_list*, struct image texture, struct rect rect, struct color);
+  void draw_list_add_text(struct draw_list*, const struct user_font*, struct rect, const char* text, int len, float font_height, struct color);
 #ifdef NK_INCLUDE_COMMAND_USERDATA
-  NK_API void draw_list_push_userdata(struct draw_list*, resource_handle userdata);
+  void draw_list_push_userdata(struct draw_list*, resource_handle userdata);
 #endif
 
 #endif
@@ -123,10 +123,10 @@ namespace nk {
    *                          GUI
    *
    * ===============================================================*/
-  NK_API style_item style_item_color(color);
-  NK_API style_item style_item_image(struct image img);
-  NK_API style_item style_item_nine_slice(nine_slice slice);
-  NK_API style_item style_item_hide(void);
+  style_item style_item_color(color);
+  style_item style_item_image(struct image img);
+  style_item style_item_nine_slice(nine_slice slice);
+  style_item style_item_hide(void);
 
 
   /* =============================================================================
@@ -187,7 +187,7 @@ namespace nk {
    *
    * \returns either `false(0)` on failure or `true(1)` on success.
    */
-  NK_API bool init_default(struct context*, const struct user_font*);
+  bool init_default(struct context*, const struct user_font*);
 #endif
   /**
    * # init_fixed
@@ -213,7 +213,7 @@ namespace nk {
    *
    * \returns either `false(0)` on failure or `true(1)` on success.
    */
-  NK_API bool init_fixed(context*, void* memory, std::size_t size, const user_font*);
+  bool init_fixed(context*, void* memory, std::size_t size, const user_font*);
 
   /**
    * # init
@@ -233,7 +233,7 @@ namespace nk {
    *
    * \returns either `false(0)` on failure or `true(1)` on success.
    */
-  NK_API bool init(context*, const allocator*, const user_font*);
+  bool init(context*, const allocator*, const user_font*);
 
   /**
    * \brief Initializes a `context` struct from two different either fixed or growing buffers.
@@ -253,7 +253,7 @@ namespace nk {
    *
    * \returns either `false(0)` on failure or `true(1)` on success.
    */
-  NK_API bool init_custom(context*, memory_buffer* cmds, memory_buffer* pool, const user_font*);
+  bool init_custom(context*, memory_buffer* cmds, memory_buffer* pool, const user_font*);
 
   /**
    * \brief Resets the context state at the end of the frame.
@@ -268,7 +268,7 @@ namespace nk {
    *
    * \param[in] ctx  Must point to a previously initialized `context` struct
    */
-  NK_API void clear(context*);
+  void clear(context*);
 
   /**
    * \brief Frees all memory allocated by nuklear; Not needed if context was initialized with `init_fixed`.
@@ -280,7 +280,7 @@ namespace nk {
    *
    * \param[in] ctx  Must point to a previously initialized `context` struct
    */
-  NK_API void free(context*);
+  void free(context*);
 
 #ifdef NK_INCLUDE_COMMAND_USERDATA
   /**
@@ -294,7 +294,7 @@ namespace nk {
    * \param[in] ctx Must point to a previously initialized `context` struct
    * \param[in] data  Handle with either pointer or index to be passed into every draw commands
    */
-  NK_API void set_user_data(struct context*, resource_handle handle);
+  void set_user_data(struct context*, resource_handle handle);
 #endif
 
   /* =============================================================================
@@ -302,50 +302,50 @@ namespace nk {
    *                                  MATH
    *
    * ============================================================================= */
-  NK_API hash murmur_hash(const void* key, int len, hash seed);
-  NK_API void triangle_from_direction(vec2f* result, rectf r, float pad_x, float pad_y, heading);
+  hash murmur_hash(const void* key, int len, hash seed);
+  void triangle_from_direction(vec2f* result, rectf r, float pad_x, float pad_y, heading);
 
-  NK_API vec2f vec2_from_floats(float x, float y);
-  NK_API vec2f vec2i_from_ints(int x, int y);
-  NK_API vec2f vec2v(const float* xy);
-  NK_API vec2f vec2iv(const int* xy);
+  vec2f vec2_from_floats(float x, float y);
+  vec2f vec2i_from_ints(int x, int y);
+  vec2f vec2v(const float* xy);
+  vec2f vec2iv(const int* xy);
 
-  NK_API rectf get_null_rect(void);
-  NK_API rectf rect(float x, float y, float w, float h);
-  NK_API rectf recti(int x, int y, int w, int h);
-  NK_API rectf recta(vec2f pos, vec2f size);
-  NK_API rectf rectv(const float* xywh);
-  NK_API rectf rectiv(const int* xywh);
-  NK_API vec2f rect_pos(rectf);
-  NK_API vec2f rect_size(rectf);
+  rectf get_null_rect(void);
+  rectf rect(float x, float y, float w, float h);
+  rectf rect_from_ints(int x, int y, int w, int h);
+  rectf recta(vec2f pos, vec2f size);
+  rectf rectv(const float* xywh);
+  rectf rectiv(const int* xywh);
+  vec2f rect_pos(rectf);
+  vec2f rect_size(rectf);
 
 
   /* math */
 #ifndef NK_INV_SQRT
-  NK_LIB float inv_sqrt(float n);
+  float inv_sqrt(float n);
 #endif
 #ifndef NK_SIN
-  NK_LIB float sin(float x);
+  float sin(float x);
 #endif
 #ifndef NK_COS
-  NK_LIB float cos(float x);
+  float cos(float x);
 #endif
 #ifndef NK_ATAN
-  NK_LIB float atan(float x);
+  float atan(float x);
 #endif
 #ifndef NK_ATAN2
-  NK_LIB float atan2(float y, float x);
+  float atan2(float y, float x);
 #endif
-  NK_LIB std::size_t round_up_pow2(std::size_t v);
-  NK_LIB rectf shrirect(rectf r, float amount);
-  NK_LIB rectf pad_rect(rectf r, vec2f pad);
-  NK_LIB void unify(rectf* clip, const rectf* a, float x0, float y0, float x1, float y1);
-  NK_LIB double pow(double x, int n);
-  NK_LIB int ifloord(double x);
-  NK_LIB int ifloorf(float x);
-  NK_LIB int iceilf(float x);
-  NK_LIB int log10(double n);
-  NK_LIB float roundf(float x);
+  std::size_t round_up_pow2(std::size_t v);
+  rectf shrirect(rectf r, float amount);
+  rectf pad_rect(rectf r, vec2f pad);
+  void unify(rectf* clip, const rectf* a, float x0, float y0, float x1, float y1);
+  double pow(double x, int n);
+  int ifloord(double x);
+  int ifloorf(float x);
+  int iceilf(float x);
+  int log10(double n);
+  float roundf(float x);
 
 }
 

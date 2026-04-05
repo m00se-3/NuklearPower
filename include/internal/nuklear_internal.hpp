@@ -34,30 +34,30 @@ namespace nk {
  * ===============================================================
  */
 
-#ifndef NK_API
-#ifdef NK_PRIVATE
-#if (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199409L))
-#define NK_API static inline
-#elif defined(__cplusplus)
-#define NK_API static inline
-#else
-#define NK_API static
-#endif
-#else
-#define NK_API extern
-#endif
-#endif
-#ifndef NK_LIB
-#ifdef NK_SINGLE_FILE
-#define NK_LIB static
-#else
-#define NK_LIB extern
-#endif
-#endif
+// #ifndef NK_API
+// #ifdef NK_PRIVATE
+// #if (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199409L))
+// #define NK_API static inline
+// #elif defined(__cplusplus)
+// #define NK_API static inline
+// #else
+// #define NK_API static
+// #endif
+// #else
+// #define NK_API extern
+// #endif
+// #endif
+// #ifndef NK_LIB
+// #ifdef NK_SINGLE_FILE
+// #define NK_LIB static
+// #else
+// #define NK_LIB extern
+// #endif
+// #endif
 
-#define INTERN static
-#define NK_STORAGE static
-#define NK_GLOBAL inline
+// #define INTERN static
+// #define NK_STORAGE static
+// #define NK_GLOBAL inline
 
 #define NK_STRINGIFY(x) #x
 #define NK_STRING_JOIN(arg1, arg2) arg1##arg2
@@ -195,13 +195,13 @@ constexpr auto operator|=(T lhs, T rhs) -> T
 
 /* standard library headers */
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-#include <stdlib.h> /* malloc, free */
+#include <cstdlib> /* malloc, free */
 #endif
 #ifdef NK_INCLUDE_STANDARD_IO
-#include <stdio.h> /* fopen, fclose,... */
+#include <cstdio> /* fopen, fclose,... */
 #endif
 #ifdef NK_INCLUDE_STANDARD_VARARGS
-#include <stdarg.h> /* valist, va_start, va_end, ... */
+#include <cstdarg> /* valist, va_start, va_end, ... */
 #endif
 #ifndef NK_ASSERT
 #include <cassert>
@@ -250,23 +250,33 @@ constexpr auto operator|=(T lhs, T rhs) -> T
   using hash = std::uint32_t;
   using flag = std::uint32_t;
   using rune = std::uint32_t;
+
   struct color {
     std::uint8_t r, g, b, a;
   };
+
   struct colorf {
     float r, g, b, a;
   };
+
   struct vec2f {
     float x, y;
   };
+
   struct vec2i {
     short x, y;
   };
+
   struct rectf {
     float x, y, w, h;
   };
+
   struct recti {
     short x, y, w, h;
+  };
+
+  struct rectu {
+    unsigned short x, y, w, h;
   };
 
   /* ============================================================================
@@ -582,9 +592,8 @@ constexpr auto operator|=(T lhs, T rhs) -> T
 #endif
 
     /* optional user callbacks */
-    resource_handle userdata;
-    void (*draw_begin)(command_buffer*, resource_handle userdata);
-    void (*draw_end)(command_buffer*, resource_handle userdata);
+    inline void (*draw_begin)(command_buffer*, resource_handle userdata);
+    inline void (*draw_end)(command_buffer*, resource_handle userdata);
 
   struct style_toggle {
     /* background */
@@ -1090,15 +1099,15 @@ NK_STATIC_ASSERT(sizeof(std::uint32_t) == 4);
 NK_STATIC_ASSERT(sizeof(std::int32_t) == 4);
 NK_STATIC_ASSERT(sizeof(std::byte) == 1);
 
-  NK_GLOBAL constexpr rectf null_rect = {.x = -8192.0f, .y = -8192.0f, .w = 16384, .h = 16384};
+  constexpr rectf null_rect = {.x = -8192.0f, .y = -8192.0f, .w = 16384, .h = 16384};
 #define NK_FLOAT_PRECISION 0.00000000000001
 
-  NK_GLOBAL constexpr color red = {.r = 255, .g = 0, .b = 0, .a = 255};
-  NK_GLOBAL constexpr color green = {.r = 0, .g = 255, .b = 0, .a = 255};
-  NK_GLOBAL constexpr color blue = {.r = 0, .g = 0, .b = 255, .a = 255};
-  NK_GLOBAL constexpr color white = {.r = 255, .g = 255, .b = 255, .a = 255};
-  NK_GLOBAL constexpr color black = {.r = 0, .g = 0, .b = 0, .a = 255};
-  NK_GLOBAL constexpr color yellow = {.r = 255, .g = 255, .b = 0, .a = 255};
+  constexpr color red = {.r = 255, .g = 0, .b = 0, .a = 255};
+  constexpr color green = {.r = 0, .g = 255, .b = 0, .a = 255};
+  constexpr color blue = {.r = 0, .g = 0, .b = 255, .a = 255};
+  constexpr color white = {.r = 255, .g = 255, .b = 255, .a = 255};
+  constexpr color black = {.r = 0, .g = 0, .b = 0, .a = 255};
+  constexpr color yellow = {.r = 255, .g = 255, .b = 0, .a = 255};
 
 
   struct config_stack_style_item_element {
@@ -2138,24 +2147,24 @@ NK_STATIC_ASSERT(sizeof(std::byte) == 1);
   };
 
   struct font_config {
-    font_config* next; /**!< NOTE: only used internally */
-    void* ttf_blob; /**!< pointer to loaded TTF file memory block.  * \note not needed for font_atlas_add_from_memory and font_atlas_add_from_file. */
-    std::size_t ttf_size; /**!< size of the loaded TTF file memory block * \note not needed for font_atlas_add_from_memory and font_atlas_add_from_file. */
+    font_config* next{}; /**!< NOTE: only used internally */
+    void* ttf_blob{}; /**!< pointer to loaded TTF file memory block.  * \note not needed for font_atlas_add_from_memory and font_atlas_add_from_file. */
+    std::size_t ttf_size{}; /**!< size of the loaded TTF file memory block * \note not needed for font_atlas_add_from_memory and font_atlas_add_from_file. */
 
-    unsigned char ttf_data_owned_by_atlas; /**!< used inside font atlas: default to: 0*/
-    unsigned char merge_mode; /**!< merges this font into the last font */
-    unsigned char pixel_snap; /**!< align every character to pixel boundary (if true set oversample (1,1)) */
-    unsigned char oversample_v, oversample_h; /**!< rasterize at high quality for sub-pixel position */
-    unsigned char padding[3];
+    unsigned char ttf_data_owned_by_atlas{}; /**!< used inside font atlas: default to: 0*/
+    unsigned char merge_mode{}; /**!< merges this font into the last font */
+    unsigned char pixel_snap{}; /**!< align every character to pixel boundary (if true set oversample (1,1)) */
+    unsigned char oversample_v{}, oversample_h{}; /**!< rasterize at high quality for sub-pixel position */
+    unsigned char padding[3]{};
 
-    float size; /**!< baked pixel height of the font */
-    font_coord_type coord_type; /**!< texture coordinate format with either pixel or UV coordinates */
-    vec2f spacing; /**!< extra pixel spacing between glyphs  */
-    const rune* range; /**!< list of unicode ranges (2 values per range, zero terminated) */
-    baked_font* font; /**!< font to setup in the baking process: NOTE: not needed for font atlas */
-    rune fallback_glyph; /**!< fallback glyph to use if a given rune is not found */
-    font_config* n;
-    font_config* p;
+    float size{}; /**!< baked pixel height of the font */
+    font_coord_type coord_type{}; /**!< texture coordinate format with either pixel or UV coordinates */
+    vec2f spacing{}; /**!< extra pixel spacing between glyphs  */
+    const rune* range{}; /**!< list of unicode ranges (2 values per range, zero terminated) */
+    baked_font* font{}; /**!< font to setup in the baking process: NOTE: not needed for font atlas */
+    rune fallback_glyph{}; /**!< fallback glyph to use if a given rune is not found */
+    font_config* n{};
+    font_config* p{};
   };
 
   struct font_glyph {
@@ -2184,13 +2193,13 @@ NK_STATIC_ASSERT(sizeof(std::byte) == 1);
 
   struct font_atlas {
     void* pixel;
-    int tex_width;
-    int tex_height;
+    unsigned int tex_width;
+    unsigned int tex_height;
 
     allocator permanent;
     allocator temporary;
 
-    recti custom;
+    rectu custom;
     cursor cursors[static_cast<unsigned>(style_cursor::CURSOR_COUNT)];
 
     int glyph_count;
@@ -2202,33 +2211,33 @@ NK_STATIC_ASSERT(sizeof(std::byte) == 1);
   };
 
   /** some language glyph codepoint ranges */
-  NK_API const rune* font_default_glyph_ranges(void);
-  NK_API const rune* font_chinese_glyph_ranges(void);
-  NK_API const rune* font_cyrillic_glyph_ranges(void);
-  NK_API const rune* font_korean_glyph_ranges(void);
+  const rune* font_default_glyph_ranges(void);
+  const rune* font_chinese_glyph_ranges(void);
+  const rune* font_cyrillic_glyph_ranges(void);
+  const rune* font_korean_glyph_ranges(void);
 
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API void font_atlas_init_default(struct font_atlas*);
+  void font_atlas_init_default(font_atlas*);
 #endif
-  NK_API void font_atlas_init(struct font_atlas*, const struct allocator*);
-  NK_API void font_atlas_init_custom(struct font_atlas*, const struct allocator* persistent, const struct allocator* transient);
-  NK_API void font_atlas_begin(struct font_atlas*);
-  NK_API struct font_config font_configure(float pixel_height);
-  NK_API struct font* font_atlas_add(struct font_atlas*, const font_config*);
+  void font_atlas_init(font_atlas*, const allocator*);
+  void font_atlas_init_custom(font_atlas*, const struct allocator* persistent, const struct allocator* transient);
+  void font_atlas_begin(font_atlas*);
+  font_config font_configure(float pixel_height);
+  font* font_atlas_add(font_atlas*, const font_config*);
 #ifdef NK_INCLUDE_DEFAULT_FONT
-  NK_API struct font* font_atlas_add_default(struct font_atlas*, float height, const struct font_config*);
+  font* font_atlas_add_default(font_atlas*, float height, const font_config*);
 #endif
-  NK_API struct font* font_atlas_add_from_memory(struct font_atlas* atlas, void* memory, std::size_t size, float height, const font_config* config);
+  font* font_atlas_add_from_memory(font_atlas* atlas, void* memory, std::size_t size, float height, const font_config* config);
 #ifdef NK_INCLUDE_STANDARD_IO
-  NK_API struct font* font_atlas_add_from_file(struct font_atlas* atlas, const char* file_path, float height, const struct font_config*);
+  font* font_atlas_add_from_file(font_atlas* atlas, const char* file_path, float height, const font_config*);
 #endif
-  NK_API struct font* font_atlas_add_compressed(struct font_atlas*, void* memory, std::size_t size, float height, const font_config*);
-  NK_API struct font* font_atlas_add_compressed_base85(struct font_atlas*, const char* data, float height, const font_config* config);
-  NK_API const void* font_atlas_bake(struct font_atlas*, int* width, int* height, enum font_atlas_format);
-  NK_API void font_atlas_end(struct font_atlas*, resource_handle tex, struct draw_null_texture*);
-  NK_API const struct font_glyph* font_find_glyph(const struct font*, rune unicode);
-  NK_API void font_atlas_cleanup(struct font_atlas* atlas);
-  NK_API void font_atlas_clear(struct font_atlas*);
+  font* font_atlas_add_compressed(font_atlas*, void* memory, std::size_t size, float height, const font_config*);
+  font* font_atlas_add_compressed_base85(font_atlas*, const char* data, float height, const font_config* config);
+  const void* font_atlas_bake(font_atlas*, unsigned int* width, unsigned int* height, font_atlas_format);
+  void font_atlas_end(font_atlas*, resource_handle tex, draw_null_texture*);
+  const font_glyph* font_find_glyph(const font*, rune unicode);
+  void font_atlas_cleanup(font_atlas* atlas);
+  void font_atlas_clear(font_atlas*);
 
 #endif
 

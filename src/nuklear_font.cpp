@@ -10,7 +10,7 @@
    *
    * --------------------------------------------------------------*/
 
-#include "stb_rect_pack.h"
+#include "../include/internal/stb_rect_pack.h"
 
   /*
    * ==============================================================
@@ -41,7 +41,7 @@ stbtt_free(void* ptr, void* user_data) {
 
 #endif
 
-#include "stb_truetype.h"
+#include "../include/internal/stb_truetype.h"
 
 namespace nk {
   /* -------------------------------------------------------------
@@ -50,28 +50,28 @@ namespace nk {
    *
    * --------------------------------------------------------------*/
   struct font_bake_data {
-    struct stbtt_fontinfo info;
-    struct stbrp_rect* rects;
+    stbtt_fontinfo info;
+    stbrp_rect* rects;
     stbtt_pack_range* ranges;
     rune range_count;
   };
 
   struct font_baker {
-    struct allocator alloc;
-    struct stbtt_pack_context spc;
-    struct font_bake_data* build;
+    allocator alloc;
+    stbtt_pack_context spc;
+    font_bake_data* build;
     stbtt_packedchar* packed_chars;
-    struct stbrp_rect* rects;
+    stbrp_rect* rects;
     stbtt_pack_range* ranges;
   };
 
-  NK_GLOBAL constexpr auto rect_align = alignof(struct stbrp_rect);
-  NK_GLOBAL constexpr auto range_align = alignof(stbtt_pack_range);
-  NK_GLOBAL constexpr auto char_align = alignof(stbtt_packedchar);
-  NK_GLOBAL constexpr auto build_align = alignof(struct font_bake_data);
-  NK_GLOBAL constexpr auto baker_align = alignof(struct font_baker);
+  constexpr auto rect_align = alignof(struct stbrp_rect);
+  constexpr auto range_align = alignof(stbtt_pack_range);
+  constexpr auto char_align = alignof(stbtt_packedchar);
+  constexpr auto build_align = alignof(struct font_bake_data);
+  constexpr auto baker_align = alignof(struct font_baker);
 
-  INTERN int
+  int
   range_count(const rune* range) {
     const rune* iter = range;
     NK_ASSERT(range);
@@ -81,7 +81,7 @@ namespace nk {
       ;
     return (iter == range) ? 0 : static_cast<int>((iter - range) / 2);
   }
-  INTERN int
+  int
   range_glyph_count(const rune* range, const int count) {
     int i = 0;
     int total_glyphs = 0;
@@ -95,14 +95,14 @@ namespace nk {
     }
     return total_glyphs;
   }
-  NK_API const rune*
+  const rune*
   font_default_glyph_ranges() {
-    NK_STORAGE constexpr std::array<rune, 3uz> ranges = {0x0020, 0x00FF, 0};
+    static constexpr std::array<rune, 3uz> ranges = {0x0020, 0x00FF, 0};
     return ranges.data();
   }
-  NK_API const rune*
+  const rune*
   font_chinese_glyph_ranges() {
-    NK_STORAGE constexpr auto ranges = std::array<rune,11uz>{
+    static constexpr auto ranges = std::array<rune,11uz>{
         0x0020, 0x00FF,
         0x3000, 0x30FF,
         0x31F0, 0x31FF,
@@ -111,9 +111,9 @@ namespace nk {
         0};
     return ranges.data();
   }
-  NK_API const rune*
+  const rune*
   font_cyrillic_glyph_ranges(void) {
-    NK_STORAGE constexpr std::array<rune, 9uz> ranges = {
+    static constexpr std::array<rune, 9uz> ranges = {
         0x0020, 0x00FF,
         0x0400, 0x052F,
         0x2DE0, 0x2DFF,
@@ -121,16 +121,16 @@ namespace nk {
         0};
     return ranges.data();
   }
-  NK_API const rune*
+  const rune*
   font_korean_glyph_ranges(void) {
-    NK_STORAGE constexpr std::array<rune, 7uz> ranges = {
+    static constexpr std::array<rune, 7uz> ranges = {
         0x0020, 0x00FF,
         0x3131, 0x3163,
         0xAC00, 0xD79D,
         0};
     return ranges.data();
   }
-  INTERN void
+  void
   font_baker_memory(std::size_t* temp, int* glyph_count,
                     font_config* config_list, int count) {
     int count_rng = 0;
@@ -163,7 +163,7 @@ namespace nk {
     *temp += rect_align + range_align + char_align;
     *temp += build_align + baker_align;
   }
-  INTERN struct font_baker*
+  struct font_baker*
   font_baker(void* memory, int glyph_count, int count, const struct allocator* alloc) {
     struct font_baker* baker;
     if (!memory)
@@ -177,12 +177,12 @@ namespace nk {
     baker->alloc = *alloc;
     return baker;
   }
-  INTERN int
+  int
   font_bake_pack(struct font_baker* baker,
-                 std::size_t* image_memory, unsigned int* width, unsigned int* height, struct recti* custom,
+                 std::size_t* image_memory, unsigned int* width, unsigned int* height, rectu* custom,
                  const font_config* config_list, int count,
                  const allocator* alloc) {
-    NK_STORAGE const std::size_t max_height = 1024 * 32;
+    const std::size_t max_height = 1024 * 32;
     const font_config *config_iter, *it;
     int total_glyph_count = 0;
     int total_range_count = 0;
@@ -213,8 +213,9 @@ namespace nk {
         stbtt_fontinfo* font_info = &baker->build[i++].info;
         font_info->userdata = (void*) alloc;
 
-        if (!stbtt_InitFont(font_info, (const unsigned char*) it->ttf_blob, stbtt_GetFontOffsetForIndex((const unsigned char*) it->ttf_blob, 0)))
+        if (stbtt_InitFont(font_info, (const unsigned char*) it->ttf_blob, stbtt_GetFontOffsetForIndex((const unsigned char*) it->ttf_blob, 0).value_or(0u)) == 0u) {
           return false;
+        }
       } while ((it = it->n) != config_iter);
     }
     *height = 0;
@@ -233,14 +234,14 @@ namespace nk {
         custom_space.w = (stbrp_coord) (custom->w);
         custom_space.h = (stbrp_coord) (custom->h);
 
-        stbtt_PackSetOversampling(&baker->spc, 1, 1);
-        stbrp_pack_rects((struct stbrp_context*) baker->spc.pack_info, &custom_space, 1);
-        *height = std::max(*height, (int) (custom_space.y + custom_space.h));
+        stbtt_PackSetOversampling(&baker->spc, 1u, 1u);
+        stbrp_pack_rects((stbrp_context*) baker->spc.pack_info, &custom_space, 1);
+        *height = std::max(*height, static_cast<unsigned int>(custom_space.y + custom_space.h));
 
-        custom->x = (short) custom_space.x;
-        custom->y = (short) custom_space.y;
-        custom->w = (short) custom_space.w;
-        custom->h = (short) custom_space.h;
+        custom->x = custom_space.x;
+        custom->y = custom_space.y;
+        custom->w = custom_space.w;
+        custom->h = custom_space.h;
       }
 
       /* first font pass: pack all glyphs */
@@ -248,7 +249,7 @@ namespace nk {
            config_iter = config_iter->next) {
         it = config_iter;
         do {
-          int n = 0;
+          unsigned int n = 0;
           int glyph_count;
           const rune* in_range;
           const font_config* cfg = it;
@@ -269,8 +270,8 @@ namespace nk {
           for (i = 0; i < count_rng; ++i) {
             in_range = &cfg->range[i * 2];
             tmp->ranges[i].font_size = cfg->size;
-            tmp->ranges[i].first_unicode_codepoint_in_range = (int) in_range[0];
-            tmp->ranges[i].num_chars = (int) (in_range[1] - in_range[0]) + 1;
+            tmp->ranges[i].first_unicode_codepoint_in_range = in_range[0];
+            tmp->ranges[i].num_chars = in_range[1] - in_range[0] + 1;
             tmp->ranges[i].chardata_for_range = baker->packed_chars + char_n;
             char_n += tmp->ranges[i].num_chars;
           }
@@ -280,13 +281,13 @@ namespace nk {
           rect_n += glyph_count;
           stbtt_PackSetOversampling(&baker->spc, cfg->oversample_h, cfg->oversample_v);
           n = stbtt_PackFontRangesGatherRects(&baker->spc, &tmp->info,
-                                              tmp->ranges, (int) tmp->range_count, tmp->rects);
-          stbrp_pack_rects((struct stbrp_context*) baker->spc.pack_info, tmp->rects, (int) n);
+                                              tmp->ranges, tmp->range_count, tmp->rects);
+          stbrp_pack_rects((stbrp_context*) baker->spc.pack_info, tmp->rects, n);
 
           /* texture height */
           for (i = 0; i < n; ++i) {
             if (tmp->rects[i].was_packed)
-              *height = std::max(*height, tmp->rects[i].y + tmp->rects[i].h);
+              *height = std::max(*height, static_cast<unsigned int>(tmp->rects[i].y + tmp->rects[i].h));
           }
         } while ((it = it->n) != config_iter);
       }
@@ -294,13 +295,13 @@ namespace nk {
       NK_ASSERT(char_n == total_glyph_count);
       NK_ASSERT(range_n == total_range_count);
     }
-    *height = (int) round_up_pow2((unsigned int) *height);
+    *height = static_cast<unsigned int>(round_up_pow2(*height));
     *image_memory = (std::size_t) (*width) * (std::size_t) (*height);
     return true;
   }
-  INTERN void
-  font_bake(struct font_baker* baker, void* image_memory, int width, int height,
-            struct font_glyph* glyphs, int glyphs_count,
+  void
+  font_bake(struct font_baker* baker, void* image_memory, unsigned int width, unsigned int height,
+            font_glyph* glyphs, int glyphs_count,
             const font_config* config_list, int font_count) {
     int input_i = 0;
     rune glyph_n = 0;
@@ -321,7 +322,7 @@ namespace nk {
     /* second font pass: render glyphs */
     zero(image_memory, (std::size_t) ((std::size_t) width * (std::size_t) height));
     baker->spc.pixels = (unsigned char*) image_memory;
-    baker->spc.height = (int) height;
+    baker->spc.height = static_cast<unsigned int>(height);
     for (input_i = 0, config_iter = config_list; input_i < font_count && config_iter;
          config_iter = config_iter->next) {
       it = config_iter;
@@ -329,7 +330,7 @@ namespace nk {
         const font_config* cfg = it;
         struct font_bake_data* tmp = &baker->build[input_i++];
         stbtt_PackSetOversampling(&baker->spc, cfg->oversample_h, cfg->oversample_v);
-        stbtt_PackFontRangesRenderIntoRects(&baker->spc, &tmp->info, tmp->ranges, (int) tmp->range_count, tmp->rects);
+        stbtt_PackFontRangesRenderIntoRects(&baker->spc, &tmp->info, tmp->ranges, tmp->range_count, tmp->rects);
       } while ((it = it->n) != config_iter);
     }
     stbtt_PackEnd(&baker->spc);
@@ -340,7 +341,7 @@ namespace nk {
       it = config_iter;
       do {
         std::size_t i = 0;
-        int char_idx = 0;
+        unsigned int char_idx = 0;
         rune glyph_count = 0;
         const font_config* cfg = it;
         struct font_bake_data* tmp = &baker->build[input_i++];
@@ -372,13 +373,13 @@ namespace nk {
             rune codepoint = 0;
             float dummy_x = 0, dummy_y = 0;
             stbtt_aligned_quad q;
-            struct font_glyph* glyph;
+            font_glyph* glyph;
 
             /* query glyph bounds from stb_truetype */
             const stbtt_packedchar* pc = &range->chardata_for_range[char_idx];
             codepoint = (rune) (range->first_unicode_codepoint_in_range + char_idx);
-            stbtt_GetPackedQuad(range->chardata_for_range, (int) width,
-                                (int) height, char_idx, &dummy_x, &dummy_y, &q, 0);
+            stbtt_GetPackedQuad(range->chardata_for_range, width,
+                                height, char_idx, &dummy_x, &dummy_y, &q, 0);
 
             /* fill own glyph type with data */
             glyph = &glyphs[dst_font->glyph_offset + dst_font->glyph_count + (unsigned int) glyph_count];
@@ -414,14 +415,14 @@ namespace nk {
       } while ((it = it->n) != config_iter);
     }
   }
-  INTERN void
-  font_bake_custom_data(void* img_memory, int img_width, int img_height,
-                        struct recti img_dst, const char* texture_data_mask, int tex_width,
-                        int tex_height, char white, char black) {
+  void
+  font_bake_custom_data(void* img_memory, unsigned int img_width, unsigned int img_height,
+                        const rectu img_dst, const char* texture_data_mask, unsigned int tex_width,
+                        unsigned int tex_height, char white, char black) {
     std::uint8_t* pixels;
-    int y = 0;
-    int x = 0;
-    int n = 0;
+    unsigned short y = 0;
+    unsigned short x = 0;
+    unsigned short n = 0;
 
     NK_ASSERT(img_memory);
     NK_ASSERT(img_width);
@@ -434,15 +435,15 @@ namespace nk {
     pixels = (std::uint8_t*) img_memory;
     for (y = 0, n = 0; y < tex_height; ++y) {
       for (x = 0; x < tex_width; ++x, ++n) {
-        const int off0 = ((img_dst.x + x) + (img_dst.y + y) * img_width);
-        const int off1 = off0 + 1 + tex_width;
+        const auto off0 = (img_dst.x + x + (img_dst.y + y) * img_width);
+        const auto off1 = off0 + 1 + tex_width;
         pixels[off0] = (texture_data_mask[n] == white) ? 0xFF : 0x00;
         pixels[off1] = (texture_data_mask[n] == black) ? 0xFF : 0x00;
       }
     }
   }
-  INTERN void
-  font_bake_convert(void* out_memory, int img_width, int img_height,
+  void
+  font_bake_convert(void* out_memory, unsigned int img_width, unsigned int img_height,
                     const void* in_memory) {
     int n = 0;
     rune* dst;
@@ -466,7 +467,7 @@ namespace nk {
    *                          FONT
    *
    * --------------------------------------------------------------*/
-  INTERN float
+  float
   font_text_width(resource_handle handle, float height, const char* text, int len) {
     rune unicode;
     int text_len = 0;
@@ -500,7 +501,7 @@ namespace nk {
     return text_width;
   }
 #ifdef NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-  INTERN void
+  void
   font_query_font_glyph(resource_handle handle, float height,
                         struct user_font_glyph* glyph, rune codepoint, rune next_codepoint) {
     float scale;
@@ -526,7 +527,7 @@ namespace nk {
     glyph->uv[1] = vec2_from_floats(g->u1, g->v1);
   }
 #endif
-  NK_API const struct font_glyph*
+  const struct font_glyph*
   font_find_glyph(const struct font* font, rune unicode) {
     int i = 0;
     int count;
@@ -555,7 +556,7 @@ namespace nk {
     } while ((iter = iter->n) != font->config);
     return glyph;
   }
-  INTERN void
+  void
   font_init(struct font* font, float pixel_height,
             rune fallback_codepoint, struct font_glyph* glyphs,
             const struct baked_font* baked_font, resource_handle atlas) {
@@ -603,7 +604,7 @@ namespace nk {
 
 #ifdef NK_INCLUDE_DEFAULT_FONT
 
-  NK_GLOBAL const char proggy_clean_ttf_compressed_data_base85[11980 + 1] =
+  const char proggy_clean_ttf_compressed_data_base85[11980 + 1] =
       "7])#######hV0qs'/###[),##/l:$#Q6>##5[n42>c-TH`->>#/e>11NNV=Bv(*:.F?uu#(gRU.o0XGH`$vhLG1hxt9?W`#,5LsCp#-i>.r$<$6pD>Lb';9Crc6tgXmKVeU2cD4Eo3R/"
       "2*>]b(MC;$jPfY.;h^`IWM9<Lh2TlS+f-s$o6Q<BWH`YiU.xfLq$N;$0iR/GX:U(jcW2p/W*q?-qmnUCI;jHSAiFWM.R*kU@C=GH?a9wp8f$e.-4^Qg1)Q-GL(lf(r/7GrRgwV%MS=C#"
       "`8ND>Qo#t'X#(v#Y9w0#1D$CIf;W'#pWUPXOuxXuU(H9M(1<q-UE31#^-V'8IRUo7Qf./L>=Ke$$'5F%)]0^#0X@U.a<r:QLtFsLcL6##lOj)#.Y5<-R&KgLwqJfLgN&;Q?gI^#DY2uL"
@@ -693,9 +694,9 @@ namespace nk {
 
 #endif /* NK_INCLUDE_DEFAULT_FONT */
 
-#define NK_CURSOR_DATA_W 90
-#define NK_CURSOR_DATA_H 27
-  NK_GLOBAL const char custom_cursor_data[NK_CURSOR_DATA_W * NK_CURSOR_DATA_H + 1] =
+#define NK_CURSOR_DATA_W 90u
+#define NK_CURSOR_DATA_H 27u
+  const char custom_cursor_data[NK_CURSOR_DATA_W * NK_CURSOR_DATA_H + 1] =
       {
           "..-         -XXXXXXX-    X    -           X           -XXXXXXX          -          XXXXXXX"
           "..-         -X.....X-   X.X   -          X.X          -X.....X          -          X.....X"
@@ -731,17 +732,17 @@ namespace nk {
 #pragma GCC diagnostic pop
 #endif
 
-  NK_GLOBAL unsigned char* _barrier;
-  NK_GLOBAL unsigned char* _barrier2;
-  NK_GLOBAL unsigned char* _barrier3;
-  NK_GLOBAL unsigned char* _barrier4;
-  NK_GLOBAL unsigned char* _dout;
+  unsigned char* _barrier;
+  unsigned char* _barrier2;
+  unsigned char* _barrier3;
+  unsigned char* _barrier4;
+  unsigned char* _dout;
 
-  INTERN unsigned int
+  unsigned int
   decompress_length(unsigned char* input) {
     return (unsigned int) ((input[8] << 24) + (input[9] << 16) + (input[10] << 8) + input[11]);
   }
-  INTERN void
+  void
   _match(unsigned char* data, unsigned int length) {
     /* INVERSE of memmove... write each byte before copying the next...*/
     NK_ASSERT(_dout + length <= _barrier);
@@ -756,7 +757,7 @@ namespace nk {
     while (length--)
       *_dout++ = *data++;
   }
-  INTERN void
+  void
   _lit(unsigned char* data, unsigned int length) {
     NK_ASSERT(_dout + length <= _barrier);
     if (_dout + length > _barrier) {
@@ -770,7 +771,7 @@ namespace nk {
     std::memcpy(_dout, data, length);
     _dout += length;
   }
-  INTERN unsigned char*
+  unsigned char*
   decompress_token(unsigned char* i) {
 #define _in2(x) ((i[x] << 8) + i[(x) + 1])
 #define _in3(x) ((i[x] << 16) + _in2((x) + 1))
@@ -799,7 +800,7 @@ namespace nk {
     }
     return i;
   }
-  INTERN unsigned int
+  unsigned int
   adler32(unsigned int adler32, unsigned char* buffer, unsigned int buflen) {
     const unsigned long ADLER_MOD = 65521;
     unsigned long s1 = adler32 & 0xffff, s2 = adler32 >> 16;
@@ -838,7 +839,7 @@ namespace nk {
     }
     return (unsigned int) (s2 << 16) + (unsigned int) s1;
   }
-  INTERN unsigned int
+  unsigned int
   decompress(unsigned char* output, unsigned char* i, unsigned int length) {
     unsigned int olen;
     if (_in4(0) != 0x57bC0000)
@@ -874,11 +875,11 @@ namespace nk {
         return 0;
     }
   }
-  INTERN unsigned int
+  unsigned int
   decode_85_byte(char c) {
     return (unsigned int) ((c >= '\\') ? c - 36 : c - 35);
   }
-  INTERN void
+  void
   decode_85(unsigned char* dst, const unsigned char* src) {
     while (*src) {
       unsigned int tmp =
@@ -904,7 +905,7 @@ namespace nk {
    *                          FONT ATLAS
    *
    * --------------------------------------------------------------*/
-  NK_API struct font_config
+  struct font_config
   font_configure(float pixel_height) {
     font_config cfg;
     zero_struct(cfg);
@@ -925,7 +926,7 @@ namespace nk {
     return cfg;
   }
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API void
+  void
   font_atlas_init_default(struct font_atlas* atlas) {
     NK_ASSERT(atlas);
     if (!atlas)
@@ -939,7 +940,7 @@ namespace nk {
     atlas->permanent.free = mfree;
   }
 #endif
-  NK_API void
+  void
   font_atlas_init(struct font_atlas* atlas, const struct allocator* alloc) {
     NK_ASSERT(atlas);
     NK_ASSERT(alloc);
@@ -949,7 +950,7 @@ namespace nk {
     atlas->permanent = *alloc;
     atlas->temporary = *alloc;
   }
-  NK_API void
+  void
   font_atlas_init_custom(struct font_atlas* atlas,
                          const struct allocator* permanent, const struct allocator* temporary) {
     NK_ASSERT(atlas);
@@ -961,7 +962,7 @@ namespace nk {
     atlas->permanent = *permanent;
     atlas->temporary = *temporary;
   }
-  NK_API void
+  void
   font_atlas_begin(struct font_atlas* atlas) {
     NK_ASSERT(atlas);
     NK_ASSERT(atlas->temporary.alloc && atlas->temporary.free);
@@ -978,7 +979,7 @@ namespace nk {
       atlas->pixel = 0;
     }
   }
-  NK_API struct font*
+  struct font*
   font_atlas_add(struct font_atlas* atlas, const struct font_config* config) {
     struct font* font = 0;
     struct font_config* cfg;
@@ -1067,7 +1068,7 @@ namespace nk {
     atlas->font_num++;
     return font;
   }
-  NK_API struct font*
+  struct font*
   font_atlas_add_from_memory(struct font_atlas* atlas, void* memory,
                              std::size_t size, float height, const font_config* config) {
     font_config cfg;
@@ -1091,7 +1092,7 @@ namespace nk {
     return font_atlas_add(atlas, &cfg);
   }
 #ifdef NK_INCLUDE_STANDARD_IO
-  NK_API struct font*
+  struct font*
   font_atlas_add_from_file(struct font_atlas* atlas, const char* file_path,
                            float height, const struct font_config* config) {
     std::size_t size;
@@ -1110,7 +1111,7 @@ namespace nk {
     if (!memory)
       return 0;
 
-    cfg = (config) ? *config : font_config(height);
+    cfg = (config) ? *config : font_config{.size = height};
     cfg.ttf_blob = memory;
     cfg.ttf_size = size;
     cfg.size = height;
@@ -1118,7 +1119,7 @@ namespace nk {
     return font_atlas_add(atlas, &cfg);
   }
 #endif
-  NK_API struct font*
+  struct font*
   font_atlas_add_compressed(struct font_atlas* atlas,
                             void* compressed_data, std::size_t compressed_size, float height,
                             const struct font_config* config) {
@@ -1153,7 +1154,7 @@ namespace nk {
     cfg.ttf_data_owned_by_atlas = 1;
     return font_atlas_add(atlas, &cfg);
   }
-  NK_API struct font*
+  struct font*
   font_atlas_add_compressed_base85(struct font_atlas* atlas,
                                    const char* data_base85, float height, const font_config* config) {
     int compressed_size;
@@ -1184,9 +1185,9 @@ namespace nk {
   }
 
 #ifdef NK_INCLUDE_DEFAULT_FONT
-  NK_API struct font*
-  font_atlas_add_default(struct font_atlas* atlas,
-                         float pixel_height, const struct font_config* config) {
+  font*
+  font_atlas_add_default(font_atlas* atlas,
+                         float pixel_height, const font_config* config) {
     NK_ASSERT(atlas);
     NK_ASSERT(atlas->temporary.alloc);
     NK_ASSERT(atlas->temporary.free);
@@ -1196,12 +1197,12 @@ namespace nk {
                                             proggy_clean_ttf_compressed_data_base85, pixel_height, config);
   }
 #endif
-  NK_API const void*
-  font_atlas_bake(struct font_atlas* atlas, int* width, int* height,
-                  enum font_atlas_format fmt) {
+  const void*
+  font_atlas_bake(font_atlas* atlas, unsigned int* width, unsigned int* height,
+                  font_atlas_format fmt) {
     void* tmp = 0;
     std::size_t tmp_size, img_size;
-    struct font* font_iter;
+    font* font_iter;
     struct font_baker* baker;
 
     NK_ASSERT(atlas);
@@ -1285,7 +1286,7 @@ namespace nk {
 
     /* initialize each cursor */
     {
-      NK_STORAGE constexpr std::array cursor_data = {
+      constexpr std::array cursor_data = {
                               /* Pos      Size              Offset */
           std::array{vec2f{.x=0, .y=3}, vec2f{.x=12, .y=19}, vec2f{.x=0, .y=0}},
           std::array{vec2f{.x=13, .y=0}, vec2f{.x=7, .y=16}, vec2f{.x=4, .y=8}},
@@ -1324,9 +1325,9 @@ namespace nk {
     }
     return 0;
   }
-  NK_API void
-  font_atlas_end(struct font_atlas* atlas, resource_handle texture,
-                 struct draw_null_texture* tex_null) {
+  void
+  font_atlas_end(font_atlas* atlas, resource_handle texture,
+                 draw_null_texture* tex_null) {
     int i = 0;
     struct font* font_iter;
     NK_ASSERT(atlas);
@@ -1359,7 +1360,7 @@ namespace nk {
     atlas->custom.w = 0;
     atlas->custom.h = 0;
   }
-  NK_API void
+  void
   font_atlas_cleanup(struct font_atlas* atlas) {
     NK_ASSERT(atlas);
     NK_ASSERT(atlas->temporary.alloc);
@@ -1381,7 +1382,7 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   font_atlas_clear(struct font_atlas* atlas) {
     NK_ASSERT(atlas);
     NK_ASSERT(atlas->temporary.alloc);

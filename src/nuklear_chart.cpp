@@ -8,7 +8,7 @@ namespace nk {
    *                          CHART
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   chart_begin_colored(context* ctx, const chart_type type,
                       const color color, const struct color highlight,
                       const int count, float min_value, float max_value) {
@@ -73,13 +73,13 @@ namespace nk {
     }
     return 1;
   }
-  NK_API bool
+  bool
   chart_begin(context* ctx, const chart_type type,
               const int count, float min_value, float max_value) {
     return chart_begin_colored(ctx, type, ctx->style.chart.color,
                                ctx->style.chart.selected_color, count, min_value, max_value);
   }
-  NK_API void
+  void
   chart_add_slot_colored(context* ctx, const chart_type type,
                          const color color, const struct color highlight,
                          const int count, float min_value, float max_value) {
@@ -109,13 +109,13 @@ namespace nk {
       slot->show_markers = style->show_markers;
     }
   }
-  NK_API void
+  void
   chart_add_slot(context* ctx, const chart_type type,
                  const int count, float min_value, float max_value) {
     chart_add_slot_colored(ctx, type, ctx->style.chart.color,
                            ctx->style.chart.selected_color, count, min_value, max_value);
   }
-  INTERN flag
+  flag
   chart_push_line(context* ctx, window* win,
                   chart* g, float value, const int slot) {
     panel* layout = win->layout;
@@ -189,7 +189,7 @@ namespace nk {
     g->slots[slot].index += 1;
     return ret;
   }
-  INTERN flag
+  flag
   chart_push_column(const context* ctx, window* win,
                     chart* chart, float value, const int slot) {
     command_buffer* out = &win->buffer;
@@ -236,7 +236,7 @@ namespace nk {
     chart->slots[slot].index += 1;
     return ret;
   }
-  NK_API flag
+  flag
   chart_push_slot(context* ctx, float value, const int slot) {
     flag flags;
 
@@ -265,11 +265,11 @@ namespace nk {
     }
     return flags;
   }
-  NK_API flag
+  flag
   chart_push(context* ctx, float value) {
     return chart_push_slot(ctx, value, 0);
   }
-  NK_API void
+  void
   chart_end(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -282,7 +282,7 @@ namespace nk {
     std::memcpy(chart, 0, sizeof(*chart));
     return;
   }
-  NK_API void
+  void
   plot(context* ctx, const chart_type type, const float* values,
        const int count, const int offset) {
     int i = 0;
@@ -305,7 +305,7 @@ namespace nk {
       chart_end(ctx);
     }
   }
-  NK_API void
+  void
   plot_function(context* ctx, const chart_type type, void* userdata,
                 float (*value_getter)(void* user, int index), const int count, const int offset) {
     int i = 0;

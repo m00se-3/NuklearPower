@@ -6,7 +6,7 @@ namespace nk {
    *                          COLOR PICKER
    *
    * ===============================================================*/
-  NK_LIB bool
+  bool
   color_picker_behavior(flag* state,
                         const rectf* bounds, const rectf* matrix,
                         const rectf* hue_bar, const rectf* alpha_bar,
@@ -57,13 +57,13 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return value_changed;
   }
-  NK_LIB void
+  void
   draw_color_picker(command_buffer* o, const rectf* matrix,
                     const rectf* hue_bar, const rectf* alpha_bar,
                     const colorf col) {
-    NK_STORAGE const color black = {0, 0, 0, 255};
-    NK_STORAGE const color white = {255, 255, 255, 255};
-    NK_STORAGE const color black_trans = {0, 0, 0, 0};
+    const color black = {0, 0, 0, 255};
+    const color white = {255, 255, 255, 255};
+    const color black_trans = {0, 0, 0, 0};
 
     const float crosshair_size = 7.0f;
     float hsva[4];
@@ -115,7 +115,7 @@ namespace nk {
       stroke_line(o, p.x, p.y - crosshair_size, p.x, p.y - 2, 1.0f, white);
     }
   }
-  NK_LIB bool
+  bool
   do_color_picker(flag* state,
                   command_buffer* out, colorf* col,
                   const color_format fmt, rectf bounds,
@@ -159,7 +159,7 @@ namespace nk {
     draw_color_picker(out, &matrix, &hue_bar, (fmt == color_format::RGBA) ? &alpha_bar : 0, *col);
     return ret;
   }
-  NK_API bool
+  bool
   color_pick(context* ctx, colorf* color,
              const color_format fmt) {
 
@@ -182,7 +182,7 @@ namespace nk {
     return do_color_picker(&ctx->last_widget_state, &win->buffer, color, fmt, bounds,
                            vec2_from_floats(0, 0), in, config->font);
   }
-  NK_API colorf
+  colorf
   color_picker(context* ctx, colorf color,
                const color_format fmt) {
     color_pick(ctx, &color, fmt);

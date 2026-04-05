@@ -289,7 +289,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] height  | New minimum row height to be used for auto generating the row height
    */
-  NK_API void layout_set_min_row_height(context*, float height);
+  void layout_set_min_row_height(context*, float height);
 
   /**
    * Reset the currently used minimum row height back to `font_height + text_padding + padding`
@@ -299,7 +299,7 @@ namespace nk {
    *
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    */
-  NK_API void layout_reset_min_row_height(context*);
+  void layout_reset_min_row_height(context*);
 
   /**
    * \brief Returns the width of the next row allocate by one of the layouting functions
@@ -313,7 +313,7 @@ namespace nk {
    *
    * \return `rect` with both position and size of the next row
    */
-  NK_API rectf layout_widget_bounds(const context* ctx);
+  rectf layout_widget_bounds(const context* ctx);
 
   /**
    * \brief Utility functions to calculate window ratio from pixel size
@@ -328,7 +328,7 @@ namespace nk {
    *
    * \returns `rect` with both position and size of the next row
    */
-  NK_API float layout_ratio_from_pixel(const context* ctx, float pixel_width);
+  float layout_ratio_from_pixel(const context* ctx, float pixel_width);
 
   /**
    * \brief Sets current row layout to share horizontal space
@@ -344,7 +344,7 @@ namespace nk {
    * \param[in] height  | Holds height of each widget in row or zero for auto layouting
    * \param[in] columns | Number of widget inside row
    */
-  NK_API void layout_row_dynamic(context* ctx, float height, int cols);
+  void layout_row_dynamic(context* ctx, float height, int cols);
 
   /**
    * \brief Sets current row layout to fill @cols number of widgets
@@ -361,7 +361,7 @@ namespace nk {
    * \param[in] width   | Holds pixel width of each widget in the row
    * \param[in] columns | Number of widget inside row
    */
-  NK_API void layout_row_static(context* ctx, float height, int item_width, int cols);
+  void layout_row_static(context* ctx, float height, int item_width, int cols);
 
   /**
    * \brief Starts a new dynamic or fixed row with given height and columns.
@@ -376,7 +376,7 @@ namespace nk {
    * \param[in] height  | holds height of each widget in row or zero for auto layouting
    * \param[in] columns | Number of widget inside row
    */
-  NK_API void layout_row_begin(context* ctx, nk::layout_format fmt, float row_height, int cols);
+  void layout_row_begin(context* ctx, nk::layout_format fmt, float row_height, int cols);
 
   /**
    * \breif Specifies either window ratio or width of a single column
@@ -389,7 +389,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] value   | either a window ratio or fixed width depending on @fmt in previous `layout_row_begin` call
    */
-  NK_API void layout_row_push(context*, float value);
+  void layout_row_push(context*, float value);
 
   /**
    * \brief Finished previously started row
@@ -401,7 +401,7 @@ namespace nk {
    *
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    */
-  NK_API void layout_row_end(context*);
+  void layout_row_end(context*);
 
   /**
    * \brief Specifies row columns in array as either window ratio or size
@@ -416,7 +416,7 @@ namespace nk {
    * \param[in] height  | Holds height of each widget in row or zero for auto layouting
    * \param[in] columns | Number of widget inside row
    */
-  NK_API void layout_row(context*, nk::layout_format, float height, int cols, const float* ratio);
+  void layout_row(context*, nk::layout_format, float height, int cols, const float* ratio);
 
   /**
    * # # layout_row_template_begin
@@ -430,7 +430,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] height  | Holds height of each widget in row or zero for auto layouting
    */
-  NK_API void layout_row_template_begin(context*, float row_height);
+  void layout_row_template_begin(context*, float row_height);
 
   /**
    * # # layout_row_template_push_dynamic
@@ -444,7 +444,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] height  | Holds height of each widget in row or zero for auto layouting
    */
-  NK_API void layout_row_template_push_dynamic(context*);
+  void layout_row_template_push_dynamic(context*);
 
   /**
    * # # layout_row_template_push_variable
@@ -458,7 +458,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] width   | Holds the minimum pixel width the next column must always be
    */
-  NK_API void layout_row_template_push_variable(context*, float min_width);
+  void layout_row_template_push_variable(context*, float min_width);
 
   /**
    * # # layout_row_template_push_static
@@ -472,7 +472,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    * \param[in] width   | Holds the absolute pixel width value the next column must be
    */
-  NK_API void layout_row_template_push_static(context*, float width);
+  void layout_row_template_push_static(context*, float width);
 
   /**
    * # # layout_row_template_end
@@ -485,7 +485,7 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `begin_xxx`
    */
-  NK_API void layout_row_template_end(context*);
+  void layout_row_template_end(context*);
 
   /**
    * # # layout_space_begin
@@ -501,7 +501,7 @@ namespace nk {
    * \param[in] height  | Holds height of each widget in row or zero for auto layouting
    * \param[in] columns | Number of widgets inside row
    */
-  NK_API void layout_space_begin(context*, nk::layout_format, float height, int widget_count);
+  void layout_space_begin(context*, nk::layout_format, float height, int widget_count);
 
   /**
    * # # layout_space_push
@@ -515,7 +515,7 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `layout_space_begin`
    * \param[in] bounds  | Position and size in laoyut space local coordinates
    */
-  NK_API void layout_space_push(context*, rectf bounds);
+  void layout_space_push(context*, rectf bounds);
 
   /**
    * # # layout_space_end
@@ -528,7 +528,7 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `layout_space_begin`
    */
-  NK_API void layout_space_end(context*);
+  void layout_space_end(context*);
 
   /**
    * # # layout_space_bounds
@@ -543,7 +543,7 @@ namespace nk {
    *
    * \returns `rect` holding the total space allocated
    */
-  NK_API rectf layout_space_bounds(const context* ctx);
+  rectf layout_space_bounds(const context* ctx);
 
   /**
    * # # layout_space_to_screen
@@ -559,7 +559,7 @@ namespace nk {
    *
    * \returns transformed `vec2` in screen space coordinates
    */
-  NK_API vec2f layout_space_to_screen(const context* ctx, vec2f vec);
+  vec2f layout_space_to_screen(const context* ctx, vec2f vec);
 
   /**
    * # # layout_space_to_local
@@ -575,7 +575,7 @@ namespace nk {
    *
    * \returns transformed `vec2` in layout space coordinates
    */
-  NK_API vec2f layout_space_to_local(const context* ctx, vec2f vec);
+  vec2f layout_space_to_local(const context* ctx, vec2f vec);
 
   /**
    * # # layout_space_rect_to_screen
@@ -591,7 +591,7 @@ namespace nk {
    *
    * \returns transformed `rect` in screen space coordinates
    */
-  NK_API rectf layout_space_rect_to_screen(const context* ctx, rectf bounds);
+  rectf layout_space_rect_to_screen(const context* ctx, rectf bounds);
 
   /**
    * # # layout_space_rect_to_local
@@ -607,7 +607,7 @@ namespace nk {
    *
    * \returns transformed `rect` in layout space coordinates
    */
-  NK_API rectf layout_space_rect_to_local(const context* ctx, rectf bounds);
+  rectf layout_space_rect_to_local(const context* ctx, rectf bounds);
 
   /**
    * # # spacer
@@ -621,16 +621,16 @@ namespace nk {
    * \param[in] ctx     | Must point to an previously initialized `context` struct after call `layout_space_begin`
    *
    */
-  NK_API void spacer(context* ctx);
+  void spacer(context* ctx);
 
   /* layout */
-  NK_LIB float layout_row_calculate_usable_space(const style* style, panel_type::value_type type, float total_space, int columns);
-  NK_LIB void panel_layout(const context* ctx, window* win, float height, int cols);
-  NK_LIB void row_layout(context* ctx, layout_format fmt, float height, int cols, int width);
-  NK_LIB void panel_alloc_row(const context* ctx, window* win);
-  NK_LIB void layout_widget_space(rectf* bounds, const context* ctx, window* win, int modify);
-  NK_LIB void panel_alloc_space(rectf* bounds, const context* ctx);
-  NK_LIB void layout_peek(rectf* bounds, const context* ctx);
+  float layout_row_calculate_usable_space(const style* style, panel_type::value_type type, float total_space, int columns);
+  void panel_layout(const context* ctx, window* win, float height, int cols);
+  void row_layout(context* ctx, layout_format fmt, float height, int cols, int width);
+  void panel_alloc_row(const context* ctx, window* win);
+  void layout_widget_space(rectf* bounds, const context* ctx, window* win, int modify);
+  void panel_alloc_space(rectf* bounds, const context* ctx);
+  void layout_peek(rectf* bounds, const context* ctx);
 
 
 

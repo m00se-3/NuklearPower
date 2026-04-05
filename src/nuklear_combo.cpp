@@ -6,7 +6,7 @@ namespace nk {
    *                          COMBO
    *
    * ===============================================================*/
-  INTERN bool
+  bool
   combo_begin(context* ctx, window* win,
               const vec2f size, const bool is_clicked, const rectf header) {
     int is_open = 0;
@@ -39,7 +39,7 @@ namespace nk {
     win->popup.name = hsh;
     return 1;
   }
-  NK_API bool
+  bool
   combo_begin_text(context* ctx, const char* selected, const int len,
                    const vec2f size) {
 
@@ -141,11 +141,11 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_label(context* ctx, const char* selected, const vec2f size) {
     return combo_begin_text(ctx, selected, strlen(selected), size);
   }
-  NK_API bool
+  bool
   combo_begin_color(context* ctx, const color color, const vec2f size) {
 
     rectf header;
@@ -232,7 +232,7 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_symbol(context* ctx, const symbol_type symbol, const vec2f size) {
 
     rectf header;
@@ -324,7 +324,7 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_symbol_text(context* ctx, const char* selected, int len,
                           symbol_type symbol, vec2f size) {
     window* win;
@@ -432,7 +432,7 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_image(context* ctx, struct image img, const vec2f size) {
 
     rectf header;
@@ -519,7 +519,7 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_image_text(context* ctx, const char* selected, int len,
                          struct image img, vec2f size) {
     window* win;
@@ -629,51 +629,51 @@ namespace nk {
     }
     return combo_begin(ctx, win, size, is_clicked, header);
   }
-  NK_API bool
+  bool
   combo_begin_symbol_label(context* ctx,
                            const char* selected, const symbol_type type, const vec2f size) {
     return combo_begin_symbol_text(ctx, selected, strlen(selected), type, size);
   }
-  NK_API bool
+  bool
   combo_begin_image_label(context* ctx,
                           const char* selected, struct image img, const vec2f size) {
     return combo_begin_image_text(ctx, selected, strlen(selected), img, size);
   }
-  NK_API bool
+  bool
   combo_item_text(context* ctx, const char* text, const int len, const flag align) {
     return contextual_item_text(ctx, text, len, align);
   }
-  NK_API bool
+  bool
   combo_item_label(context* ctx, const char* label, const flag align) {
     return contextual_item_label(ctx, label, align);
   }
-  NK_API bool
+  bool
   combo_item_image_text(context* ctx, struct image img, const char* text,
                         const int len, const flag alignment) {
     return contextual_item_image_text(ctx, img, text, len, alignment);
   }
-  NK_API bool
+  bool
   combo_item_image_label(context* ctx, struct image img,
                          const char* text, const flag alignment) {
     return contextual_item_image_label(ctx, img, text, alignment);
   }
-  NK_API bool
+  bool
   combo_item_symbol_text(context* ctx, const symbol_type sym,
                          const char* text, const int len, const flag alignment) {
     return contextual_item_symbol_text(ctx, sym, text, len, alignment);
   }
-  NK_API bool
+  bool
   combo_item_symbol_label(context* ctx, const symbol_type sym,
                           const char* label, const flag alignment) {
     return contextual_item_symbol_label(ctx, sym, label, alignment);
   }
-  NK_API void combo_end(context* ctx) {
+  void combo_end(context* ctx) {
     contextual_end(ctx);
   }
-  NK_API void combo_close(context* ctx) {
+  void combo_close(context* ctx) {
     contextual_close(ctx);
   }
-  NK_API int
+  int
   combo(context* ctx, const char* const* items, const int count,
         int selected, const int item_height, vec2f size) {
     int i = 0;
@@ -699,7 +699,7 @@ namespace nk {
     }
     return selected;
   }
-  NK_API int
+  int
   combo_separator(context* ctx, const char* items_separated_by_separator,
                   const int separator, int selected, const int count, const int item_height, vec2f size) {
     int i;
@@ -746,12 +746,12 @@ namespace nk {
     }
     return selected;
   }
-  NK_API int
+  int
   combo_string(context* ctx, const char* items_separated_by_zeros,
                const int selected, const int count, const int item_height, const vec2f size) {
     return combo_separator(ctx, items_separated_by_zeros, '\0', selected, count, item_height, size);
   }
-  NK_API int
+  int
   combo_callback(context* ctx, void (*item_getter)(void*, int, const char**),
                  void* userdata, int selected, const int count, const int item_height, vec2f size) {
     const char* item;
@@ -780,23 +780,23 @@ namespace nk {
     }
     return selected;
   }
-  NK_API void
+  void
   combobox(context* ctx, const char* const* items, const int count,
            int* selected, const int item_height, const vec2f size) {
     *selected = combo(ctx, items, count, *selected, item_height, size);
   }
-  NK_API void
+  void
   combobox_string(context* ctx, const char* items_separated_by_zeros,
                   int* selected, const int count, const int item_height, const vec2f size) {
     *selected = combo_string(ctx, items_separated_by_zeros, *selected, count, item_height, size);
   }
-  NK_API void
+  void
   combobox_separator(context* ctx, const char* items_separated_by_separator,
                      const int separator, int* selected, const int count, const int item_height, const vec2f size) {
     *selected = combo_separator(ctx, items_separated_by_separator, separator,
                                 *selected, count, item_height, size);
   }
-  NK_API void
+  void
   combobox_callback(context* ctx,
                     void (*item_getter)(void* data, int id, const char** out_text),
                     void* userdata, int* selected, const int count, const int item_height, const vec2f size) {

@@ -6,7 +6,7 @@ namespace nk {
    *                              SELECTABLE
    *
    * ===============================================================*/
-  NK_LIB void
+  void
   draw_selectable(command_buffer* out,
                   const flag state, const style_selectable* style, const bool active,
                   const rectf* bounds,
@@ -66,7 +66,7 @@ namespace nk {
     }
     widget_text(out, *bounds, string, len, &text, align, font);
   }
-  NK_LIB bool
+  bool
   do_selectable(flag* state, command_buffer* out,
                 const rectf bounds, const char* str, const int len, const flag align, bool* value,
                 const style_selectable* style, const input* in,
@@ -103,7 +103,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return old_value != *value;
   }
-  NK_LIB bool
+  bool
   do_selectable_image(flag* state, command_buffer* out,
                       const rectf bounds, const char* str, const int len, const flag align, bool* value,
                       const struct image* img, const style_selectable* style,
@@ -152,7 +152,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return old_value != *value;
   }
-  NK_LIB bool
+  bool
   do_selectable_symbol(flag* state, command_buffer* out,
                        const rectf bounds, const char* str, const int len, const flag align, bool* value,
                        const symbol_type sym, const style_selectable* style,
@@ -202,7 +202,7 @@ namespace nk {
     return old_value != *value;
   }
 
-  NK_API bool
+  bool
   selectable_text(context* ctx, const char* str, const int len,
                   const flag align, bool* value) {
 
@@ -226,7 +226,7 @@ namespace nk {
     return do_selectable(&ctx->last_widget_state, &win->buffer, bounds,
                          str, len, align, value, &style->selectable, in, style->font);
   }
-  NK_API bool
+  bool
   selectable_image_text(context* ctx, struct image img,
                         const char* str, const int len, const flag align, bool* value) {
 
@@ -250,7 +250,7 @@ namespace nk {
     return do_selectable_image(&ctx->last_widget_state, &win->buffer, bounds,
                                str, len, align, value, &img, &style->selectable, in, style->font);
   }
-  NK_API bool
+  bool
   selectable_symbol_text(context* ctx, const symbol_type sym,
                          const char* str, const int len, const flag align, bool* value) {
 
@@ -274,44 +274,44 @@ namespace nk {
     return do_selectable_symbol(&ctx->last_widget_state, &win->buffer, bounds,
                                 str, len, align, value, sym, &style->selectable, in, style->font);
   }
-  NK_API bool
+  bool
   selectable_symbol_label(context* ctx, const symbol_type sym,
                           const char* title, const flag align, bool* value) {
     return selectable_symbol_text(ctx, sym, title, strlen(title), align, value);
   }
-  NK_API bool select_text(context* ctx, const char* str, const int len,
+  bool select_text(context* ctx, const char* str, const int len,
                           const flag align, bool value) {
     selectable_text(ctx, str, len, align, &value);
     return value;
   }
-  NK_API bool selectable_label(context* ctx, const char* str, const flag align, bool* value) {
+  bool selectable_label(context* ctx, const char* str, const flag align, bool* value) {
     return selectable_text(ctx, str, strlen(str), align, value);
   }
-  NK_API bool selectable_image_label(context* ctx, struct image img,
+  bool selectable_image_label(context* ctx, struct image img,
                                      const char* str, const flag align, bool* value) {
     return selectable_image_text(ctx, img, str, strlen(str), align, value);
   }
-  NK_API bool select_label(context* ctx, const char* str, const flag align, bool value) {
+  bool select_label(context* ctx, const char* str, const flag align, bool value) {
     selectable_text(ctx, str, strlen(str), align, &value);
     return value;
   }
-  NK_API bool select_image_label(context* ctx, struct image img,
+  bool select_image_label(context* ctx, struct image img,
                                  const char* str, const flag align, bool value) {
     selectable_image_text(ctx, img, str, strlen(str), align, &value);
     return value;
   }
-  NK_API bool select_image_text(context* ctx, struct image img,
+  bool select_image_text(context* ctx, struct image img,
                                 const char* str, const int len, const flag align, bool value) {
     selectable_image_text(ctx, img, str, len, align, &value);
     return value;
   }
-  NK_API bool
+  bool
   select_symbol_text(context* ctx, const symbol_type sym,
                      const char* title, const int title_len, const flag align, bool value) {
     selectable_symbol_text(ctx, sym, title, title_len, align, &value);
     return value;
   }
-  NK_API bool
+  bool
   select_symbol_label(context* ctx, const symbol_type sym,
                       const char* title, const flag align, const bool value) {
     return select_symbol_text(ctx, sym, title, strlen(title), align, value);

@@ -7,7 +7,7 @@ namespace nk {
    *                          CONTEXT
    *
    * ===============================================================*/
-  INTERN void
+  void
   setup(context* ctx, const user_font* font) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -22,7 +22,7 @@ namespace nk {
 #endif
   }
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API bool
+  bool
   init_default(struct context* ctx, const struct user_font* font) {
     struct allocator alloc;
     alloc.userdata.ptr = 0;
@@ -31,7 +31,7 @@ namespace nk {
     return init(ctx, &alloc, font);
   }
 #endif
-  NK_API bool
+  bool
   init_fixed(context* ctx, void* memory, const std::size_t size,
              const user_font* font) {
     NK_ASSERT(memory);
@@ -42,7 +42,7 @@ namespace nk {
     ctx->use_pool = false;
     return 1;
   }
-  NK_API bool
+  bool
   init_custom(context* ctx, memory_buffer* cmds,
               memory_buffer* pool, const user_font* font) {
     NK_ASSERT(cmds);
@@ -63,7 +63,7 @@ namespace nk {
     ctx->use_pool = true;
     return 1;
   }
-  NK_API bool
+  bool
   init(context* ctx, const allocator* alloc,
        const user_font* font) {
     NK_ASSERT(alloc);
@@ -76,7 +76,7 @@ namespace nk {
     return 1;
   }
 #ifdef NK_INCLUDE_COMMAND_USERDATA
-  NK_API void
+  void
   set_user_data(struct context* ctx, resource_handle handle) {
     if (!ctx)
       return;
@@ -85,7 +85,7 @@ namespace nk {
       ctx->current->buffer.userdata = handle;
   }
 #endif
-  NK_API void
+  void
   free(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -107,7 +107,7 @@ namespace nk {
     ctx->freelist = 0;
     ctx->count = 0;
   }
-  NK_API void
+  void
   clear(context* ctx) {
     NK_ASSERT(ctx);
 
@@ -176,7 +176,7 @@ namespace nk {
     }
     ctx->seq++;
   }
-  NK_LIB void
+  void
   start_buffer(context* ctx, command_buffer* buffer) {
     NK_ASSERT(ctx);
     NK_ASSERT(buffer);
@@ -187,13 +187,13 @@ namespace nk {
     buffer->last = buffer->begin;
     buffer->clip = null_rect;
   }
-  NK_LIB void
+  void
   start(context* ctx, window* win) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
     start_buffer(ctx, &win->buffer);
   }
-  NK_LIB void
+  void
   start_popup(context* ctx, window* win) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
@@ -208,7 +208,7 @@ namespace nk {
     buf->last = buf->begin;
     buf->active = true;
   }
-  NK_LIB void
+  void
   finish_popup(context* ctx, window* win) {
     NK_ASSERT(ctx);
     NK_ASSERT(win);
@@ -219,7 +219,7 @@ namespace nk {
     buf->last = win->buffer.last;
     buf->end = win->buffer.end;
   }
-  NK_LIB void
+  void
   finish_buffer(context* ctx, command_buffer* buffer) {
     NK_ASSERT(ctx);
     NK_ASSERT(buffer);
@@ -227,7 +227,7 @@ namespace nk {
       return;
     buffer->end = ctx->memory.allocated;
   }
-  NK_LIB void
+  void
   finish(context* ctx, window* win) {
 
     NK_ASSERT(ctx);
@@ -243,7 +243,7 @@ namespace nk {
     command* parent_last = ptr_add(command, memory, buf->parent);
     parent_last->next = buf->end;
   }
-  NK_LIB void
+  void
   build(context* ctx) {
     window* it = 0;
     command* cmd = 0;
@@ -308,7 +308,7 @@ namespace nk {
         cmd->next = ctx->memory.allocated;
     }
   }
-  NK_API const command*
+  const command*
   _begin(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -330,7 +330,7 @@ namespace nk {
     return ptr_add_const(command, buffer, iter->buffer.begin);
   }
 
-  NK_API const command*
+  const command*
   _next(context* ctx, const command* cmd) {
     NK_ASSERT(ctx);
     if (!ctx || !cmd || !ctx->count)

@@ -6,7 +6,7 @@ namespace nk {
    *                          LIST VIEW
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   list_view_begin(context* ctx, list_view* view,
                   const char* title, const flag flags, int row_height, const int row_count) {
     unsigned int* y_offset;
@@ -53,7 +53,7 @@ namespace nk {
     view->ctx = ctx;
     return result;
   }
-  NK_API void
+  void
   list_view_end(list_view* view) {
 
     NK_ASSERT(view);

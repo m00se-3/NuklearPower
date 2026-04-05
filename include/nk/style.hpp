@@ -31,93 +31,93 @@ namespace nk {
    */
 
 
-  NK_API void style_default(context*);
-  NK_API void style_from_table(context*, const color*);
-  NK_API void style_load_cursor(context*, nk::style_cursor, const cursor*);
-  NK_API void style_load_all_cursors(context*, const cursor*);
-  NK_API const char* style_get_color_by_name(nk::style_colors);
-  NK_API void style_set_font(context*, const user_font*);
-  NK_API bool style_set_cursor(context*, nk::style_cursor);
-  NK_API void style_show_cursor(context*);
-  NK_API void style_hide_cursor(context*);
+  void style_default(context*);
+  void style_from_table(context*, const color*);
+  void style_load_cursor(context*, nk::style_cursor, const cursor*);
+  void style_load_all_cursors(context*, const cursor*);
+  const char* style_get_color_by_name(nk::style_colors);
+  void style_set_font(context*, const user_font*);
+  bool style_set_cursor(context*, nk::style_cursor);
+  void style_show_cursor(context*);
+  void style_hide_cursor(context*);
 
-  NK_API bool style_push_font(context*, const user_font*);
-  NK_API bool style_push_float(context*, float*, float);
-  NK_API bool style_push_vec2(context*, vec2f*, vec2f);
-  NK_API bool style_push_style_item(context*, style_item*, style_item);
-  NK_API bool style_push_flags(context*, flag*, flag);
-  NK_API bool style_push_color(context*, color*, color);
+  bool style_push_font(context*, const user_font*);
+  bool style_push_float(context*, float*, float);
+  bool style_push_vec2(context*, vec2f*, vec2f);
+  bool style_push_style_item(context*, style_item*, style_item);
+  bool style_push_flags(context*, flag*, flag);
+  bool style_push_color(context*, color*, color);
 
-  NK_API bool style_pop_font(context*);
-  NK_API bool style_pop_float(context*);
-  NK_API bool style_pop_vec2(context*);
-  NK_API bool style_pop_style_item(context*);
-  NK_API bool style_pop_flags(context*);
-  NK_API bool style_pop_color(context*);
+  bool style_pop_font(context*);
+  bool style_pop_float(context*);
+  bool style_pop_vec2(context*);
+  bool style_pop_style_item(context*);
+  bool style_pop_flags(context*);
+  bool style_pop_color(context*);
   /* =============================================================================
    *
    *                                  COLOR
    *
    * ============================================================================= */
-  NK_API color rgb(int r, int g, int b);
-  NK_API color rgb_iv(const int* rgb);
-  NK_API color rgb_bv(const std::byte* rgb);
-  NK_API color rgb_f(float r, float g, float b);
-  NK_API color rgb_fv(const float* rgb);
-  NK_API color rgb_cf(colorf c);
-  NK_API color rgb_hex(const char* rgb);
-  NK_API color rgb_factor(color col, float factor);
+  color rgb(int r, int g, int b);
+  color rgb_iv(const int* rgb);
+  color rgb_bv(const std::byte* rgb);
+  color rgb_f(float r, float g, float b);
+  color rgb_fv(const float* rgb);
+  color rgb_cf(colorf c);
+  color rgb_hex(const char* rgb);
+  color rgb_factor(color col, float factor);
 
-  NK_API color rgba(int r, int g, int b, int a);
-  NK_API color rgba_u32(std::uint32_t);
-  NK_API color rgba_iv(const int* rgba);
-  NK_API color rgba_bv(const std::byte* rgba);
-  NK_API color rgba_f(float r, float g, float b, float a);
-  NK_API color rgba_fv(const float* rgba);
-  NK_API color rgba_cf(colorf c);
-  NK_API color rgba_hex(const char* rgb);
+  color rgba(int r, int g, int b, int a);
+  color rgba_u32(std::uint32_t);
+  color rgba_iv(const int* rgba);
+  color rgba_bv(const std::byte* rgba);
+  color rgba_f(float r, float g, float b, float a);
+  color rgba_fv(const float* rgba);
+  color rgba_cf(colorf c);
+  color rgba_hex(const char* rgb);
 
-  NK_API colorf hsva_colorf(float h, float s, float v, float a);
-  NK_API colorf hsva_colorfv(const float* c);
-  NK_API void colorf_hsva_f(float* out_h, float* out_s, float* out_v, float* out_a, colorf in);
-  NK_API void colorf_hsva_fv(float* hsva, colorf in);
+  colorf hsva_colorf(float h, float s, float v, float a);
+  colorf hsva_colorfv(const float* c);
+  void colorf_hsva_f(float* out_h, float* out_s, float* out_v, float* out_a, colorf in);
+  void colorf_hsva_fv(float* hsva, colorf in);
 
-  NK_API color hsv(int h, int s, int v);
-  NK_API color hsv_iv(const int* hsv);
-  NK_API color hsv_bv(const std::byte* hsv);
-  NK_API color hsv_f(float h, float s, float v);
-  NK_API color hsv_fv(const float* hsv);
+  color hsv(int h, int s, int v);
+  color hsv_iv(const int* hsv);
+  color hsv_bv(const std::byte* hsv);
+  color hsv_f(float h, float s, float v);
+  color hsv_fv(const float* hsv);
 
-  NK_API color hsva(int h, int s, int v, int a);
-  NK_API color hsva_iv(const int* hsva);
-  NK_API color hsva_bv(const std::byte* hsva);
-  NK_API color hsva_f(float h, float s, float v, float a);
-  NK_API color hsva_fv(const float* hsva);
+  color hsva(int h, int s, int v, int a);
+  color hsva_iv(const int* hsva);
+  color hsva_bv(const std::byte* hsva);
+  color hsva_f(float h, float s, float v, float a);
+  color hsva_fv(const float* hsva);
 
   /* color (conversion nuklear --> user) */
-  NK_API void color_f(float* r, float* g, float* b, float* a, color);
-  NK_API void color_fv(float* rgba_out, color);
-  NK_API colorf color_cf(color);
-  NK_API void color_d(double* r, double* g, double* b, double* a, color);
-  NK_API void color_dv(double* rgba_out, color);
+  void color_f(float* r, float* g, float* b, float* a, color);
+  void color_fv(float* rgba_out, color);
+  colorf color_cf(color);
+  void color_d(double* r, double* g, double* b, double* a, color);
+  void color_dv(double* rgba_out, color);
 
-  NK_API std::uint32_t color_u32(color);
-  NK_API void color_hex_rgba(char* output, color);
-  NK_API void color_hex_rgb(char* output, color);
+  std::uint32_t color_u32(color);
+  void color_hex_rgba(char* output, color);
+  void color_hex_rgb(char* output, color);
 
-  NK_API void color_hsv_i(int* out_h, int* out_s, int* out_v, color);
-  NK_API void color_hsv_b(std::byte* out_h, std::byte* out_s, std::byte* out_v, color);
-  NK_API void color_hsv_iv(int* hsv_out, color);
-  NK_API void color_hsv_bv(std::byte* hsv_out, color);
-  NK_API void color_hsv_f(float* out_h, float* out_s, float* out_v, color);
-  NK_API void color_hsv_fv(float* hsv_out, color);
+  void color_hsv_i(int* out_h, int* out_s, int* out_v, color);
+  void color_hsv_b(std::byte* out_h, std::byte* out_s, std::byte* out_v, color);
+  void color_hsv_iv(int* hsv_out, color);
+  void color_hsv_bv(std::byte* hsv_out, color);
+  void color_hsv_f(float* out_h, float* out_s, float* out_v, color);
+  void color_hsv_fv(float* hsv_out, color);
 
-  NK_API void color_hsva_i(int* h, int* s, int* v, int* a, color);
-  NK_API void color_hsva_b(std::byte* h, std::byte* s, std::byte* v, std::byte* a, color);
-  NK_API void color_hsva_iv(int* hsva_out, color);
-  NK_API void color_hsva_bv(std::byte* hsva_out, color);
-  NK_API void color_hsva_f(float* out_h, float* out_s, float* out_v, float* out_a, color);
-  NK_API void color_hsva_fv(float* hsva_out, color);
+  void color_hsva_i(int* h, int* s, int* v, int* a, color);
+  void color_hsva_b(std::byte* h, std::byte* s, std::byte* v, std::byte* a, color);
+  void color_hsva_iv(int* hsva_out, color);
+  void color_hsva_bv(std::byte* hsva_out, color);
+  void color_hsva_f(float* out_h, float* out_s, float* out_v, float* out_a, color);
+  void color_hsva_fv(float* hsva_out, color);
 }
 
 #endif

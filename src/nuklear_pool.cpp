@@ -6,7 +6,7 @@ namespace nk {
    *                              POOL
    *
    * ===============================================================*/
-  NK_LIB void
+  void
   pool_init(pool* pool, const allocator* alloc,
             const unsigned int capacity) {
     NK_ASSERT(capacity >= 1);
@@ -16,7 +16,7 @@ namespace nk {
     pool->type = allocation_type::BUFFER_DYNAMIC;
     pool->pages = 0;
   }
-  NK_LIB void
+  void
   pool_free(pool* pool) {
     if (!pool)
       return;
@@ -29,7 +29,7 @@ namespace nk {
       iter = next;
     }
   }
-  NK_LIB void
+  void
   pool_init_fixed(pool* pool, void* memory, const std::size_t size) {
     zero(pool, sizeof(*pool));
     NK_ASSERT(size >= sizeof(page));
@@ -41,7 +41,7 @@ namespace nk {
     pool->type = allocation_type::BUFFER_FIXED;
     pool->size = size;
   }
-  NK_LIB page_element*
+  page_element*
   pool_alloc(pool* pool) {
     if (!pool->pages || pool->pages->size >= pool->capacity) {
       /* allocate new page */

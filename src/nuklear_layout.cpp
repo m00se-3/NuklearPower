@@ -7,7 +7,7 @@ namespace nk {
    *                          LAYOUT
    *
    * ===============================================================*/
-  NK_API void
+  void
   layout_set_min_row_height(context* ctx, float height) {
 
     NK_ASSERT(ctx);
@@ -20,7 +20,7 @@ namespace nk {
     panel* layout = win->layout;
     layout->row.min_height = height;
   }
-  NK_API void
+  void
   layout_reset_min_row_height(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -35,7 +35,7 @@ namespace nk {
     layout->row.min_height += ctx->style.text.padding.y * 2;
     layout->row.min_height += ctx->style.window.min_row_height_padding * 2;
   }
-  NK_LIB float
+  float
   layout_row_calculate_usable_space(const style* style, const panel_type::value_type type,
                                     float total_space, const int columns) {
 
@@ -48,7 +48,7 @@ namespace nk {
     float panel_space = total_space - panel_spacing;
     return panel_space;
   }
-  NK_LIB void
+  void
   panel_layout(const context* ctx, window* win,
                float height, const int cols) {
 
@@ -94,7 +94,7 @@ namespace nk {
       fill_rect(out, background, 0, color);
     }
   }
-  NK_LIB void
+  void
   row_layout(context* ctx, const layout_format fmt,
              float height, const int cols, const int width) {
     /* update the current row and set the current row layout */
@@ -116,7 +116,7 @@ namespace nk {
     win->layout->row.item_offset = 0;
     win->layout->row.item_width = (float) width;
   }
-  NK_API float
+  float
   layout_ratio_from_pixel(const context* ctx, float pixel_width) {
     NK_ASSERT(ctx);
     NK_ASSERT(pixel_width);
@@ -125,15 +125,15 @@ namespace nk {
     const window* win = ctx->current;
     return std::clamp(0.0f, pixel_width / win->bounds.x, 1.0f);
   }
-  NK_API void
+  void
   layout_row_dynamic(context* ctx, float height, const int cols) {
     row_layout(ctx, layout_format::DYNAMIC, height, cols, 0);
   }
-  NK_API void
+  void
   layout_row_static(context* ctx, float height, const int item_width, const int cols) {
     row_layout(ctx, layout_format::STATIC, height, cols, item_width);
   }
-  NK_API void
+  void
   layout_row_begin(context* ctx, const layout_format fmt,
                    float row_height, const int cols) {
 
@@ -157,7 +157,7 @@ namespace nk {
     layout->row.item_offset = 0;
     layout->row.columns = cols;
   }
-  NK_API void
+  void
   layout_row_push(context* ctx, float ratio_or_width) {
 
     NK_ASSERT(ctx);
@@ -183,7 +183,7 @@ namespace nk {
     } else
       layout->row.item_width = ratio_or_width;
   }
-  NK_API void
+  void
   layout_row_end(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -200,7 +200,7 @@ namespace nk {
     layout->row.item_width = 0;
     layout->row.item_offset = 0;
   }
-  NK_API void
+  void
   layout_row(context* ctx, const layout_format fmt,
              float height, const int cols, const float* ratio) {
     int n_undef = 0;
@@ -236,7 +236,7 @@ namespace nk {
     layout->row.item_offset = 0;
     layout->row.filled = 0;
   }
-  NK_API void
+  void
   layout_row_template_begin(context* ctx, float height) {
 
     NK_ASSERT(ctx);
@@ -260,7 +260,7 @@ namespace nk {
     layout->row.item.w = 0;
     layout->row.item.h = 0;
   }
-  NK_API void
+  void
   layout_row_template_push_dynamic(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -279,7 +279,7 @@ namespace nk {
       return;
     layout->row.templates[layout->row.columns++] = -1.0f;
   }
-  NK_API void
+  void
   layout_row_template_push_variable(context* ctx, float min_width) {
 
     NK_ASSERT(ctx);
@@ -298,7 +298,7 @@ namespace nk {
       return;
     layout->row.templates[layout->row.columns++] = -min_width;
   }
-  NK_API void
+  void
   layout_row_template_push_static(context* ctx, float width) {
 
     NK_ASSERT(ctx);
@@ -317,7 +317,7 @@ namespace nk {
       return;
     layout->row.templates[layout->row.columns++] = width;
   }
-  NK_API void
+  void
   layout_row_template_end(context* ctx) {
 
     int i = 0;
@@ -367,7 +367,7 @@ namespace nk {
       }
     }
   }
-  NK_API void
+  void
   layout_space_begin(context* ctx, const layout_format fmt,
                      float height, const int widget_count) {
 
@@ -390,7 +390,7 @@ namespace nk {
     layout->row.item_width = 0;
     layout->row.item_offset = 0;
   }
-  NK_API void
+  void
   layout_space_end(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -406,7 +406,7 @@ namespace nk {
     layout->row.item_offset = 0;
     zero(&layout->row.item, sizeof(layout->row.item));
   }
-  NK_API void
+  void
   layout_space_push(context* ctx, const rectf rect) {
 
     NK_ASSERT(ctx);
@@ -419,7 +419,7 @@ namespace nk {
     panel* layout = win->layout;
     layout->row.item = rect;
   }
-  NK_API rectf
+  rectf
   layout_space_bounds(const context* ctx) {
     rectf ret;
 
@@ -435,7 +435,7 @@ namespace nk {
     ret.h = layout->row.height;
     return ret;
   }
-  NK_API rectf
+  rectf
   layout_widget_bounds(const context* ctx) {
     rectf ret;
 
@@ -451,7 +451,7 @@ namespace nk {
     ret.h = layout->row.height;
     return ret;
   }
-  NK_API vec2f
+  vec2f
   layout_space_to_screen(const context* ctx, vec2f ret) {
 
     NK_ASSERT(ctx);
@@ -464,7 +464,7 @@ namespace nk {
     ret.y += layout->at_y - (float) *layout->offset_y;
     return ret;
   }
-  NK_API vec2f
+  vec2f
   layout_space_to_local(const context* ctx, vec2f ret) {
 
     NK_ASSERT(ctx);
@@ -477,7 +477,7 @@ namespace nk {
     ret.y += -layout->at_y + (float) *layout->offset_y;
     return ret;
   }
-  NK_API rectf
+  rectf
   layout_space_rect_to_screen(const context* ctx, rectf ret) {
 
     NK_ASSERT(ctx);
@@ -490,7 +490,7 @@ namespace nk {
     ret.y += layout->at_y - (float) *layout->offset_y;
     return ret;
   }
-  NK_API rectf
+  rectf
   layout_space_rect_to_local(const context* ctx, rectf ret) {
 
     NK_ASSERT(ctx);
@@ -503,14 +503,14 @@ namespace nk {
     ret.y += -layout->at_y + (float) *layout->offset_y;
     return ret;
   }
-  NK_LIB void
+  void
   panel_alloc_row(const context* ctx, window* win) {
     const panel* layout = win->layout;
     const vec2f spacing = ctx->style.window.spacing;
     const float row_height = layout->row.height - spacing.y;
     panel_layout(ctx, win, row_height, layout->row.columns);
   }
-  NK_LIB void
+  void
   layout_widget_space(rectf* bounds, const context* ctx,
                       window* win, const int modify) {
 
@@ -642,7 +642,7 @@ namespace nk {
       layout->max_x = bounds->x + bounds->w;
     bounds->x -= (float) *layout->offset_x;
   }
-  NK_LIB void
+  void
   panel_alloc_space(rectf* bounds, const context* ctx) {
 
     NK_ASSERT(ctx);
@@ -661,7 +661,7 @@ namespace nk {
     layout_widget_space(bounds, ctx, win, true);
     layout->row.index++;
   }
-  NK_LIB void
+  void
   layout_peek(rectf* bounds, const context* ctx) {
 
     NK_ASSERT(ctx);
@@ -687,7 +687,7 @@ namespace nk {
     layout->at_y = y;
     layout->row.index = index;
   }
-  NK_API void
+  void
   spacer(context* ctx) {
     rectf dummy_rect = {0, 0, 0, 0};
     panel_alloc_space(&dummy_rect, ctx);

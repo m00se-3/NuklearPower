@@ -139,7 +139,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool tree_push_hashed(context*, nk::tree_type, const char* title, nk::collapse_states initial_state, const char* hash, int len, int seed);
+  bool tree_push_hashed(context*, nk::tree_type, const char* title, nk::collapse_states initial_state, const char* hash, int len, int seed);
 
   /**
    * # # tree_image_push
@@ -208,7 +208,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool tree_image_push_hashed(context*, nk::tree_type, image, const char* title, nk::collapse_states initial_state, const char* hash, int len, int seed);
+  bool tree_image_push_hashed(context*, nk::tree_type, image, const char* title, nk::collapse_states initial_state, const char* hash, int len, int seed);
 
   /**
    * # # tree_pop
@@ -221,7 +221,7 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct after calling `tree_xxx_push_xxx`
    */
-  NK_API void tree_pop(context*);
+  void tree_pop(context*);
 
   /**
    * # # tree_state_push
@@ -239,7 +239,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool tree_state_push(context*, nk::tree_type, const char* title, nk::collapse_states* state);
+  bool tree_state_push(context*, nk::tree_type, const char* title, nk::collapse_states* state);
 
   /**
    * # # tree_state_image_push
@@ -258,7 +258,7 @@ namespace nk {
    *
    * \returns `true(1)` if visible and fillable with widgets or `false(0)` otherwise
    */
-  NK_API bool tree_state_image_push(context*, nk::tree_type, image, const char* title, nk::collapse_states* state);
+  bool tree_state_image_push(context*, nk::tree_type, image, const char* title, nk::collapse_states* state);
 
   /**
    * # # tree_state_pop
@@ -271,13 +271,13 @@ namespace nk {
    * ------------|-----------------------------------------------------------
    * \param[in] ctx     | Must point to an previously initialized `context` struct after calling `tree_xxx_push_xxx`
    */
-  NK_API void tree_state_pop(context*);
+  void tree_state_pop(context*);
 
 #define tree_element_push(ctx, type, title, state, sel) tree_element_push_hashed(ctx, type, title, state, sel, NK_FILE_LINE, strlen(NK_FILE_LINE), __LINE__)
 #define tree_element_push_id(ctx, type, title, state, sel, id) tree_element_push_hashed(ctx, type, title, state, sel, NK_FILE_LINE, strlen(NK_FILE_LINE), id)
-  NK_API bool tree_element_push_hashed(context*, nk::tree_type, const char* title, nk::collapse_states initial_state, bool* selected, const char* hash, int len, int seed);
-  NK_API bool tree_element_image_push_hashed(context*, nk::tree_type, image, const char* title, nk::collapse_states initial_state, bool* selected, const char* hash, int len, int seed);
-  NK_API void tree_element_pop(context*);
+  bool tree_element_push_hashed(context*, nk::tree_type, const char* title, nk::collapse_states initial_state, bool* selected, const char* hash, int len, int seed);
+  bool tree_element_image_push_hashed(context*, nk::tree_type, image, const char* title, nk::collapse_states initial_state, bool* selected, const char* hash, int len, int seed);
+  void tree_element_pop(context*);
 
 }
 

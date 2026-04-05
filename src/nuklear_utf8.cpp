@@ -6,12 +6,12 @@ namespace nk {
    *                              UTF-8
    *
    * ===============================================================*/
-  NK_GLOBAL const std::uint8_t utfbyte[NK_UTF_SIZE + 1] = {0x80, 0, 0xC0, 0xE0, 0xF0};
-  NK_GLOBAL const std::uint8_t utfmask[NK_UTF_SIZE + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
-  NK_GLOBAL const std::uint32_t utfmin[NK_UTF_SIZE + 1] = {0, 0, 0x80, 0x800, 0x10000};
-  NK_GLOBAL const std::uint32_t utfmax[NK_UTF_SIZE + 1] = {0x10FFFF, 0x7F, 0x7FF, 0xFFFF, 0x10FFFF};
+  const std::uint8_t utfbyte[NK_UTF_SIZE + 1] = {0x80, 0, 0xC0, 0xE0, 0xF0};
+  const std::uint8_t utfmask[NK_UTF_SIZE + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
+  const std::uint32_t utfmin[NK_UTF_SIZE + 1] = {0, 0, 0x80, 0x800, 0x10000};
+  const std::uint32_t utfmax[NK_UTF_SIZE + 1] = {0x10FFFF, 0x7F, 0x7FF, 0xFFFF, 0x10FFFF};
 
-  INTERN int
+  int
   utf_validate(rune* u, int i) {
     NK_ASSERT(u);
     if (!u)
@@ -23,7 +23,7 @@ namespace nk {
       ;
     return i;
   }
-  INTERN rune
+  rune
   utf_decode_byte(const char c, int* i) {
     NK_ASSERT(i);
     if (!i)
@@ -34,7 +34,7 @@ namespace nk {
     }
     return 0;
   }
-  NK_API int
+  int
   utf_decode(const char* c, rune* u, const int clen) {
     int i, j, len, type = 0;
 
@@ -62,11 +62,11 @@ namespace nk {
     utf_validate(u, len);
     return len;
   }
-  INTERN char
+  char
   utf_encode_byte(const rune u, const int i) {
     return (char) ((utfbyte[i]) | ((std::uint8_t) u & ~utfmask[i]));
   }
-  NK_API int
+  int
   utf_encode(rune u, char* c, const int clen) {
     const int len = utf_validate(&u, 0);
     if (clen < len || !len || len > NK_UTF_SIZE)
@@ -79,7 +79,7 @@ namespace nk {
     c[0] = utf_encode_byte(u, len);
     return len;
   }
-  NK_API int
+  int
   utf_len(const char* str, const int len) {
     int glyphs = 0;
     int src_len = 0;
@@ -99,7 +99,7 @@ namespace nk {
     }
     return glyphs;
   }
-  NK_API const char*
+  const char*
   utf_at(const char* buffer, const int length, const int index,
          rune* unicode, int* len) {
     int i = 0;

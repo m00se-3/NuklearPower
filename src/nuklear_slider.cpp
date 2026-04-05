@@ -7,7 +7,7 @@ namespace nk {
    *                              SLIDER
    *
    * ===============================================================*/
-  NK_LIB float
+  float
   slider_behavior(flag* state, rectf* logical_cursor,
                   rectf* visual_cursor, input* in,
                   const rectf bounds, float slider_min, float slider_max, float slider_value,
@@ -46,7 +46,7 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return slider_value;
   }
-  NK_LIB void
+  void
   draw_slider(command_buffer* out, const flag state,
               const style_slider* style, const rectf* bounds,
               const rectf* visual_cursor, float min, float value, float max) {
@@ -112,7 +112,7 @@ namespace nk {
     else
       fill_circle(out, *visual_cursor, rgb_factor(cursor->data.color, style->color_factor));
   }
-  NK_LIB float
+  float
   do_slider(flag* state,
             command_buffer* out, rectf bounds,
             float min, float val, float max, float step,
@@ -196,7 +196,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return slider_value;
   }
-  NK_API bool
+  bool
   slider_float(context* ctx, float min_value, float* value, float max_value,
                float value_step) {
 
@@ -224,18 +224,18 @@ namespace nk {
                        old_value, max_value, value_step, &style->slider, in, style->font);
     return (old_value > *value || old_value < *value);
   }
-  NK_API float
+  float
   slide_float(context* ctx, float min, float val, float max, float step) {
     slider_float(ctx, min, &val, max, step);
     return val;
   }
-  NK_API int
+  int
   slide_int(context* ctx, const int min, const int val, const int max, const int step) {
     float value = (float) val;
     slider_float(ctx, (float) min, &value, (float) max, (float) step);
     return (int) value;
   }
-  NK_API bool
+  bool
   slider_int(context* ctx, const int min, int* val, const int max, const int step) {
     float value = (float) *val;
     const int ret = slider_float(ctx, (float) min, &value, (float) max, (float) step);

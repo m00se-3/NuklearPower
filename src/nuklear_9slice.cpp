@@ -6,7 +6,7 @@ namespace nk {
    *                          9-SLICE
    *
    * ===============================================================*/
-  NK_API nine_slice
+  nine_slice
   sub9slice_ptr(void* ptr, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -24,7 +24,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API nine_slice
+  nine_slice
   sub9slice_id(const int id, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -42,7 +42,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API nine_slice
+  nine_slice
   sub9slice_handle(const resource_handle handle, const unsigned short w, const unsigned short h, const rectf sub_region, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -60,7 +60,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API nine_slice
+  nine_slice
   nine_slice_handle(const resource_handle handle, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -78,7 +78,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API nine_slice
+  nine_slice
   nine_slice_ptr(void* ptr, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -97,7 +97,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API nine_slice
+  nine_slice
   nine_slice_id(const int id, const unsigned short l, const unsigned short t, const unsigned short r, const unsigned short b) {
     nine_slice s;
     struct image* i = &s.img;
@@ -115,7 +115,7 @@ namespace nk {
     s.b = b;
     return s;
   }
-  NK_API int
+  int
   nine_slice_is_sub9slice(const nine_slice* img) {
     NK_ASSERT(img);
     return !(img->img.w == 0 && img->img.h == 0);

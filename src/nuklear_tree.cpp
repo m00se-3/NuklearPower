@@ -6,7 +6,7 @@ namespace nk {
    *                              TREE
    *
    * ===============================================================*/
-  INTERN int
+  int
   tree_state_base(context* ctx, const tree_type type,
                   struct image* img, const char* title, collapse_states* state) {
     const style_button* button;
@@ -116,7 +116,7 @@ namespace nk {
     } else
       return false;
   }
-  INTERN int
+  int
   tree_base(context* ctx, const tree_type type,
             struct image* img, const char* title, const collapse_states initial_state,
             const char* hash_str, const int len, const int line) {
@@ -138,17 +138,17 @@ namespace nk {
     }
     return tree_state_base(ctx, type, img, title, (collapse_states*) state);
   }
-  NK_API bool
+  bool
   tree_state_push(context* ctx, const tree_type type,
                   const char* title, collapse_states* state) {
     return tree_state_base(ctx, type, 0, title, state);
   }
-  NK_API bool
+  bool
   tree_state_image_push(context* ctx, const tree_type type,
                         struct image img, const char* title, collapse_states* state) {
     return tree_state_base(ctx, type, &img, title, state);
   }
-  NK_API void
+  void
   tree_state_pop(context* ctx) {
     const window* win = 0;
     panel* layout = 0;
@@ -166,23 +166,23 @@ namespace nk {
     NK_ASSERT(layout->row.tree_depth);
     layout->row.tree_depth--;
   }
-  NK_API bool
+  bool
   tree_push_hashed(context* ctx, const tree_type type,
                    const char* title, const collapse_states initial_state,
                    const char* hash, const int len, const int line) {
     return tree_base(ctx, type, 0, title, initial_state, hash, len, line);
   }
-  NK_API bool
+  bool
   tree_image_push_hashed(context* ctx, const tree_type type,
                          struct image img, const char* title, const collapse_states initial_state,
                          const char* hash, const int len, const int seed) {
     return tree_base(ctx, type, &img, title, initial_state, hash, len, seed);
   }
-  NK_API void
+  void
   tree_pop(context* ctx) {
     tree_state_pop(ctx);
   }
-  INTERN int
+  int
   tree_element_image_push_hashed_base(context* ctx, const tree_type type,
                                       struct image* img, const char* title, const int title_len,
                                       collapse_states* state, bool* selected) {
@@ -291,7 +291,7 @@ namespace nk {
     } else
       return false;
   }
-  INTERN int
+  int
   tree_element_base(context* ctx, const tree_type type,
                     struct image* img, const char* title, const collapse_states initial_state,
                     bool* selected, const char* hash_str, const int len, const int line) {
@@ -314,19 +314,19 @@ namespace nk {
     return tree_element_image_push_hashed_base(ctx, type, img, title,
                                                strlen(title), (collapse_states*) state, selected);
   }
-  NK_API bool
+  bool
   tree_element_push_hashed(context* ctx, const tree_type type,
                            const char* title, const collapse_states initial_state,
                            bool* selected, const char* hash, const int len, const int seed) {
     return tree_element_base(ctx, type, 0, title, initial_state, selected, hash, len, seed);
   }
-  NK_API bool
+  bool
   tree_element_image_push_hashed(context* ctx, const tree_type type,
                                  struct image img, const char* title, const collapse_states initial_state,
                                  bool* selected, const char* hash, const int len, const int seed) {
     return tree_element_base(ctx, type, &img, title, initial_state, selected, hash, len, seed);
   }
-  NK_API void
+  void
   tree_element_pop(context* ctx) {
     tree_state_pop(ctx);
   }

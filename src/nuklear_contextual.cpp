@@ -6,12 +6,12 @@ namespace nk {
    *                          CONTEXTUAL
    *
    * ===============================================================*/
-  NK_API bool
+  bool
   contextual_begin(context* ctx, flag flags, const vec2f size,
                    const rectf trigger_bounds) {
     rectf body;
 
-    NK_STORAGE const rectf null_rect = {-1, -1, 0, 0};
+    const rectf null_rect = {-1, -1, 0, 0};
     int is_clicked = 0;
     int is_open = 0;
     int ret = 0;
@@ -67,7 +67,7 @@ namespace nk {
     }
     return ret;
   }
-  NK_API bool
+  bool
   contextual_item_text(context* ctx, const char* text, const int len,
                        const flag alignment) {
 
@@ -93,11 +93,11 @@ namespace nk {
     }
     return false;
   }
-  NK_API bool
+  bool
   contextual_item_label(context* ctx, const char* label, const flag align) {
     return contextual_item_text(ctx, label, strlen(label), align);
   }
-  NK_API bool
+  bool
   contextual_item_image_text(context* ctx, struct image img,
                              const char* text, const int len, const flag align) {
 
@@ -123,12 +123,12 @@ namespace nk {
     }
     return false;
   }
-  NK_API bool
+  bool
   contextual_item_image_label(context* ctx, struct image img,
                               const char* label, const flag align) {
     return contextual_item_image_text(ctx, img, label, strlen(label), align);
   }
-  NK_API bool
+  bool
   contextual_item_symbol_text(context* ctx, const symbol_type symbol,
                               const char* text, const int len, const flag align) {
 
@@ -154,12 +154,12 @@ namespace nk {
     }
     return false;
   }
-  NK_API bool
+  bool
   contextual_item_symbol_label(context* ctx, const symbol_type symbol,
                                const char* text, const flag align) {
     return contextual_item_symbol_text(ctx, symbol, text, strlen(text), align);
   }
-  NK_API void
+  void
   contextual_close(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);
@@ -168,7 +168,7 @@ namespace nk {
       return;
     popup_close(ctx);
   }
-  NK_API void
+  void
   contextual_end(context* ctx) {
     NK_ASSERT(ctx);
     NK_ASSERT(ctx->current);

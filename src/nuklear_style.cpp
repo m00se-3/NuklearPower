@@ -6,7 +6,7 @@ namespace nk {
    *                              STYLE
    *
    * ===============================================================*/
-  NK_API void style_default(context* ctx) { style_from_table(ctx, 0); }
+  void style_default(context* ctx) { style_from_table(ctx, 0); }
 #define NK_COLOR_MAP(NK_COLOR)                                                                        \
   NK_COLOR(NK_COLOR_TEXT, 175, 175, 175, 255)                                                         \
   NK_COLOR(NK_COLOR_WINDOW, 45, 45, 45, 255)                                                          \
@@ -41,51 +41,51 @@ namespace nk {
   NK_COLOR(static_cast<std::size_t>(style_colors::COLOR_KNOB_CURSOR_HOVER), 120, 120, 120, 255)       \
   NK_COLOR(static_cast<std::size_t>(style_colors::COLOR_KNOB_CURSOR_ACTIVE), 150, 150, 150, 255)
 
-  NK_GLOBAL const color
+  const color
       default_color_style[static_cast<std::size_t>(style_colors::COLOR_COUNT)] = {
 #define NK_COLOR(a, b, c, d, e) {b, c, d, e},
           NK_COLOR_MAP(NK_COLOR)
 #undef NK_COLOR
   };
-  NK_GLOBAL const char* color_names[static_cast<std::size_t>(style_colors::COLOR_COUNT)] = {
+  const char* color_names[static_cast<std::size_t>(style_colors::COLOR_COUNT)] = {
 #define NK_COLOR(a, b, c, d, e) #a,
       NK_COLOR_MAP(NK_COLOR)
 #undef NK_COLOR
   };
 
-  NK_API const char*
+  const char*
   style_get_color_by_name(style_colors c) {
     return color_names[static_cast<std::size_t>(c)];
   }
-  NK_API style_item
+  style_item
   style_item_color(const color col) {
     style_item i;
     i.type = style_item_type::STYLE_ITEM_COLOR;
     i.data.color = col;
     return i;
   }
-  NK_API style_item
+  style_item
   style_item_image(struct image img) {
     style_item i;
     i.type = style_item_type::STYLE_ITEM_IMAGE;
     i.data.image = img;
     return i;
   }
-  NK_API style_item
+  style_item
   style_item_nine_slice(nine_slice slice) {
     style_item i;
     i.type = style_item_type::STYLE_ITEM_NINE_SLICE;
     i.data.slice = slice;
     return i;
   }
-  NK_API style_item
+  style_item
   style_item_hide(void) {
     style_item i;
     i.type = style_item_type::STYLE_ITEM_COLOR;
     i.data.color = rgba(0, 0, 0, 0);
     return i;
   }
-  NK_API void
+  void
   style_from_table(context* ctx, const color* table) {
 
     NK_ASSERT(ctx);
@@ -702,7 +702,7 @@ namespace nk {
     win->tooltip_padding = vec2_from_floats(4, 4);
   }
 
-  NK_API void
+  void
   style_set_font(context* ctx, const user_font* font) {
     NK_ASSERT(ctx);
 
@@ -715,7 +715,7 @@ namespace nk {
       layout_reset_min_row_height(ctx);
   }
 
-  NK_API bool
+  bool
   style_push_font(context* ctx, const user_font* font) {
 
     NK_ASSERT(ctx);
@@ -734,7 +734,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool
+  bool
   style_pop_font(context* ctx) {
 
     NK_ASSERT(ctx);
@@ -785,7 +785,7 @@ namespace nk {
     return 1;                                                                      \
   }
 
-  NK_API bool style_push_style_item(context* ctx, style_item* address, style_item value) {
+  bool style_push_style_item(context* ctx, style_item* address, style_item value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -800,7 +800,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_push_float(context* ctx, float* address, float value) {
+  bool style_push_float(context* ctx, float* address, float value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -815,7 +815,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_push_vec2(context* ctx, vec2f* address, const vec2f value) {
+  bool style_push_vec2(context* ctx, vec2f* address, const vec2f value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -830,7 +830,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_push_flags(context* ctx, flag* address, const flag value) {
+  bool style_push_flags(context* ctx, flag* address, const flag value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -845,7 +845,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_push_color(context* ctx, color* address, const color value) {
+  bool style_push_color(context* ctx, color* address, const color value) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -860,7 +860,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API void
+  void
   style_load_cursor(context* ctx, style_cursor cur,
                     const cursor* c) {
     NK_ASSERT(ctx);
@@ -870,7 +870,7 @@ namespace nk {
     style->cursors[static_cast<std::size_t>(cur)] = c;
   }
 
-  NK_API void
+  void
   style_load_all_cursors(context* ctx, const cursor* cursors) {
     int i = 0;
     NK_ASSERT(ctx);
@@ -882,7 +882,7 @@ namespace nk {
     style->cursor_visible = true;
   }
 
-  NK_API bool
+  bool
   style_set_cursor(context* ctx, style_cursor c) {
     NK_ASSERT(ctx);
     if (!ctx)
@@ -895,17 +895,17 @@ namespace nk {
     return 0;
   }
 
-  NK_API void
+  void
   style_show_cursor(context* ctx) {
     ctx->style.cursor_visible = true;
   }
 
-  NK_API void
+  void
   style_hide_cursor(context* ctx) {
     ctx->style.cursor_visible = false;
   }
 
-  NK_API bool style_pop_float(context* ctx) {
+  bool style_pop_float(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -918,7 +918,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_pop_vec2(context* ctx) {
+  bool style_pop_vec2(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -931,7 +931,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_pop_style_item(context* ctx) {
+  bool style_pop_style_item(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -944,7 +944,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_pop_flags(context* ctx) {
+  bool style_pop_flags(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;
@@ -957,7 +957,7 @@ namespace nk {
     return 1;
   }
 
-  NK_API bool style_pop_color(context* ctx) {
+  bool style_pop_color(context* ctx) {
     NK_ASSERT(ctx);
     if (!ctx)
       return 0;

@@ -7,7 +7,7 @@ namespace nk {
    *                          PROGRESS
    *
    * ===============================================================*/
-  NK_LIB std::size_t
+  std::size_t
   progress_behavior(flag* state, input* in,
                     const rectf r, const rectf cursor, const std::size_t max, std::size_t value, const bool modifiable) {
     int left_mouse_down = 0;
@@ -37,7 +37,7 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return value;
   }
-  NK_LIB void
+  void
   draw_progress(command_buffer* out, const flag state,
                 const style_progress* style, const rectf* bounds,
                 const rectf* scursor, const std::size_t value, const std::size_t max) {
@@ -87,7 +87,7 @@ namespace nk {
         break;
     }
   }
-  NK_LIB std::size_t
+  std::size_t
   do_progress(flag* state,
               command_buffer* out, const rectf bounds,
               const std::size_t value, const std::size_t max, const bool modifiable,
@@ -118,7 +118,7 @@ namespace nk {
       style->draw_end(out, style->userdata);
     return prog_value;
   }
-  NK_API bool
+  bool
   progress(context* ctx, std::size_t* cur, const std::size_t max, const bool is_modifyable) {
 
     rectf bounds;
@@ -143,7 +143,7 @@ namespace nk {
                        *cur, max, is_modifyable, &style->progress, in);
     return (*cur != old_value);
   }
-  NK_API std::size_t
+  std::size_t
   prog(context* ctx, std::size_t cur, const std::size_t max, const bool modifyable) {
     progress(ctx, &cur, max, modifyable);
     return cur;

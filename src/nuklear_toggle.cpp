@@ -6,7 +6,7 @@ namespace nk {
    *                              TOGGLE
    *
    * ===============================================================*/
-  NK_LIB bool
+  bool
   toggle_behavior(const input* in, const rectf select,
                   flag* state, bool active) {
     nk::widget_state_reset(state);
@@ -20,7 +20,7 @@ namespace nk {
       *state |= NK_WIDGET_STATE_LEFT;
     return active;
   }
-  NK_LIB void
+  void
   draw_checkbox(command_buffer* out,
                 const flag state, const style_toggle* style, const bool active,
                 const rectf* label, const rectf* selector,
@@ -64,7 +64,7 @@ namespace nk {
         fill_rect(out, *cursors, 0, cursor->data.color);
     }
   }
-  NK_LIB void
+  void
   draw_option(command_buffer* out,
               const flag state, const style_toggle* style, const bool active,
               const rectf* label, const rectf* selector,
@@ -108,7 +108,7 @@ namespace nk {
         fill_circle(out, *cursors, cursor->data.color);
     }
   }
-  NK_LIB bool
+  bool
   do_toggle(flag* state,
             command_buffer* out, rectf r,
             bool* active, const char* str, const int len, const toggle_type type,
@@ -196,7 +196,7 @@ namespace nk {
    *                          CHECKBOX
    *
    * --------------------------------------------------------------*/
-  NK_API bool
+  bool
   check_text(context* ctx, const char* text, const int len, bool active) {
 
     rectf bounds;
@@ -219,7 +219,7 @@ namespace nk {
               text, len, NK_TOGGLE_CHECK, &style->checkbox, in, style->font, NK_WIDGET_LEFT, NK_TEXT_LEFT);
     return active;
   }
-  NK_API bool
+  bool
   check_text_align(context* ctx, const char* text, const int len, bool active, const flag widget_alignment, const flag text_alignment) {
 
     rectf bounds;
@@ -242,7 +242,7 @@ namespace nk {
               text, len, NK_TOGGLE_CHECK, &style->checkbox, in, style->font, widget_alignment, text_alignment);
     return active;
   }
-  NK_API unsigned int
+  unsigned int
   check_flags_text(context* ctx, const char* text, const int len,
                    unsigned int flags, const unsigned int value) {
     NK_ASSERT(ctx);
@@ -256,7 +256,7 @@ namespace nk {
       flags &= ~value;
     return flags;
   }
-  NK_API bool
+  bool
   checkbox_text(context* ctx, const char* text, const int len, bool* active) {
     NK_ASSERT(ctx);
     NK_ASSERT(text);
@@ -267,7 +267,7 @@ namespace nk {
     *active = check_text(ctx, text, len, *active);
     return old_val != *active;
   }
-  NK_API bool
+  bool
   checkbox_text_align(context* ctx, const char* text, const int len, bool* active, const flag widget_alignment, const flag text_alignment) {
     NK_ASSERT(ctx);
     NK_ASSERT(text);
@@ -278,7 +278,7 @@ namespace nk {
     *active = check_text_align(ctx, text, len, *active, widget_alignment, text_alignment);
     return old_val != *active;
   }
-  NK_API bool
+  bool
   checkbox_flags_text(context* ctx, const char* text, const int len,
                       unsigned int* flags, const unsigned int value) {
     bool active;
@@ -298,20 +298,20 @@ namespace nk {
     }
     return 0;
   }
-  NK_API bool check_label(context* ctx, const char* label, const bool active) {
+  bool check_label(context* ctx, const char* label, const bool active) {
     return check_text(ctx, label, strlen(label), active);
   }
-  NK_API unsigned int check_flags_label(context* ctx, const char* label,
+  unsigned int check_flags_label(context* ctx, const char* label,
                                         const unsigned int flags, const unsigned int value) {
     return check_flags_text(ctx, label, strlen(label), flags, value);
   }
-  NK_API bool checkbox_label(context* ctx, const char* label, bool* active) {
+  bool checkbox_label(context* ctx, const char* label, bool* active) {
     return checkbox_text(ctx, label, strlen(label), active);
   }
-  NK_API bool checkbox_label_align(context* ctx, const char* label, bool* active, const flag widget_alignment, const flag text_alignment) {
+  bool checkbox_label_align(context* ctx, const char* label, bool* active, const flag widget_alignment, const flag text_alignment) {
     return checkbox_text_align(ctx, label, strlen(label), active, widget_alignment, text_alignment);
   }
-  NK_API bool checkbox_flags_label(context* ctx, const char* label,
+  bool checkbox_flags_label(context* ctx, const char* label,
                                    unsigned int* flags, const unsigned int value) {
     return checkbox_flags_text(ctx, label, strlen(label), flags, value);
   }
@@ -320,7 +320,7 @@ namespace nk {
    *                          OPTION
    *
    * --------------------------------------------------------------*/
-  NK_API bool
+  bool
   option_text(context* ctx, const char* text, const int len, bool is_active) {
 
     rectf bounds;
@@ -343,7 +343,7 @@ namespace nk {
               text, len, NK_TOGGLE_OPTION, &style->option, in, style->font, NK_WIDGET_LEFT, NK_TEXT_LEFT);
     return is_active;
   }
-  NK_API bool
+  bool
   option_text_align(context* ctx, const char* text, const int len, bool is_active, const flag widget_alignment, const flag text_alignment) {
 
     rectf bounds;
@@ -366,7 +366,7 @@ namespace nk {
               text, len, NK_TOGGLE_OPTION, &style->option, in, style->font, widget_alignment, text_alignment);
     return is_active;
   }
-  NK_API bool
+  bool
   radio_text(context* ctx, const char* text, const int len, bool* active) {
     NK_ASSERT(ctx);
     NK_ASSERT(text);
@@ -377,7 +377,7 @@ namespace nk {
     *active = option_text(ctx, text, len, old_value);
     return old_value != *active;
   }
-  NK_API bool
+  bool
   radio_text_align(context* ctx, const char* text, const int len, bool* active, const flag widget_alignment, const flag text_alignment) {
     NK_ASSERT(ctx);
     NK_ASSERT(text);
@@ -388,19 +388,19 @@ namespace nk {
     *active = option_text_align(ctx, text, len, old_value, widget_alignment, text_alignment);
     return old_value != *active;
   }
-  NK_API bool
+  bool
   option_label(context* ctx, const char* label, const bool active) {
     return option_text(ctx, label, strlen(label), active);
   }
-  NK_API bool
+  bool
   option_label_align(context* ctx, const char* label, const bool active, const flag widget_alignment, const flag text_alignment) {
     return option_text_align(ctx, label, strlen(label), active, widget_alignment, text_alignment);
   }
-  NK_API bool
+  bool
   radio_label(context* ctx, const char* label, bool* active) {
     return radio_text(ctx, label, strlen(label), active);
   }
-  NK_API bool
+  bool
   radio_label_align(context* ctx, const char* label, bool* active, const flag widget_alignment, const flag text_alignment) {
     return radio_text_align(ctx, label, strlen(label), active, widget_alignment, text_alignment);
   }

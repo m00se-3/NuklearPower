@@ -26,12 +26,12 @@ namespace nk {
   };
 
   /* forward declarations */
-  INTERN void textedit_makeundo_delete(text_edit*, int, int);
-  INTERN void textedit_makeundo_insert(text_edit*, int, int);
-  INTERN void textedit_makeundo_replace(text_edit*, int, int, int);
+  void textedit_makeundo_delete(text_edit*, int, int);
+  void textedit_makeundo_insert(text_edit*, int, int);
+  void textedit_makeundo_replace(text_edit*, int, int, int);
 #define NK_TEXT_HAS_SELECTION(s) ((s)->select_start != (s)->select_end)
 
-  INTERN float
+  float
   textedit_get_width(const text_edit* edit, const int line_start, const int char_id,
                      const user_font* font) {
     int len = 0;
@@ -39,7 +39,7 @@ namespace nk {
     const char* str = str_at_const(&edit->string, line_start + char_id, &unicode, &len);
     return font->width(font->userdata, font->height, str, len);
   }
-  INTERN void
+  void
   textedit_layout_row(text_edit_row* r, text_edit* edit,
                       const int line_start_id, float row_height, const user_font* font) {
     int l;
@@ -59,7 +59,7 @@ namespace nk {
     r->ymax = size.y;
     r->num_chars = glyphs;
   }
-  INTERN int
+  int
   textedit_locate_coord(text_edit* edit, float x, float y,
                         const user_font* font, float row_height) {
     text_edit_row r;
@@ -120,7 +120,7 @@ namespace nk {
     else
       return i + r.num_chars;
   }
-  NK_LIB void
+  void
   textedit_click(text_edit* state, float x, float y,
                  const user_font* font, float row_height) {
     /* API click: on mouse down, move the cursor to the clicked location,
@@ -130,7 +130,7 @@ namespace nk {
     state->select_end = state->cursor;
     state->has_preferred_x = 0;
   }
-  NK_LIB void
+  void
   textedit_drag(text_edit* state, float x, float y,
                 const user_font* font, float row_height) {
     /* API drag: on mouse drag, move the cursor and selection endpoint
@@ -140,7 +140,7 @@ namespace nk {
       state->select_start = state->cursor;
     state->cursor = state->select_end = p;
   }
-  INTERN void
+  void
   textedit_find_charpos(text_find* find, text_edit* state,
                         const int n, const int single_line, const user_font* font, float row_height) {
     /* find the x/y location of a character, and remember info about the previous
@@ -197,7 +197,7 @@ namespace nk {
     for (i = 0; first + i < n; ++i)
       find->x += textedit_get_width(state, first, i, font);
   }
-  INTERN void
+  void
   textedit_clamp(text_edit* state) {
     /* make the selection/cursor state valid if client altered the string */
     const int n = state->string.len;
@@ -213,14 +213,14 @@ namespace nk {
     if (state->cursor > n)
       state->cursor = n;
   }
-  NK_API void
+  void
   textedit_delete(text_edit* state, const int where, const int len) {
     /* delete characters while updating undo */
     textedit_makeundo_delete(state, where, len);
     str_delete_runes(&state->string, where, len);
     state->has_preferred_x = 0;
   }
-  NK_API void
+  void
   textedit_delete_selection(text_edit* state) {
     /* delete the section */
     textedit_clamp(state);
@@ -237,7 +237,7 @@ namespace nk {
       state->has_preferred_x = 0;
     }
   }
-  INTERN void
+  void
   textedit_sortselection(text_edit* state) {
     /* canonicalize the selection so start <= end */
     if (state->select_end < state->select_start) {
@@ -246,7 +246,7 @@ namespace nk {
       state->select_start = temp;
     }
   }
-  INTERN void
+  void
   textedit_move_to_first(text_edit* state) {
     /* move cursor to first character of selection */
     if (NK_TEXT_HAS_SELECTION(state)) {
@@ -256,7 +256,7 @@ namespace nk {
       state->has_preferred_x = 0;
     }
   }
-  INTERN void
+  void
   textedit_move_to_last(text_edit* state) {
     /* move cursor to last character of selection */
     if (NK_TEXT_HAS_SELECTION(state)) {
@@ -267,7 +267,7 @@ namespace nk {
       state->has_preferred_x = 0;
     }
   }
-  INTERN int
+  int
   is_word_boundary(text_edit* state, const int idx) {
     int len;
     rune c;
@@ -282,7 +282,7 @@ namespace nk {
     return NK_IS_WORD_BOUNDARY(c);
 #endif
   }
-  INTERN int
+  int
   textedit_move_to_word_previous(text_edit* state) {
     int c = state->cursor - 1;
     if (c > 0) {
@@ -299,7 +299,7 @@ namespace nk {
 
     return c;
   }
-  INTERN int
+  int
   textedit_move_to_word_next(text_edit* state) {
     const int len = state->string.len;
     int c = state->cursor;
@@ -316,7 +316,7 @@ namespace nk {
 
     return c;
   }
-  INTERN void
+  void
   textedit_prep_selection_at_cursor(text_edit* state) {
     /* update selection and cursor to match each other */
     if (!NK_TEXT_HAS_SELECTION(state))
@@ -324,7 +324,7 @@ namespace nk {
     else
       state->cursor = state->select_end;
   }
-  NK_API bool
+  bool
   textedit_cut(text_edit* state) {
     /* API cut: delete selection */
     if (state->mode == static_cast<unsigned char>(text_edit_mode::TEXT_EDIT_MODE_VIEW))
@@ -336,7 +336,7 @@ namespace nk {
     }
     return 0;
   }
-  NK_API bool
+  bool
   textedit_paste(text_edit* state, char const* ctext, const int len) {
     /* API paste: replace existing selection with passed-in text */
     const char* text = (const char*) ctext;
@@ -360,7 +360,7 @@ namespace nk {
       --state->undo.undo_point;
     return 0;
   }
-  NK_API void
+  void
   textedit_text(text_edit* state, const char* text, const int total_len) {
     rune unicode;
     int text_len = 0;
@@ -407,7 +407,7 @@ namespace nk {
       glyph_len = utf_decode(text + text_len, &unicode, total_len - text_len);
     }
   }
-  NK_LIB void
+  void
   textedit_key(text_edit* state, keys key, const int shift_mod,
                const user_font* font, float row_height) {
   retry:
@@ -720,12 +720,12 @@ namespace nk {
       } break;
     }
   }
-  INTERN void
+  void
   textedit_flush_redo(text_undo_state* state) {
     state->redo_point = NK_TEXTEDIT_UNDOSTATECOUNT;
     state->redo_char_point = NK_TEXTEDIT_UNDOCHARCOUNT;
   }
-  INTERN void
+  void
   textedit_discard_undo(text_undo_state* state) {
     /* discard the oldest entry in the undo list */
     if (state->undo_point > 0) {
@@ -747,7 +747,7 @@ namespace nk {
                   (std::size_t) ((std::size_t) state->undo_point * sizeof(state->undo_rec[0])));
     }
   }
-  INTERN void
+  void
   textedit_discard_redo(text_undo_state* state) {
     /*  discard the oldest entry in the redo list--it's bad if this
         ever happens, but because undo & redo have to store the actual
@@ -778,7 +778,7 @@ namespace nk {
                     state->undo_rec.data() + state->redo_point, num * sizeof(state->undo_rec[0]));
     }
   }
-  INTERN text_undo_record*
+  text_undo_record*
   textedit_create_undo_record(text_undo_state* state, const int numchars) {
     /* any time we create a new undo record, we discard redo*/
     textedit_flush_redo(state);
@@ -803,7 +803,7 @@ namespace nk {
     state->undo_point++;
     return &state->undo_rec[static_cast<long unsigned int>(state->undo_point)];
   }
-  INTERN rune*
+  rune*
   textedit_createundo(text_undo_state* state, const int pos,
                       const int insert_len, const int delete_len) {
     text_undo_record* r = textedit_create_undo_record(state, insert_len);
@@ -823,7 +823,7 @@ namespace nk {
       return &state->undo_char[static_cast<long unsigned int>(r->char_storage)];
     }
   }
-  NK_API void
+  void
   textedit_undo(text_edit* state) {
     text_undo_state* s = &state->undo;
     if (s->undo_point == 0)
@@ -886,7 +886,7 @@ namespace nk {
     s->undo_point--;
     s->redo_point--;
   }
-  NK_API void
+  void
   textedit_redo(text_edit* state) {
     text_undo_state* s = &state->undo;
     if (s->redo_point == NK_TEXTEDIT_UNDOSTATECOUNT)
@@ -932,11 +932,11 @@ namespace nk {
     s->undo_point++;
     s->redo_point++;
   }
-  INTERN void
+  void
   textedit_makeundo_insert(text_edit* state, const int where, const int length) {
     textedit_createundo(&state->undo, where, 0, length);
   }
-  INTERN void
+  void
   textedit_makeundo_delete(text_edit* state, const int where, const int length) {
     rune* p = textedit_createundo(&state->undo, where, length, 0);
     if (p) {
@@ -944,7 +944,7 @@ namespace nk {
         p[i] = str_rune_at(&state->string, where + i);
     }
   }
-  INTERN void
+  void
   textedit_makeundo_replace(text_edit* state, const int where,
                             const int old_length, const int new_length) {
     rune* p = textedit_createundo(&state->undo, where, old_length, new_length);
@@ -953,7 +953,7 @@ namespace nk {
         p[i] = str_rune_at(&state->string, where + i);
     }
   }
-  NK_LIB void
+  void
   textedit_clear_state(text_edit* state, const text_edit_type type,
                        const plugin_filter filter) {
     /* reset the state to default */
@@ -972,7 +972,7 @@ namespace nk {
     state->filter = filter;
     state->scrollbar = vec2_from_floats(0.0f, 0.0f);
   }
-  NK_API void
+  void
   textedit_init_fixed(text_edit* state, void* memory, const std::size_t size) {
     NK_ASSERT(state);
     NK_ASSERT(memory);
@@ -982,7 +982,7 @@ namespace nk {
     textedit_clear_state(state, text_edit_type::TEXT_EDIT_SINGLE_LINE, 0);
     str_init_fixed(&state->string, memory, size);
   }
-  NK_API void
+  void
   textedit_init(text_edit* state, const allocator* alloc, const std::size_t size) {
     NK_ASSERT(state);
     NK_ASSERT(alloc);
@@ -993,7 +993,7 @@ namespace nk {
     str_init(&state->string, alloc, size);
   }
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-  NK_API void
+  void
   textedit_init_default(struct text_edit* state) {
     NK_ASSERT(state);
     if (!state)
@@ -1003,13 +1003,13 @@ namespace nk {
     str_init_default(&state->string);
   }
 #endif
-  NK_API void
+  void
   textedit_select_all(text_edit* state) {
     NK_ASSERT(state);
     state->select_start = 0;
     state->select_end = state->string.len;
   }
-  NK_API void
+  void
   textedit_free(text_edit* state) {
     NK_ASSERT(state);
     if (!state)
