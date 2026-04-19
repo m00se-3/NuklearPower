@@ -4233,7 +4233,8 @@ inline unsigned int stbtt_PackFontRangesGatherRects(stbtt_pack_context* spc, con
       unsigned short x0, y0, x1, y1;
       const unsigned int codepoint = ranges[i].array_of_unicode_codepoints == NULL ? ranges[i].first_unicode_codepoint_in_range + j : ranges[i].array_of_unicode_codepoints[j];
       if (const auto glyph = stbtt_FindGlyphIndex(info, codepoint); glyph == 0 && (spc->skip_missing || missing_glyph_added)) {
-        rects[k].w = rects[k].h = 0;
+        rects[k].w = 0;
+        rects[k].h = 0;
       } else {
         stbtt_GetGlyphBitmapBoxSubpixel(info, glyph,
                                         scale * spc->h_oversample,

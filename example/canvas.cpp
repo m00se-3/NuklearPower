@@ -183,10 +183,7 @@ int main([[maybe_unused]] int argc,[[maybe_unused]] char *argv[])
     static GLFWwindow *win;
     int width = 0, height = 0;
 
-    /* GUI */
-    device device;
-    nk::font_atlas atlas;
-    nk::context ctx;
+    nk::context ctx{};
 
     /* GLFW */
     glfwSetErrorCallback(error_callback);
@@ -214,7 +211,9 @@ int main([[maybe_unused]] int argc,[[maybe_unused]] char *argv[])
     }
 
     /* GUI */
-    {
+    device device;
+    nk::font_atlas atlas{};
+  {
       unsigned int w, h;
       nk::font_atlas_init_default(&atlas);
       nk::font_atlas_begin(&atlas);

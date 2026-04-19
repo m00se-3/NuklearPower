@@ -809,7 +809,7 @@ namespace nk {
 /* buffer */
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
   void* malloc(resource_handle unused, void* old, std::size_t size);
-  inline void mfree([[maybe_unused]] resource_handle unused, void* ptr) { free(static_cast<context*>(ptr)); }
+  inline void mfree([[maybe_unused]] resource_handle unused, void* ptr) { std::free(ptr); }
 #endif
   void* buffer_align(void* unaligned, std::size_t align, std::size_t* alignment, buffer_allocation_type type);
   void* buffer_alloc(memory_buffer* b, buffer_allocation_type type, std::size_t size, std::size_t align);

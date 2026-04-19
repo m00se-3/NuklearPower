@@ -19,6 +19,21 @@ namespace nk {
     handle.id = id;
     return handle;
   }
+
+  void get_image(context* ctx, struct image img) {
+    nk::window *win;
+    nk::rectf bounds;
+
+    NK_ASSERT(ctx);
+    NK_ASSERT(ctx->current);
+    NK_ASSERT(ctx->current->layout);
+    if (!ctx || !ctx->current || !ctx->current->layout) return;
+
+    win = ctx->current;
+    if (!nk::widget(&bounds, ctx)) return;
+    nk::draw_image(&win->buffer, bounds, &img, nk::white);
+  }
+
   image
   subimage_ptr(void* ptr, const unsigned short w, const unsigned short h, const rectf r) {
     image s;

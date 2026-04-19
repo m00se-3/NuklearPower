@@ -26,9 +26,10 @@ struct nk_glfw_vertex {
 
 struct device {
   device()
-    : prog(glCreateProgram()), vert_shdr(glCreateShader(GL_VERTEX_SHADER))
-    , frag_shdr(glCreateShader(GL_FRAGMENT_SHADER))
+    : prog(glCreateProgram())
   {
+    vert_shdr = glCreateShader(GL_VERTEX_SHADER);
+    frag_shdr = glCreateShader(GL_FRAGMENT_SHADER);
 
     GLint status = 0;
     static constexpr auto vertex_shader =

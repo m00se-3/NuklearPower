@@ -83,11 +83,10 @@ int main(int argc, char *argv[])
     int display_width=0, display_height=0;
 
     /* GUI */
-    device device;
-    nk::font_atlas atlas;
-    media media;
-    nk::context ctx;
-    nk::font *font;
+    nk::font_atlas atlas{};
+    media media{};
+    nk::context ctx{};
+    nk::font *font{};
 
     /* GLFW */
     glfwSetErrorCallback(error_callback);
@@ -116,6 +115,8 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to setup GLEW\n");
         exit(1);
     }
+
+    device device;
 
     /* GUI */
     {
